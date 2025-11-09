@@ -1,0 +1,154 @@
+:root {
+  --variable-collection-color-2: rgba(253, 243, 231, 1);
+  --variable-collection-color-1: rgba(255, 255, 255, 1);
+  --variable-collection-color-3: rgba(245, 245, 220, 1);
+  --variable-collection-color-4: rgba(227, 227, 227, 1);
+  --variable-collection-color-5: rgba(114, 114, 114, 1);
+  --variable-collection-color-6: rgba(33, 33, 33, 1);
+  --variable-collection-color-7: rgba(10, 10, 10, 1);
+  --variable-collection-color-8: rgba(238, 22, 8, 1);
+  --variable-collection-color-9: rgba(128, 0, 0, 1);
+  --variable-collection-text: rgba(20, 20, 20, 1);
+  --m3-schemes-on-error-container: rgba(133, 34, 33, 1);
+  --size-space-200: 8px;
+}
+
+/*
+
+To enable a theme in your HTML, simply add one of the following data attributes to an HTML element, like so:
+
+<body data-m3-mode="light">
+    <!-- the rest of your content -->
+</body>
+
+You can apply the theme on any DOM node, not just the `body`
+
+*/
+
+[data-m3-mode="light"] {
+  --m3-schemes-on-error-container: rgba(133, 34, 33, 1);
+}
+
+[data-m3-mode="light-high-contrast"] {
+  --m3-schemes-on-error-container: rgba(255, 255, 255, 1);
+}
+
+[data-m3-mode="light-medium-contrast"] {
+  --m3-schemes-on-error-container: rgba(255, 255, 255, 1);
+}
+
+[data-m3-mode="dark"] {
+  --m3-schemes-on-error-container: rgba(249, 222, 220, 1);
+}
+
+[data-m3-mode="dark-high-contrast"] {
+  --m3-schemes-on-error-container: rgba(0, 0, 0, 1);
+}
+
+[data-m3-mode="dark-medium-contrast"] {
+  --m3-schemes-on-error-container: rgba(0, 0, 0, 1);
+}
+
+[data-m3-mode="monochrome-LT"] {
+  --m3-schemes-on-error-container: rgba(65, 14, 11, 1);
+}
+
+[data-m3-mode="monochrome-DT"] {
+  --m3-schemes-on-error-container: rgba(242, 184, 181, 1);
+}
+
+[data-m3-mode="pink-LT"] {
+  --m3-schemes-on-error-container: rgba(140, 29, 24, 1);
+}
+
+[data-m3-mode="pink-DT"] {
+  --m3-schemes-on-error-container: rgba(249, 222, 220, 1);
+}
+
+[data-m3-mode="rose-LT"] {
+  --m3-schemes-on-error-container: rgba(140, 29, 24, 1);
+}
+
+[data-m3-mode="rose-DT"] {
+  --m3-schemes-on-error-container: rgba(249, 222, 220, 1);
+}
+
+[data-m3-mode="red-LT"] {
+  --m3-schemes-on-error-container: rgba(140, 29, 24, 1);
+}
+
+[data-m3-mode="red-DT"] {
+  --m3-schemes-on-error-container: rgba(249, 222, 220, 1);
+}
+
+[data-m3-mode="orange-LT"] {
+  --m3-schemes-on-error-container: rgba(140, 29, 24, 1);
+}
+
+[data-m3-mode="orange-DT"] {
+  --m3-schemes-on-error-container: rgba(249, 222, 220, 1);
+}
+
+[data-m3-mode="yellow-LT"] {
+  --m3-schemes-on-error-container: rgba(140, 29, 24, 1);
+}
+
+[data-m3-mode="yellow-DT"] {
+  --m3-schemes-on-error-container: rgba(249, 222, 220, 1);
+}
+
+[data-m3-mode="chartreuse-LT"] {
+  --m3-schemes-on-error-container: rgba(140, 29, 24, 1);
+}
+
+[data-m3-mode="chartreuse-DT"] {
+  --m3-schemes-on-error-container: rgba(249, 222, 220, 1);
+}
+
+[data-m3-mode="green-LT"] {
+  --m3-schemes-on-error-container: rgba(140, 29, 24, 1);
+}
+
+[data-m3-mode="green-DT"] {
+  --m3-schemes-on-error-container: rgba(249, 222, 220, 1);
+}
+
+[data-m3-mode="teal-LT"] {
+  --m3-schemes-on-error-container: rgba(140, 29, 24, 1);
+}
+
+[data-m3-mode="teal-DT"] {
+  --m3-schemes-on-error-container: rgba(249, 222, 220, 1);
+}
+
+[data-m3-mode="cyan-LT"] {
+  --m3-schemes-on-error-container: rgba(140, 29, 24, 1);
+}
+
+[data-m3-mode="cyan-DT"] {
+  --m3-schemes-on-error-container: rgba(249, 222, 220, 1);
+}
+
+[data-m3-mode="blue-LT"] {
+  --m3-schemes-on-error-container: rgba(140, 29, 24, 1);
+}
+
+[data-m3-mode="blue-DT"] {
+  --m3-schemes-on-error-container: rgba(249, 222, 220, 1);
+}
+
+[data-m3-mode="indigo-LT"] {
+  --m3-schemes-on-error-container: rgba(140, 29, 24, 1);
+}
+
+[data-m3-mode="indigo-DT"] {
+  --m3-schemes-on-error-container: rgba(249, 222, 220, 1);
+}
+
+[data-m3-mode="purple-LT"] {
+  --m3-schemes-on-error-container: rgba(140, 29, 24, 1);
+}
+
+[data-m3-mode="purple-DT"] {
+  --m3-schemes-on-error-container: rgba(249, 222, 220, 1);
+}

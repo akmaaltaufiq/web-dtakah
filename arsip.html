@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+    />
+  </head>
+  <body>
+    <!-- Sidebar placeholder -->
+    <div id="sidebar-placeholder"></div>
+
+    <!-- Main content -->
+    <div class="main-content">
+      <!-- Header -->
+      <div class="content-header">
+        <div class="search-box">
+          <input type="text" placeholder="Search" id="headerSearch">
+          <i class="bi bi-search"></i>
+        </div>
+        <div class="header-right">
+          <button class="header-btn">
+            <i class="bi bi-bell-fill"></i>
+            <span class="notification-badge">4</span>
+          </button>
+          <div class="language-selector">
+            <img src="https://flagcdn.com/w40/id.png" alt="Indonesia">
+            <span style="font-size: 14px; font-weight: 500;">Indonesia</span>
+            <i class="bi bi-chevron-down" style="font-size: 12px;"></i>
+          </div>
+          <div class="user-info">
+            <div class="user-details">
+              <div class="user-details-name">Staff TU Puslapbinkunhan</div>
+              <div class="user-details-role">Admin</div>
+            </div>
+            <div class="user-avatar-header">
+              <i class="bi bi-person-fill"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+        
+      <!-- Page content -->
+      <div class="content-container">
+        <div class="arsip-container">
+          <div class="arsip-header">
+            <h1 class="arsip-title">Arsip</h1>
+            <p class="arsip-subtitle">Pencarian</p>
+          </div>
+
+          <div class="arsip-controls-wrapper">
+            <div class="arsip-controls-top">
+              <div class="arsip-search">
+                <i class="bi bi-search"></i>
+                <input type="text" id="arsipSearch" placeholder="Cari Berdasarkan Judul">
+              </div>
+              
+              <div class="arsip-filter-group">
+                <span class="filter-label">Jenis Arsip</span>
+                <select class="arsip-select" id="jenisArsipFilter">
+                  <option value="">Pilih Jenis Arsip</option>
+                  <option value="pemberitahuan">Pemberitahuan</option>
+                  <option value="undangan">Undangan</option>
+                  <option value="surat">Surat</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="view-toggle">
+              <button class="view-btn active" title="List View">
+                <i class="bi bi-list"></i>
+              </button>
+              <button class="view-btn" title="Grid View">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+              </button>
+            </div>
+          </div>
+
+          <table class="arsip-table">
+            <thead>
+              <tr>
+                <th>Nomor Naskah</th>
+                <th>Judul</th>
+                <th>Perihal</th>
+                <th>Sifat</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="arsipTableBody">
+              <tr>
+                <td class="nomor-naskah">C-2025-010</td>
+                <td class="jenis-judul">
+                  <div class="jenis-title">Surat Pemberitahuan Kegiatan Minggu Bela Negara</div>
+                </td>
+                <td class="bidang-text">Memberikan pemberitahuan kegiatan bulanan</td>
+                <td><span class="tanggal-badge">Umum</span></td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="action-btn edit" title="Edit">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="action-btn delete" title="Delete">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="nomor-naskah">B-2025-042</td>
+                <td class="jenis-judul">
+                  <div class="jenis-title">Pemberitahuan Cuti Bersama</div>
+                </td>
+                <td class="bidang-text">Memberikan pemberitahuan cuti bersama Natal & Tahun Baru</td>
+                <td><span class="tanggal-badge">Umum</span></td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="action-btn edit" title="Edit">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="action-btn delete" title="Delete">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="nomor-naskah">A-2025-001</td>
+                <td class="jenis-judul">
+                  <div class="jenis-title">Pemberitahuan Pemberian Anggaran</div>
+                </td>
+                <td class="bidang-text">Menyampaikan informasi realisasi penggunaan anggaran untuk transparansi.</td>
+                <td><span class="tanggal-badge">Umum</span></td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="action-btn edit" title="Edit">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="action-btn delete" title="Delete">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="nomor-naskah">B-2025-002</td>
+                <td class="jenis-judul">
+                  <div class="jenis-title">Pemberitahuan Perubahan Kebijakan</div>
+                </td>
+                <td class="bidang-text">Menginformasikan perubahan aturan, prosedur, atau kebijakan yang berlaku.</td>
+                <td><span class="tanggal-badge">Umum</span></td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="action-btn edit" title="Edit">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="action-btn delete" title="Delete">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="nomor-naskah">C-2025-012</td>
+                <td class="jenis-judul">
+                  <div class="jenis-title">Pemberitahuan Penyerahan Dokumen</div>
+                </td>
+                <td class="bidang-text">Mengingatkan divisi Banglola untuk menyerahkan dan melengkapi dokumen.</td>
+                <td><span class="tanggal-badge">Umum</span></td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="action-btn edit" title="Edit">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="action-btn delete" title="Delete">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="nomor-naskah">B-2025-003</td>
+                <td class="jenis-judul">
+                  <div class="jenis-title">Pemberitahuan Kegiatan Outbond</div>
+                </td>
+                <td class="bidang-text">Pemberitahuan kegiatan outbonding untuk meningkatkan rasa kerja sama</td>
+                <td><span class="tanggal-badge">Umum</span></td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="action-btn edit" title="Edit">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="action-btn delete" title="Delete">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="nomor-naskah">A-2025-040</td>
+                <td class="jenis-judul">
+                  <div class="jenis-title">Undangan Sosialisasi Program</div>
+                </td>
+                <td class="bidang-text">Menginformasikan akan dilaksanakannya Program Pelatihan</td>
+                <td><span class="tanggal-badge">Umum</span></td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="action-btn edit" title="Edit">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="action-btn delete" title="Delete">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="arsip-footer">
+            <div class="showing-info">Showing 1-7 of 1,253</div>
+            <div class="pagination">
+              <button class="pagination-btn" disabled>
+                <i class="bi bi-chevron-left"></i>
+              </button>
+              <button class="pagination-btn">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Footer -->
+      <footer class="content-footer">
+        <p>
+          © 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik
+          Indonesia
+        </p>
+      </footer>
+    </div>
+
+    <!-- JS -->
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

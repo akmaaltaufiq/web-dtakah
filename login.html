@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="assets/css/globals.css" />
+    <link rel="stylesheet" href="assets/css/styleguide.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+    />
+  </head>
+  <body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+      <div class="loading-content">
+        <div class="loading-logo">
+          <img src="assets/img/logo_kemhan_ri.png" alt="Logo Kemhan" />
+        </div>
+        <div class="loading-spinner">
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+        </div>
+        <div class="loading-text">
+          Sedang Memproses<span class="loading-dots"></span>
+        </div>
+        <div class="loading-subtext">Mohon tunggu sebentar</div>
+      </div>
+    </div>
+    <div class="login-page">
+      <div class="frame">
+        <img class="image" src="assets/img/logo_kemhan_ri.png" />
+        <div class="login-form">
+          <div class="div">
+            <div class="frame-2">
+              <div class="frame-3">
+                <div class="text-wrapper">Selamat Datang</div>
+                <p class="p">Platform Kolaborasi dan Smart Office</p>
+              </div>
+              <div class="login-form-2">
+                <div class="group-wrapper">
+                  <div class="group">
+                    <i class="bi bi-lock" style="font-size: 1.5rem"></i>
+                  </div>
+                </div>
+                <div class="vector-wrapper">
+                  <i class="bi bi-envelope" style="font-size: 1.5rem"></i>
+                </div>
+                <div class="input-field">
+                  <div class="div-wrapper">
+                    <input
+                      type="email"
+                      id="email"
+                      placeholder="masukkan username"
+                    />
+                  </div>
+                </div>
+                <div class="input-field-2">
+                  <div class="frame-4">
+                    <input
+                      type="password"
+                      id="password"
+                      placeholder="masukkan password anda"
+                    />
+                  </div>
+                </div>
+                <div class="text-wrapper-4">Username</div>
+                <div class="text-wrapper-5">Password</div>
+              </div>
+            </div>
+            <div class="frame-5">
+              <div class="remember-wrapper">
+                <input type="checkbox" id="remember" />
+                <label for="remember">Ingat saya</label>
+              </div>
+              <div class="text-wrapper-7">Lupa Password?</div>
+            </div>
+            <button class="button" onclick="handleLogin()">
+              <div class="rectangle"></div>
+              <div class="text-wrapper-8">Masuk</div>
+            </button>
+          </div>
+          <div class="frame-7">
+            <div class="flexcontainer">
+              <p class="text"><span class="span">Tata Naskah Digital</span></p>
+              <p class="text">
+                <span class="span"
+                  >Kementerian Pertahanan Republik Indonesia</span
+                >
+              </p>
+              <p class="text">
+                <span class="span">Pusat Panggilan: 0812-8595-1569</span>
+              </p>
+              <p class="text">
+                <span class="span"
+                  >Aplikasi ini didukung oleh Balai Sertifikasi Elektronik</span
+                >
+              </p>
+            </div>
+            <img class="image-2" src="assets/img/bse.png" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Kredensial login yang valid (bisa diganti nanti dengan data dari backend/API)
+      const validCredentials = {
+        username: "magang",
+        password: "123",
+      };
+
+      function showLoading() {
+        const loadingScreen = document.getElementById("loadingScreen");
+        loadingScreen.classList.add("show");
+      }
+
+      function hideLoading() {
+        const loadingScreen = document.getElementById("loadingScreen");
+        loadingScreen.classList.remove("show");
+      }
+
+      function handleLogin() {
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        const remember = document.getElementById("remember").checked;
+
+        if (!email || !password) {
+          alert("Silakan isi username dan password");
+          return;
+        }
+
+        showLoading();
+
+        setTimeout(() => {
+          if (
+            email === validCredentials.username &&
+            password === validCredentials.password
+          ) {
+            console.log("Login berhasil:", {
+              email: email,
+              remember: remember,
+              timestamp: new Date().toISOString(),
+            });
+
+            const userData = {
+              email,
+              loginTime: new Date().toISOString(),
+            };
+
+            if (remember) {
+              localStorage.setItem("isLoggedIn", "true");
+              localStorage.setItem("userData", JSON.stringify(userData));
+            } else {
+              sessionStorage.setItem("isLoggedIn", "true");
+              sessionStorage.setItem("userData", JSON.stringify(userData));
+            }
+
+            // Redirect ke index
+            window.location.href = "index.html";
+          } else {
+            hideLoading();
+            alert(
+              "Username atau password salah!\n\nGunakan:\nUsername: magang\nPassword: 123"
+            );
+            document.getElementById("password").value = "";
+            document.getElementById("password").focus();
+          }
+        }, 1500); // simulasi loading 1.5 detik
+      }
+
+      // Cek login otomatis saat halaman dibuka
+      window.addEventListener("DOMContentLoaded", function () {
+        const isLoggedIn =
+          localStorage.getItem("isLoggedIn") ||
+          sessionStorage.getItem("isLoggedIn");
+
+        if (isLoggedIn === "true") {
+          showLoading();
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 500);
+        }
+      });
+
+      // Tekan Enter untuk login
+      document
+        .getElementById("password")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") handleLogin();
+        });
+      document
+        .getElementById("email")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") handleLogin();
+        });
+
+      // Fungsi logout (dipanggil dari sidebar dashboard)
+      function handleLogout() {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = "login.html";
+      }
+    </script>
+  </body>
+</html>
