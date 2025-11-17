@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
+    <title>Surat Masuk - Dashboard</title>
     <link rel="stylesheet" href="assets/css/style.css" />
     <link
       rel="stylesheet"
@@ -18,9 +18,9 @@
     <div class="main-content">
       <!-- Header -->
       <div class="content-header">
-        <div class="header-left">
-          <div class="logo-emblem"></div>
-          <div class="header-title">Kementerian Pertahanan Republik Indonesia</div>
+        <div class="search-box">
+          <input type="text" placeholder="Search" id="headerSearch" />
+          <i class="bi bi-search"></i>
         </div>
         <div class="header-right">
           <button class="header-btn">
@@ -28,9 +28,9 @@
             <span class="notification-badge">4</span>
           </button>
           <div class="language-selector">
-            <img src="https://flagcdn.com/w40/id.png" alt="Indonesia">
-            <span class="language-text">Indonesia</span>
-            <i class="bi bi-chevron-down"></i>
+            <img src="https://flagcdn.com/w40/id.png" alt="Indonesia" />
+            <span style="font-size: 14px; font-weight: 500">Indonesia</span>
+            <i class="bi bi-chevron-down" style="font-size: 12px"></i>
           </div>
           <div class="user-info">
             <div class="user-details">
@@ -43,7 +43,7 @@
           </div>
         </div>
       </div>
-        
+
       <!-- Page content -->
       <div class="content-container">
         <!-- LIST VIEW -->
@@ -52,12 +52,12 @@
 
           <div class="surat-masuk-card">
             <div class="card-header-section">
-              <button class="btn-tambah" onclick="tambahSurat()">
+              <button class="btn-tambah" onclick="showTambahForm()">
                 <i class="bi bi-plus-lg"></i>
                 Tambah Baru
               </button>
               <div class="search-table">
-                <input type="text" placeholder="Search" id="tableSearch">
+                <input type="text" placeholder="Search" id="tableSearch" />
                 <i class="bi bi-search"></i>
               </div>
             </div>
@@ -76,161 +76,29 @@
                   </tr>
                 </thead>
                 <tbody id="tableBody">
-                  <tr>
-                    <td class="td-no">1</td>
-                    <td class="td-tanggal">04 Agustus 2025</td>
-                    <td class="td-nosurat">001/2025</td>
-                    <td class="td-perihal">Pengajuan Magang Mahasiswa Prodi Sistem Informasi</td>
-                    <td class="td-dari">UPN Veteran Jakarta</td>
-                    <td class="td-kepada">Kepala Bidang Banglola Sisfohan</td>
-                    <td class="td-opsi">
-                      <div class="action-buttons">
-                        <div class="btn-action-group">
-                          <button class="btn-action" title="Lihat" onclick="lihatSurat(this)">
-                            <i class="bi bi-eye"></i>
-                          </button>
-                          <div class="btn-action-separator"></div>
-                          <button class="btn-action" title="Disposisi" onclick="disposisiSurat(this)">
-                            <i class="bi bi-send"></i>
-                          </button>
-                        </div>
-                        <button class="btn-delete" title="Hapus" onclick="hapusSurat(this)">
-                          <i class="bi bi-trash"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="td-no">2</td>
-                    <td class="td-tanggal">10 Agustus 2025</td>
-                    <td class="td-nosurat">002/2025</td>
-                    <td class="td-perihal">Pengajuan Magang Mahasiswa Prodi Informatika</td>
-                    <td class="td-dari">Universitas Pertahanan</td>
-                    <td class="td-kepada">Kepala Bidang Infra TIK</td>
-                    <td class="td-opsi">
-                      <div class="action-buttons">
-                        <div class="btn-action-group">
-                          <button class="btn-action" title="Lihat" onclick="lihatSurat(this)">
-                            <i class="bi bi-eye"></i>
-                          </button>
-                          <div class="btn-action-separator"></div>
-                          <button class="btn-action" title="Disposisi" onclick="disposisiSurat(this)">
-                            <i class="bi bi-send"></i>
-                          </button>
-                        </div>
-                        <button class="btn-delete" title="Hapus" onclick="hapusSurat(this)">
-                          <i class="bi bi-trash"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="td-no">3</td>
-                    <td class="td-tanggal">04 Agustus 2025</td>
-                    <td class="td-nosurat">007/2025</td>
-                    <td class="td-perihal">Undangan Seminar Nasional</td>
-                    <td class="td-dari">UPN Veteran Jakarta</td>
-                    <td class="td-kepada">Kasubbag TU</td>
-                    <td class="td-opsi">
-                      <div class="action-buttons">
-                        <div class="btn-action-group">
-                          <button class="btn-action" title="Lihat" onclick="lihatSurat(this)">
-                            <i class="bi bi-eye"></i>
-                          </button>
-                          <div class="btn-action-separator"></div>
-                          <button class="btn-action" title="Disposisi" onclick="disposisiSurat(this)">
-                            <i class="bi bi-send"></i>
-                          </button>
-                        </div>
-                        <button class="btn-delete" title="Hapus" onclick="hapusSurat(this)">
-                          <i class="bi bi-trash"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="td-no">4</td>
-                    <td class="td-tanggal">10 Agustus 2025</td>
-                    <td class="td-nosurat">008/2025</td>
-                    <td class="td-perihal">Permintaan Data Penelitian</td>
-                    <td class="td-dari">Universitas Pertahanan</td>
-                    <td class="td-kepada">Kabid MSI</td>
-                    <td class="td-opsi">
-                      <div class="action-buttons">
-                        <div class="btn-action-group">
-                          <button class="btn-action" title="Lihat" onclick="lihatSurat(this)">
-                            <i class="bi bi-eye"></i>
-                          </button>
-                          <div class="btn-action-separator"></div>
-                          <button class="btn-action" title="Disposisi" onclick="disposisiSurat(this)">
-                            <i class="bi bi-send"></i>
-                          </button>
-                        </div>
-                        <button class="btn-delete" title="Hapus" onclick="hapusSurat(this)">
-                          <i class="bi bi-trash"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="td-no">5</td>
-                    <td class="td-tanggal">25 Agustus 2025</td>
-                    <td class="td-nosurat">009/2025</td>
-                    <td class="td-perihal">Permohonan Izin Kegiatan</td>
-                    <td class="td-dari">Institut Teknologi Bandung</td>
-                    <td class="td-kepada">Kepala Bidang Banglola Sisfohan</td>
-                    <td class="td-opsi">
-                      <div class="action-buttons">
-                        <div class="btn-action-group">
-                          <button class="btn-action" title="Lihat" onclick="lihatSurat(this)">
-                            <i class="bi bi-eye"></i>
-                          </button>
-                          <div class="btn-action-separator"></div>
-                          <button class="btn-action" title="Disposisi" onclick="disposisiSurat(this)">
-                            <i class="bi bi-send"></i>
-                          </button>
-                        </div>
-                        <button class="btn-delete" title="Hapus" onclick="hapusSurat(this)">
-                          <i class="bi bi-trash"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="td-no">6</td>
-                    <td class="td-tanggal">30 Agustus 2025</td>
-                    <td class="td-nosurat">010/2025</td>
-                    <td class="td-perihal">Laporan Kegiatan Bulan Agustus</td>
-                    <td class="td-dari">Kasubbag TU</td>
-                    <td class="td-kepada">Kepala Pusat</td>
-                    <td class="td-opsi">
-                      <div class="action-buttons">
-                        <div class="btn-action-group">
-                          <button class="btn-action" title="Lihat" onclick="lihatSurat(this)">
-                            <i class="bi bi-eye"></i>
-                          </button>
-                          <div class="btn-action-separator"></div>
-                          <button class="btn-action" title="Disposisi" onclick="disposisiSurat(this)">
-                            <i class="bi bi-send"></i>
-                          </button>
-                        </div>
-                        <button class="btn-delete" title="Hapus" onclick="hapusSurat(this)">
-                          <i class="bi bi-trash"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                  <!-- Data will be populated by JavaScript -->
                 </tbody>
               </table>
             </div>
 
             <div class="pagination-wrapper">
-              <div class="pagination-info">Showing 1-6 of 1,253</div>
+              <div class="pagination-info" id="paginationInfo">
+                Showing 0-0 of 0
+              </div>
               <div class="pagination-controls">
-                <button class="pagination-btn" id="prevBtn" disabled onclick="previousPage()">
+                <button
+                  class="pagination-btn"
+                  id="prevBtn"
+                  disabled
+                  onclick="previousPage()"
+                >
                   <i class="bi bi-chevron-left"></i>
                 </button>
-                <button class="pagination-btn" id="nextBtn" onclick="nextPage()">
+                <button
+                  class="pagination-btn"
+                  id="nextBtn"
+                  onclick="nextPage()"
+                >
                   <i class="bi bi-chevron-right"></i>
                 </button>
               </div>
@@ -239,7 +107,10 @@
 
           <!-- Footer -->
           <div class="content-footer">
-            <p>© 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik Indonesia</p>
+            <p>
+              © 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik
+              Indonesia
+            </p>
             <div class="footer-links">
               <a href="#">About</a>
               <a href="#">Support</a>
@@ -260,10 +131,14 @@
           <div class="detail-layout">
             <!-- Left: Preview -->
             <div class="preview-card">
-              <div class="preview-doc-title" id="previewDocTitle">Pengajuan Magang Mahasiswa Prodi Sistem Informasi</div>
+              <div class="preview-doc-title" id="previewDocTitle">
+                Pengajuan Magang Mahasiswa Prodi Sistem Informasi
+              </div>
               <div class="preview-content">
                 <i class="bi bi-file-earmark-pdf"></i>
-                <div class="preview-text">Preview dokumen PDF akan ditampilkan di sini</div>
+                <div class="preview-text">
+                  Preview dokumen PDF akan ditampilkan di sini
+                </div>
               </div>
               <div class="preview-navigation">
                 <button class="nav-btn">
@@ -282,13 +157,25 @@
                 <div class="info-header">
                   <div class="info-title">Informasi Surat</div>
                   <div class="info-actions">
-                    <button class="action-icon-btn" title="Download" onclick="downloadFile()">
+                    <button
+                      class="action-icon-btn"
+                      title="Download"
+                      onclick="downloadFile()"
+                    >
                       <i class="bi bi-download"></i>
                     </button>
-                    <button class="action-icon-btn" title="Print" onclick="printFile()">
+                    <button
+                      class="action-icon-btn"
+                      title="Print"
+                      onclick="printFile()"
+                    >
                       <i class="bi bi-printer"></i>
                     </button>
-                    <button class="action-icon-btn" title="Delete" onclick="deleteFile()">
+                    <button
+                      class="action-icon-btn"
+                      title="Delete"
+                      onclick="deleteFile()"
+                    >
                       <i class="bi bi-trash"></i>
                     </button>
                   </div>
@@ -301,7 +188,9 @@
                   </div>
                   <div class="info-item">
                     <div class="info-label">Asal Surat</div>
-                    <div class="info-value" id="infoAsalSurat">UPN Veteran Jakarta</div>
+                    <div class="info-value" id="infoAsalSurat">
+                      UPN Veteran Jakarta
+                    </div>
                   </div>
                   <div class="info-item">
                     <div class="info-label">Tanggal Surat</div>
@@ -319,25 +208,35 @@
                   </div>
                   <div class="info-item">
                     <div class="info-label">Jenis Surat</div>
-                    <span class="badge badge-masuk" id="infoJenisSurat">Masuk</span>
+                    <span class="badge badge-masuk" id="infoJenisSurat"
+                      >Masuk</span
+                    >
                   </div>
                   <div class="info-item">
                     <div class="info-label">Sifat Surat</div>
-                    <span class="badge badge-umum" id="infoSifatSurat">Umum</span>
+                    <span class="badge badge-umum" id="infoSifatSurat"
+                      >Umum</span
+                    >
                   </div>
                   <div class="info-item info-full">
                     <div class="info-label">Kepada</div>
-                    <div class="info-value" id="infoKepada">Kepala Bidang Banglola Sisfohan</div>
+                    <div class="info-value" id="infoKepada">
+                      Kepala Bidang Banglola Sisfohan
+                    </div>
                   </div>
                   <div class="info-item info-full">
                     <div class="info-label">Perihal</div>
-                    <div class="info-perihal" id="infoPerihal">Pengajuan Magang Mahasiswa Prodi Sistem Informasi</div>
+                    <div class="info-perihal" id="infoPerihal">
+                      Pengajuan Magang Mahasiswa Prodi Sistem Informasi
+                    </div>
                   </div>
                   <div class="info-item info-full">
                     <div class="info-label">File</div>
                     <div class="info-file" onclick="downloadFile()">
                       <i class="bi bi-file-earmark-pdf-fill"></i>
-                      <div class="file-name" id="infoFileName">Pengajuan_MagangMahasiswa_UPNVJ.pdf</div>
+                      <div class="file-name" id="infoFileName">
+                        Pengajuan_MagangMahasiswa_UPNVJ.pdf
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -363,68 +262,8 @@
                     </div>
                   </div>
 
-                  <div class="disposisi-list">
-                    <!-- Disposisi Item 1 -->
-                    <div class="disposisi-item proses">
-                      <div class="disposisi-header">
-                        <div>
-                          <div class="disposisi-title">ACC Untuk ditindaklanjuti</div>
-                        </div>
-                        <span class="disposisi-badge proses">Proses</span>
-                      </div>
-                      <div class="disposisi-meta">
-                        <div class="meta-row">
-                          <i class="bi bi-person"></i>
-                          <span>Kepada: Kepala Bidang Banglola Sisfohan</span>
-                        </div>
-                        <div class="meta-row">
-                          <i class="bi bi-person-check"></i>
-                          <span>Oleh: Kabag TU</span>
-                        </div>
-                        <div class="meta-row">
-                          <i class="bi bi-calendar3"></i>
-                          <span>Dibuat: 04/08/2025</span>
-                        </div>
-                        <div class="meta-row">
-                          <i class="bi bi-clock"></i>
-                          <span>Deadline: 08/08/2025</span>
-                        </div>
-                      </div>
-                      <div class="disposisi-note">
-                        <strong>Catatan:</strong> Mohon segera ditindaklanjuti dan di proses
-                      </div>
-                    </div>
-
-                    <!-- Disposisi Item 2 -->
-                    <div class="disposisi-item selesai">
-                      <div class="disposisi-header">
-                        <div>
-                          <div class="disposisi-title">Disiapkan Jawaban</div>
-                        </div>
-                        <span class="disposisi-badge selesai">Selesai</span>
-                      </div>
-                      <div class="disposisi-meta">
-                        <div class="meta-row">
-                          <i class="bi bi-person"></i>
-                          <span>Kepada: Kepala Bidang Infra TIK</span>
-                        </div>
-                        <div class="meta-row">
-                          <i class="bi bi-person-check"></i>
-                          <span>Oleh: Kabag TU</span>
-                        </div>
-                        <div class="meta-row">
-                          <i class="bi bi-calendar3"></i>
-                          <span>Dibuat: 01/08/2025</span>
-                        </div>
-                        <div class="meta-row">
-                          <i class="bi bi-clock"></i>
-                          <span>Deadline: 04/08/2025</span>
-                        </div>
-                      </div>
-                      <div class="disposisi-note">
-                        <strong>Catatan:</strong> Mohon dipersiapkan
-                      </div>
-                    </div>
+                  <div class="disposisi-list" id="disposisiList">
+                    <!-- Disposisi items will be populated by JavaScript -->
                   </div>
                 </div>
               </div>
@@ -432,27 +271,31 @@
               <!-- Status Surat -->
               <div class="status-card">
                 <div class="status-header">Status Surat</div>
-                
+
                 <div class="status-current">
                   <div class="status-label">Status Saat ini</div>
-                  <span class="status-value">Proses</span>
+                  <span class="status-value" id="statusValue">Proses</span>
                 </div>
 
                 <div class="progress-section">
                   <div class="progress-label">Progress Disposisi</div>
                   <div class="progress-bar-container">
-                    <div class="progress-bar" style="width: 50%"></div>
+                    <div
+                      class="progress-bar"
+                      id="progressBar"
+                      style="width: 50%"
+                    ></div>
                   </div>
-                  <div class="progress-text">50%</div>
+                  <div class="progress-text" id="progressText">50%</div>
                 </div>
 
                 <div class="update-section">
                   <div class="update-label">Update Surat</div>
-                  <select class="update-select">
-                    <option>Update Surat</option>
-                    <option>Proses</option>
-                    <option>Selesai</option>
-                    <option>Ditolak</option>
+                  <select class="update-select" id="updateStatusSelect">
+                    <option value="">Update Surat</option>
+                    <option value="Proses">Proses</option>
+                    <option value="Selesai">Selesai</option>
+                    <option value="Ditolak">Ditolak</option>
                   </select>
                 </div>
               </div>
@@ -461,7 +304,138 @@
 
           <!-- Footer -->
           <div class="content-footer">
-            <p>© 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik Indonesia</p>
+            <p>
+              © 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik
+              Indonesia
+            </p>
+            <div class="footer-links">
+              <a href="#">About</a>
+              <a href="#">Support</a>
+              <a href="#">Contact Us</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- FORM TAMBAH/EDIT SURAT -->
+        <div class="form-view-container" id="formViewContainer">
+          <div class="page-title-section">
+            <button class="btn-back" onclick="closeForm()">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+            <h1 class="page-title" id="formTitle">Tambah Surat Masuk</h1>
+          </div>
+
+          <div class="surat-masuk-card">
+            <form id="suratForm" onsubmit="submitForm(event)">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label">Nomor Surat *</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="formNoSurat"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Asal Surat *</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="formDari"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Tanggal Surat *</label>
+                  <input
+                    type="date"
+                    class="form-input"
+                    id="formTanggalSurat"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Tanggal Diterima *</label>
+                  <input
+                    type="date"
+                    class="form-input"
+                    id="formTanggalDiterima"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Jenis Surat *</label>
+                  <select class="form-input" id="formJenisSurat" required>
+                    <option value="">Pilih Jenis</option>
+                    <option value="Masuk">Masuk</option>
+                    <option value="Keluar">Keluar</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Sifat Surat *</label>
+                  <select class="form-input" id="formSifatSurat" required>
+                    <option value="">Pilih Sifat</option>
+                    <option value="Umum">Umum</option>
+                    <option value="Penting">Penting</option>
+                    <option value="Rahasia">Rahasia</option>
+                  </select>
+                </div>
+
+                <div class="form-group form-full">
+                  <label class="form-label">Kepada *</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="formKepada"
+                    required
+                  />
+                </div>
+
+                <div class="form-group form-full">
+                  <label class="form-label">Perihal *</label>
+                  <textarea
+                    class="form-input"
+                    id="formPerihal"
+                    rows="3"
+                    required
+                  ></textarea>
+                </div>
+
+                <div class="form-group form-full">
+                  <label class="form-label">Nama File</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="formFile"
+                    placeholder="contoh: Pengajuan_Magang.pdf"
+                  />
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn-cancel" onclick="closeForm()">
+                  Batal
+                </button>
+                <button type="submit" class="btn-submit">
+                  <i class="bi bi-save"></i>
+                  Simpan
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Footer -->
+          <div class="content-footer">
+            <p>
+              © 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik
+              Indonesia
+            </p>
             <div class="footer-links">
               <a href="#">About</a>
               <a href="#">Support</a>
@@ -471,10 +445,10 @@
         </div>
       </div>
     </div>
-      
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JS -->
     <script src="assets/js/main.js"></script>
   </body>
 </html>
