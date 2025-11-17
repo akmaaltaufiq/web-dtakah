@@ -18,10 +18,10 @@
     <div class="main-content">
       <!-- Header -->
         <div class="content-header">
-          <div class="search-box">
-            <input type="text" placeholder="Search" id="headerSearch">
-            <i class="bi bi-search"></i>
-          </div>
+        <div class="header-left">
+          <div class="logo-emblem"></div>
+          <div class="header-title">Tata Naskah Digital Kementerian Pertahanan Republik Indonesia</div>
+        </div>
           <div class="header-right">
             <button class="header-btn">
               <i class="bi bi-bell-fill"></i>
@@ -44,9 +44,141 @@
           </div>
         </div>
         
-      <!-- Page content -->
+       <!-- Page content -->
       <div class="content-container">
-        <p>Ini konten halaman daftar takah. Bisa diganti di halaman lain.</p>
+        <div class="takah-container">
+          <h1 class="takah-title">Daftar Takah</h1>
+
+          <div class="takah-filters">
+            <div class="filter-title">Filter Tahun</div>
+            <select class="filter-select" id="yearFilter">
+              <option value="">Pilih Tahun</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+              <option value="2023">2023</option>
+              <option value="2022">2022</option>
+            </select>
+
+            <div class="search-group">
+              <div class="search-input-wrapper">
+                <input type="text" class="search-input" placeholder="Cari Daftar Takah" id="searchTakah">
+              </div>
+              <button class="btn-search">
+                <i class="bi bi-search"></i>
+                Cari
+              </button>
+            </div>
+
+            <button class="btn-print">
+              <i class="bi bi-printer"></i>
+              Cetak
+            </button>
+          </div>
+
+          <div class="takah-grid">
+            <!-- Card 1 -->
+            <div class="takah-card" data-year="2024">
+              <div class="card-header">
+                <div class="card-number">TKH/01/X/2025</div>
+                <div class="card-title">Surat Pemberitahuan Kegiatan Minggu Bela Negara</div>
+              </div>
+              <div class="card-body">
+                <div class="card-description">
+                  Memberikan pemberitahuan kegiatan bulanan
+                </div>
+                <div class="card-footer">
+                  <span class="badge badge-umum">Umum</span>
+                  <span class="year-badge year-2024">2024</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="takah-card" data-year="2025">
+              <div class="card-header">
+                <div class="card-number">TKH/02/X/2025</div>
+                <div class="card-title">Pemberitahuan Cuti Bersama</div>
+              </div>
+              <div class="card-body">
+                <div class="card-description">
+                  Memberikan pemberitahuan cuti bersama Natal & Tahun Baru
+                </div>
+                <div class="card-footer">
+                  <span class="badge badge-umum">Umum</span>
+                  <span class="year-badge year-2025">2025</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="takah-card" data-year="2023">
+              <div class="card-header">
+                <div class="card-number">TKH/03/X/2025</div>
+                <div class="card-title">Pemberitahuan Pemberian Anggaran</div>
+              </div>
+              <div class="card-body">
+                <div class="card-description">
+                  Menyampaikan informasi realisasi penggunaan anggaran untuk transparansi
+                </div>
+                <div class="card-footer">
+                  <span class="badge badge-umum">Umum</span>
+                  <span class="year-badge year-2023">2023</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="takah-card" data-year="2022">
+              <div class="card-header">
+                <div class="card-number">TKH/04/X/2025</div>
+                <div class="card-title">Pemberitahuan Pembaharuan Kebijakan</div>
+              </div>
+              <div class="card-body">
+                <div class="card-description">
+                  Menginformasikan perubahan aturan, prosedur, atau kebijakan yang berlaku.
+                </div>
+                <div class="card-footer">
+                  <span class="badge badge-umum">Umum</span>
+                  <span class="year-badge year-2022">2022</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="takah-card" data-year="2022">
+              <div class="card-header">
+                <div class="card-number">TKH/05/X/2025</div>
+                <div class="card-title">Pemberitahuan Penyerahan Dokumen</div>
+              </div>
+              <div class="card-body">
+                <div class="card-description">
+                  Mengingatkan divisi Banglola untuk menyerahkan dan melengkapi dokumen.
+                </div>
+                <div class="card-footer">
+                  <span class="badge badge-umum">Umum</span>
+                  <span class="year-badge year-2022">2022</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="takah-card" data-year="2022">
+              <div class="card-header">
+                <div class="card-number">TKH/06/X/2025</div>
+                <div class="card-title">Undangan Sosialisasi Program</div>
+              </div>
+              <div class="card-body">
+                <div class="card-description">
+                  Menginformasikan akan dilaksanakannya Program Pelatihan
+                </div>
+                <div class="card-footer">
+                  <span class="badge badge-umum">Umum</span>
+                  <span class="year-badge year-2022">2022</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Footer -->
@@ -55,8 +187,14 @@
           © 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik
           Indonesia
         </p>
+        <div class="footer-links">
+          <a href="#">About</a>
+          <a href="#">Support</a>
+          <a href="#">Contact Us</a>
+        </div>
       </footer>
     </div>
+
 
     <!-- JS -->
     <script src="assets/js/main.js"></script>

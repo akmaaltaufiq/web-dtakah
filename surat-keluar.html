@@ -18,10 +18,10 @@
     <div class="main-content">
       <!-- Header -->
         <div class="content-header">
-          <div class="search-box">
-            <input type="text" placeholder="Search" id="headerSearch">
-            <i class="bi bi-search"></i>
-          </div>
+        <div class="header-left">
+          <div class="logo-emblem"></div>
+          <div class="header-title">Tata Naskah Digital Kementerian Pertahanan Republik Indonesia</div>
+        </div>
           <div class="header-right">
             <button class="header-btn">
               <i class="bi bi-bell-fill"></i>
@@ -49,26 +49,29 @@
     <div class="container">
       <h1 class="page-title">Surat Keluar</h1>
       
-      <div class="toolbar">
-        <button class="btn btn-primary">
-          <i class="bi bi-plus-lg"></i> Tambah Baru
-        </button>
-        <div class="filters">
-          <button class="btn btn-filter">
-            <i class="bi bi-funnel"></i>
-          </button>
-          </select>
+       <button class="btn-tambah" onclick="tambahSurat()">
+                <i class="bi bi-plus-lg"></i>
+                Tambah Baru
+              </button>
+              
+         <!-- Filters -->
+          <div class="filters-container">
+            <div class="filter-icon">
+              <i class="bi bi-funnel"></i>
+              <span>Filter By</span>
+            </div>
+               </select>
              <button class="date-picker-btn" id="datePickerBtn">
                 <span id="selectedDateText">Tanggal</span>
                     <i class="bi bi-chevron-down"></i>
-        </button>
-        <!-- Calendar Modal -->
-    <div class="calendar-modal" id="calendarModal">
-        <div class="calendar-container">
-            <div class="calendar-header">
-                <h3 id="calendarMonth">February 2025</h3>
-                <div class="calendar-nav">
-                    <button id="prevMonth">
+            </button>
+          <!-- Calendar Modal -->
+            <div class="calendar-modal" id="calendarModal">
+               <div class="calendar-container">
+                  <div class="calendar-header">
+                     <h3 id="calendarMonth">February 2025</h3>
+                        <div class="calendar-nav">
+                     <button id="prevMonth">
                         <i class="bi bi-chevron-left"></i>
                     </button>
                     <button id="nextMonth">
@@ -96,24 +99,28 @@
             </div>
         </div>
     </div>
-        
-          </select>
-          <select class="select-input">
-            <option value="">Sifat</option>
-            <option value="umum">Umum</option>
-            <option value="penting">Penting</option>
-            <option value="rahasia">Rahasia</option>
-          </select>
-          <div class="search-box">
-            <i class="bi bi-search"></i>
-            <input type="text" placeholder="Ketik Perihal Surat" />
-          </div>
-          <button class="btn btn-reset">
-            <i class="bi bi-arrow-clockwise"></i> Reset Filter
-          </button>
-        </div>
-      </div>
+            <div class="filter-group">
+              <select class="filter-select" id="sifatFilter">
+                <option value="">Sifat: Umum</option>
+                <option value="umum">Umum</option>
+                <option value="rahasia">Rahasia</option>
+                <option value="sangat-rahasia">Sangat Rahasia</option>
+                <option value="penting">Penting</option>
+              </select>
+            </div>
 
+            <div class="search-filter">
+              <i class="bi bi-search"></i>
+              <input type="text" placeholder="Ketik Perihal Surat" id="searchPerihal">
+            </div>
+
+            <button class="reset-filter" id="resetBtn">
+              <i class="bi bi-arrow-clockwise"></i>
+              Reset Filter
+            </button>
+          </div>
+
+      <!-- TABLE  -->
       <div class="table-wrapper">
         <table class="table-surat">
           <thead>
@@ -241,6 +248,13 @@
           © 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik
           Indonesia
         </p>
+        <div class="footer-links">
+              <a href="#">About</a>
+              <a href="#">Support</a>
+              <a href="#">Contact Us</a>
+            </div>
+          </div>
+        </div>
       </footer>
     </div>
 

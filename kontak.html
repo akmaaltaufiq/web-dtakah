@@ -18,10 +18,10 @@
     <div class="main-content">
       <!-- Header -->
         <div class="content-header">
-          <div class="search-box">
-            <input type="text" placeholder="Search" id="headerSearch">
-            <i class="bi bi-search"></i>
-          </div>
+        <div class="header-left">
+          <div class="logo-emblem"></div>
+          <div class="header-title">Tata Naskah Digital Kementerian Pertahanan Republik Indonesia</div>
+        </div>
           <div class="header-right">
             <button class="header-btn">
               <i class="bi bi-bell-fill"></i>
@@ -44,19 +44,254 @@
           </div>
         </div>
         
-      <!-- Page content -->
-      <div class="content-container">
-        <p>Ini konten halaman kontak. Bisa diganti di halaman lain.</p>
-      </div>
+        <!-- Page Content -->
+            <div class="chat-container">
+                <!-- Contact Sidebar -->
+                <div class="contact-sidebar">
+                    <div class="sidebar-header">
+                        <h2 class="sidebar-title">Pesan</h2>
+                        <div class="sidebar-search">
+                            <i class="bi bi-search"></i>
+                            <input type="text" placeholder="Search" id="contactSearch">
+                        </div>
+                    </div>
 
-      <!-- Footer -->
-      <footer class="content-footer">
-        <p>
-          © 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik
-          Indonesia
-        </p>
-      </footer>
-    </div>
+                    <div class="contact-list">
+                        <div class="contact-item active" onclick="selectContact(this, 'Kabid Pamsisinfosan', 'Online')">
+                            <div class="contact-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div class="contact-info">
+                                <div class="contact-header">
+                                    <span class="contact-name">Kabid Pamsisinfosan</span>
+                                    <span class="contact-time">16:45</span>
+                                </div>
+                                <div class="contact-preview typing">... sedang mengetik</div>
+                            </div>
+                        </div>
+
+                        <div class="contact-item" onclick="selectContact(this, 'Kepala Pusat', 'Online')">
+                            <div class="contact-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div class="contact-info">
+                                <div class="contact-header">
+                                    <span class="contact-name">Kepala Pusat</span>
+                                    <span class="contact-time">16:45</span>
+                                </div>
+                                <div class="contact-preview">Hari ini ada rapat <i class="bi bi-check-all status-check"></i></div>
+                            </div>
+                        </div>
+
+                        <div class="contact-item" onclick="selectContact(this, 'Kabag TU', 'Online')">
+                            <div class="contact-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div class="contact-info">
+                                <div class="contact-header">
+                                    <span class="contact-name">Kabag TU</span>
+                                    <span class="contact-time">16:45</span>
+                                </div>
+                                <div class="contact-preview">anda: Besok dipersiapkan! <i class="bi bi-check-all status-check"></i></div>
+                            </div>
+                        </div>
+
+                        <div class="contact-item" onclick="selectContact(this, 'Kabid Infra TIK', 'Online')">
+                            <div class="contact-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div class="contact-info">
+                                <div class="contact-header">
+                                    <span class="contact-name">Kabid Infra TIK</span>
+                                    <span class="contact-time">16:45</span>
+                                </div>
+                                <div class="contact-preview">Siap! <i class="bi bi-check-all status-check text-success"></i></div>
+                            </div>
+                        </div>
+
+                        <div class="contact-item" onclick="selectContact(this, 'Kasubbag MSI', 'Offline')">
+                            <div class="contact-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div class="contact-info">
+                                <div class="contact-header">
+                                    <span class="contact-name">Kasubbag MSI</span>
+                                    <span class="contact-time">16:45</span>
+                                </div>
+                                <div class="contact-preview">Ide bagus</div>
+                            </div>
+                        </div>
+
+                        <div class="contact-item" onclick="selectContact(this, 'Ditjen Strahan', 'Online')">
+                            <div class="contact-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div class="contact-info">
+                                <div class="contact-header">
+                                    <span class="contact-name">Ditjen Strahan</span>
+                                    <span class="contact-time">16:45</span>
+                                </div>
+                                <div class="contact-preview">anda: Siap, sudah dikirim <i class="bi bi-check-all status-check"></i></div>
+                            </div>
+                        </div>
+
+                        <div class="contact-item" onclick="selectContact(this, 'Banglola Sisfohan', 'Online')">
+                            <div class="contact-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div class="contact-info">
+                                <div class="contact-header">
+                                    <span class="contact-name">Banglola Sisfohan</span>
+                                    <span class="contact-time">16:45</span>
+                                </div>
+                                <div class="contact-preview">Surat sudah sampai disposisi <i class="bi bi-check-all status-check"></i></div>
+                            </div>
+                        </div>
+
+                        <div class="contact-item" onclick="selectContact(this, 'Kabid Banglola', 'Online')">
+                            <div class="contact-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div class="contact-info">
+                                <div class="contact-header">
+                                    <span class="contact-name">Kabid Banglola</span>
+                                    <span class="contact-time">16:45</span>
+                                </div>
+                                <div class="contact-preview">Siapkan agenda hari ini <i class="bi bi-check-all status-check"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Area -->
+                <div class="chat-area">
+                    <div class="chat-header">
+                        <div class="chat-header-left">
+                            <div class="chat-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div class="chat-user-info">
+                                <h3 id="chatUserName">Kabid Pamsisinfosan</h3>
+                                <span class="chat-user-status" id="chatUserStatus">Online</span>
+                            </div>
+                        </div>
+                        <div class="chat-header-actions">
+                            <button class="chat-action-btn">
+                                <i class="bi bi-camera-video"></i>
+                            </button>
+                            <button class="chat-action-btn">
+                                <i class="bi bi-info-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message-group">
+                            <div class="message-date">Hari Ini</div>
+
+                            <div class="message received">
+                                <div class="message-avatar">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+                                <div class="message-content">
+                                    <div class="message-file">
+                                        <div class="file-icon">
+                                            <i class="bi bi-file-pdf-fill"></i>
+                                        </div>
+                                        <div class="file-info">
+                                            <div class="file-name">Lembar Persetujuan.pdf</div>
+                                            <div class="file-meta">2 pages • 171 kB • PDF</div>
+                                        </div>
+                                    </div>
+                                    <div class="message-time">15:42</div>
+                                </div>
+                            </div>
+
+                            <div class="message received">
+                                <div class="message-avatar">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+                                <div class="message-content">
+                                    <div class="message-bubble">
+                                        Print kan dokumen tersebut
+                                    </div>
+                                    <div class="message-time">15:42</div>
+                                </div>
+                            </div>
+
+                            <div class="message sent">
+                                <div class="message-content">
+                                    <div class="message-bubble">
+                                        Siap pak, akan saya print
+                                    </div>
+                                    <div class="message-time">
+                                        15:42 <i class="bi bi-check-all"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="message received">
+                                <div class="message-avatar">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+                                <div class="message-content">
+                                    <div class="message-bubble">
+                                        Apakah surat kemarin sudah sampai tahap disposisi?
+                                    </div>
+                                    <div class="message-time">15:42</div>
+                                </div>
+                            </div>
+
+                            <div class="message sent">
+                                <div class="message-content">
+                                    <div class="message-bubble">
+                                        Sudah pak aman
+                                    </div>
+                                    <div class="message-time">
+                                        15:42 <i class="bi bi-check-all"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="message received">
+                                <div class="message-avatar">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+                                <div class="message-content">
+                                    <div class="message-bubble">
+                                        Sampaikan pesan saya ke kepala bidang banglola
+                                    </div>
+                                    <div class="message-time">15:42</div>
+                                </div>
+                            </div>
+
+                            <div class="message received">
+                                <div class="message-avatar">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+                                <div class="message-content">
+                                    <div class="message-bubble typing">
+                                        ... sedang mengetik
+                                    </div>
+                                    <div class="message-time">16:45</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-input">
+                        <button class="attach-btn">
+                            <i class="bi bi-paperclip"></i>
+                        </button>
+                        <div class="input-wrapper">
+                            <input type="text" placeholder="Ketik pesanmu disini" id="messageInput">
+                        </div>
+                        <button class="send-btn" onclick="sendMessage()">
+                            Kirim pesan
+                        </button>
+                    </div>
+                </div>
+            </div>
 
     <!-- JS -->
     <script src="assets/js/main.js"></script>

@@ -17,11 +17,11 @@
      <!-- Main content -->
     <div class="main-content">
       <!-- Header -->
-        <div class="content-header">
-          <div class="search-box">
-            <input type="text" placeholder="Search" id="headerSearch">
-            <i class="bi bi-search"></i>
-          </div>
+       <div class="content-header">
+        <div class="header-left">
+          <div class="logo-emblem"></div>
+          <div class="header-title">Tata Naskah Digital Kementerian Pertahanan Republik Indonesia</div>
+        </div>
           <div class="header-right">
             <button class="header-btn">
               <i class="bi bi-bell-fill"></i>
@@ -45,9 +45,61 @@
         </div>
         
       <!-- Page content -->
-      <div class="content-container">
-        <p>Ini konten halaman pengaturan. Bisa diganti di halaman lain.</p>
-      </div>
+        <div class="content-container">
+            <h1 class="page-title">Pengaturan</h1>
+
+            <div class="settings-card">
+                <div class="profile-section">
+                    <div class="profile-left">
+                        <div class="form-group">
+                            <label class="form-label">Nama</label>
+                            <input type="text" class="form-input" value="Staff TU Puslapbinkunhan" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Jabatan</label>
+                            <input type="text" class="form-input" value="Staff TU Puslapbinkunhan" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" value="staffTUpuslapbinkunhan@pusdatin.ac.id" disabled>
+                        </div>
+                    </div>
+
+                    <div class="profile-right">
+                        <div class="photo-upload">
+                            <div class="photo-circle" onclick="document.getElementById('photoInput').click()">
+                                <i class="bi bi-camera-fill"></i>
+                            </div>
+                            <span class="upload-text" onclick="document.getElementById('photoInput').click()">Upload Photo</span>
+                            <input type="file" id="photoInput" style="display: none;" accept="image/*">
+                        </div>
+
+                        <div class="activity-section">
+                            <h3 class="activity-title">Aktivitas Akun</h3>
+                            
+                            <div class="activity-item">
+                                <span class="activity-label">Pendaftaran</span>
+                                <span class="activity-value">1 Agustus 2024</span>
+                            </div>
+
+                            <div class="activity-item">
+                                <span class="activity-label">Terakhir Login</span>
+                                <span class="activity-value">10.31 WIB<br>10 Oktober 2025</span>
+                            </div>
+
+                            <div class="activity-item">
+                                <span class="activity-label">Lokasi</span>
+                                <span class="activity-value">Jakarta, Indonesia</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="edit-button" onclick="enableEdit()">Edit Akun</button>
+            </div>
+        </div>
 
       <!-- Footer -->
       <footer class="content-footer">

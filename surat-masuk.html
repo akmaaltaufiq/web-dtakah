@@ -17,37 +17,37 @@
     <!-- Main content -->
     <div class="main-content">
       <!-- Header -->
-        <div class="content-header">
-          <div class="search-box">
-            <input type="text" placeholder="Search" id="headerSearch">
-            <i class="bi bi-search"></i>
+      <div class="content-header">
+        <div class="header-left">
+          <div class="logo-emblem"></div>
+          <div class="header-title">Kementerian Pertahanan Republik Indonesia</div>
+        </div>
+        <div class="header-right">
+          <button class="header-btn">
+            <i class="bi bi-bell-fill"></i>
+            <span class="notification-badge">4</span>
+          </button>
+          <div class="language-selector">
+            <img src="https://flagcdn.com/w40/id.png" alt="Indonesia">
+            <span class="language-text">Indonesia</span>
+            <i class="bi bi-chevron-down"></i>
           </div>
-          <div class="header-right">
-            <button class="header-btn">
-              <i class="bi bi-bell-fill"></i>
-              <span class="notification-badge">4</span>
-            </button>
-            <div class="language-selector">
-              <img src="https://flagcdn.com/w40/id.png" alt="Indonesia">
-              <span style="font-size: 14px; font-weight: 500;">Indonesia</span>
-              <i class="bi bi-chevron-down" style="font-size: 12px;"></i>
+          <div class="user-info">
+            <div class="user-details">
+              <div class="user-details-name">Staff TU Puslapbinkunhan</div>
+              <div class="user-details-role">Admin</div>
             </div>
-            <div class="user-info">
-              <div class="user-details">
-                <div class="user-details-name">Staff TU Puslapbinkunhan</div>
-                <div class="user-details-role">Admin</div>
-              </div>
-              <div class="user-avatar-header">
-                <i class="bi bi-person-fill"></i>
-              </div>
+            <div class="user-avatar-header">
+              <i class="bi bi-person-fill"></i>
             </div>
           </div>
         </div>
-
+      </div>
+        
       <!-- Page content -->
       <div class="content-container">
-         <!-- Content Container -->
-        <div class="content-container">
+        <!-- LIST VIEW -->
+        <div class="list-view-container" id="listViewContainer">
           <h1 class="page-title">Surat Masuk</h1>
 
           <div class="surat-masuk-card">
@@ -125,7 +125,7 @@
                     </td>
                   </tr>
                   <tr>
-                    <td class="td-no">7</td>
+                    <td class="td-no">3</td>
                     <td class="td-tanggal">04 Agustus 2025</td>
                     <td class="td-nosurat">007/2025</td>
                     <td class="td-perihal">Undangan Seminar Nasional</td>
@@ -149,7 +149,7 @@
                     </td>
                   </tr>
                   <tr>
-                    <td class="td-no">8</td>
+                    <td class="td-no">4</td>
                     <td class="td-tanggal">10 Agustus 2025</td>
                     <td class="td-nosurat">008/2025</td>
                     <td class="td-perihal">Permintaan Data Penelitian</td>
@@ -173,7 +173,7 @@
                     </td>
                   </tr>
                   <tr>
-                    <td class="td-no">9</td>
+                    <td class="td-no">5</td>
                     <td class="td-tanggal">25 Agustus 2025</td>
                     <td class="td-nosurat">009/2025</td>
                     <td class="td-perihal">Permohonan Izin Kegiatan</td>
@@ -197,7 +197,7 @@
                     </td>
                   </tr>
                   <tr>
-                    <td class="td-no">10</td>
+                    <td class="td-no">6</td>
                     <td class="td-tanggal">30 Agustus 2025</td>
                     <td class="td-nosurat">010/2025</td>
                     <td class="td-perihal">Laporan Kegiatan Bulan Agustus</td>
@@ -224,11 +224,34 @@
               </table>
             </div>
 
-            
-        <!-- Content -->
-        <div class="content-container">
+            <div class="pagination-wrapper">
+              <div class="pagination-info">Showing 1-6 of 1,253</div>
+              <div class="pagination-controls">
+                <button class="pagination-btn" id="prevBtn" disabled onclick="previousPage()">
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="pagination-btn" id="nextBtn" onclick="nextPage()">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="content-footer">
+            <p>© 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik Indonesia</p>
+            <div class="footer-links">
+              <a href="#">About</a>
+              <a href="#">Support</a>
+              <a href="#">Contact Us</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- DETAIL VIEW -->
+        <div class="detail-view-container" id="detailViewContainer">
           <div class="page-title-section">
-            <button class="btn-back" onclick="window.history.back()">
+            <button class="btn-back" onclick="closePreview()">
               <i class="bi bi-chevron-left"></i>
             </button>
             <h1 class="page-title">Surat Masuk</h1>
@@ -237,9 +260,7 @@
           <div class="detail-layout">
             <!-- Left: Preview -->
             <div class="preview-card">
-              <div class="preview-header">
-                <div class="preview-title">Pengajuan Magang Mahasiswa Prodi Sistem Informasi</div>
-              </div>
+              <div class="preview-doc-title" id="previewDocTitle">Pengajuan Magang Mahasiswa Prodi Sistem Informasi</div>
               <div class="preview-content">
                 <i class="bi bi-file-earmark-pdf"></i>
                 <div class="preview-text">Preview dokumen PDF akan ditampilkan di sini</div>
@@ -261,13 +282,13 @@
                 <div class="info-header">
                   <div class="info-title">Informasi Surat</div>
                   <div class="info-actions">
-                    <button class="action-icon-btn" title="Download">
+                    <button class="action-icon-btn" title="Download" onclick="downloadFile()">
                       <i class="bi bi-download"></i>
                     </button>
-                    <button class="action-icon-btn" title="Print">
+                    <button class="action-icon-btn" title="Print" onclick="printFile()">
                       <i class="bi bi-printer"></i>
                     </button>
-                    <button class="action-icon-btn" title="Delete">
+                    <button class="action-icon-btn" title="Delete" onclick="deleteFile()">
                       <i class="bi bi-trash"></i>
                     </button>
                   </div>
@@ -276,27 +297,47 @@
                 <div class="info-grid">
                   <div class="info-item">
                     <div class="info-label">Nomor Surat</div>
-                    <div class="info-value">001/2025</div>
+                    <div class="info-value" id="infoNomorSurat">001/2025</div>
                   </div>
                   <div class="info-item">
                     <div class="info-label">Asal Surat</div>
-                    <div class="info-value">UPN Veteran Jakarta</div>
+                    <div class="info-value" id="infoAsalSurat">UPN Veteran Jakarta</div>
                   </div>
                   <div class="info-item">
                     <div class="info-label">Tanggal Surat</div>
                     <div class="info-date">
                       <i class="bi bi-calendar3"></i>
-                      <span class="badge badge-umum">Umum</span>
+                      <span id="infoTanggalSurat">01/08/2025</span>
+                    </div>
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Tanggal Diterima</div>
+                    <div class="info-date">
+                      <i class="bi bi-calendar3"></i>
+                      <span id="infoTanggalDiterima">04/08/2025</span>
+                    </div>
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Jenis Surat</div>
+                    <span class="badge badge-masuk" id="infoJenisSurat">Masuk</span>
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Sifat Surat</div>
+                    <span class="badge badge-umum" id="infoSifatSurat">Umum</span>
+                  </div>
+                  <div class="info-item info-full">
+                    <div class="info-label">Kepada</div>
+                    <div class="info-value" id="infoKepada">Kepala Bidang Banglola Sisfohan</div>
                   </div>
                   <div class="info-item info-full">
                     <div class="info-label">Perihal</div>
-                    <div class="info-perihal">Pengajuan Magang Mahasiswa Prodi Sistem Informasi</div>
+                    <div class="info-perihal" id="infoPerihal">Pengajuan Magang Mahasiswa Prodi Sistem Informasi</div>
                   </div>
                   <div class="info-item info-full">
                     <div class="info-label">File</div>
                     <div class="info-file" onclick="downloadFile()">
                       <i class="bi bi-file-earmark-pdf-fill"></i>
-                      <div class="file-name">Pengajuan_MagangMahasiswa_UPNVJ.pdf</div>
+                      <div class="file-name" id="infoFileName">Pengajuan_MagangMahasiswa_UPNVJ.pdf</div>
                     </div>
                   </div>
                 </div>
@@ -389,56 +430,38 @@
               </div>
 
               <!-- Status Surat -->
-              <div class="status-section">
-                <div class="status-card">
-                  <div class="status-header">Status Surat</div>
-                  
-                  <div class="status-current">
-                    <div class="status-label">Status Saat ini</div>
-                    <span class="status-value">Proses</span>
-                  </div>
+              <div class="status-card">
+                <div class="status-header">Status Surat</div>
+                
+                <div class="status-current">
+                  <div class="status-label">Status Saat ini</div>
+                  <span class="status-value">Proses</span>
+                </div>
 
-                  <div class="progress-section">
-                    <div class="progress-label">Progress Disposisi</div>
-                    <div class="progress-bar-container">
-                      <div class="progress-bar" style="width: 50%"></div>
-                    </div>
-                    <div class="progress-text">50%</div>
+                <div class="progress-section">
+                  <div class="progress-label">Progress Disposisi</div>
+                  <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: 50%"></div>
                   </div>
+                  <div class="progress-text">50%</div>
+                </div>
 
-                  <div class="update-section">
-                    <div class="update-label">Update Surat</div>
-                    <select class="update-select">
-                      <option>Update Surat</option>
-                      <option>Proses</option>
-                      <option>Selesai</option>
-                      <option>Ditolak</option>
-                    </select>
-                  </div>
+                <div class="update-section">
+                  <div class="update-label">Update Surat</div>
+                  <select class="update-select">
+                    <option>Update Surat</option>
+                    <option>Proses</option>
+                    <option>Selesai</option>
+                    <option>Ditolak</option>
+                  </select>
                 </div>
               </div>
             </div>
           </div>
 
-            <div class="pagination-wrapper">
-              <div class="pagination-info">Showing 1-10 of 1,253</div>
-              <div class="pagination-controls">
-                <button class="pagination-btn" id="prevBtn" disabled onclick="previousPage()">
-                  <i class="bi bi-chevron-left"></i>
-                </button>
-                <button class="pagination-btn" id="nextBtn" onclick="nextPage()">
-                  <i class="bi bi-chevron-right"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-
-     <!-- Footer -->
+          <!-- Footer -->
           <div class="content-footer">
-            <p>
-              © 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik
-              Indonesia
-            </p>
+            <p>© 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik Indonesia</p>
             <div class="footer-links">
               <a href="#">About</a>
               <a href="#">Support</a>
@@ -448,30 +471,10 @@
         </div>
       </div>
     </div>
+      
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-      const notifBtn = document.querySelector(".notification");
-      const sidebar = document.getElementById("notificationSidebar");
-      const closeBtn = document.getElementById("closeSidebarBtn");
-
-      notifBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        sidebar.classList.toggle("active");
-      });
-
-      closeBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        sidebar.classList.remove("active");
-      });
-
-      // Klik di luar sidebar untuk menutup
-      document.addEventListener("click", (e) => {
-        if (!sidebar.contains(e.target) && !notifBtn.contains(e.target)) {
-          sidebar.classList.remove("active");
-        }
-      });
-    </script>
     <script src="assets/js/main.js"></script>
   </body>
 </html>
