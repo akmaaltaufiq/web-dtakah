@@ -18,9 +18,9 @@
     <div class="main-content">
       <!-- Header -->
       <div class="content-header">
-        <div class="search-box">
-          <input type="text" placeholder="Search" id="headerSearch" />
-          <i class="bi bi-search"></i>
+        <div class="header-left">
+          <div class="logo-emblem"></div>
+          <div class="header-title">Tata Naskah Digital Kementerian Pertahanan Republik Indonesia</div>
         </div>
         <div class="header-right">
           <button class="header-btn">
@@ -150,6 +150,7 @@
               </div>
             </div>
 
+            
             <!-- Right: Info & Status -->
             <div>
               <!-- Info Surat -->
@@ -157,25 +158,13 @@
                 <div class="info-header">
                   <div class="info-title">Informasi Surat</div>
                   <div class="info-actions">
-                    <button
-                      class="action-icon-btn"
-                      title="Download"
-                      onclick="downloadFile()"
-                    >
+                    <button class="action-icon-btn" title="Download" onclick="downloadFile()">
                       <i class="bi bi-download"></i>
                     </button>
-                    <button
-                      class="action-icon-btn"
-                      title="Print"
-                      onclick="printFile()"
-                    >
+                    <button class="action-icon-btn" title="Print" onclick="printFile()">
                       <i class="bi bi-printer"></i>
                     </button>
-                    <button
-                      class="action-icon-btn"
-                      title="Delete"
-                      onclick="deleteFile()"
-                    >
+                    <button class="action-icon-btn" title="Delete" onclick="deleteFile()">
                       <i class="bi bi-trash"></i>
                     </button>
                   </div>
@@ -188,9 +177,7 @@
                   </div>
                   <div class="info-item">
                     <div class="info-label">Asal Surat</div>
-                    <div class="info-value" id="infoAsalSurat">
-                      UPN Veteran Jakarta
-                    </div>
+                    <div class="info-value" id="infoAsalSurat">UPN Veteran Jakarta</div>
                   </div>
                   <div class="info-item">
                     <div class="info-label">Tanggal Surat</div>
@@ -208,38 +195,27 @@
                   </div>
                   <div class="info-item">
                     <div class="info-label">Jenis Surat</div>
-                    <span class="badge badge-masuk" id="infoJenisSurat"
-                      >Masuk</span
-                    >
+                    <span class="badge badge-masuk" id="infoJenisSurat">Masuk</span>
                   </div>
                   <div class="info-item">
                     <div class="info-label">Sifat Surat</div>
-                    <span class="badge badge-umum" id="infoSifatSurat"
-                      >Umum</span
-                    >
+                    <span class="badge badge-umum" id="infoSifatSurat">Umum</span>
                   </div>
                   <div class="info-item info-full">
                     <div class="info-label">Kepada</div>
-                    <div class="info-value" id="infoKepada">
-                      Kepala Bidang Banglola Sisfohan
-                    </div>
+                    <div class="info-value" id="infoKepada">Kepala Bidang Banglola Sisfohan</div>
                   </div>
                   <div class="info-item info-full">
                     <div class="info-label">Perihal</div>
-                    <div class="info-perihal" id="infoPerihal">
-                      Pengajuan Magang Mahasiswa Prodi Sistem Informasi
-                    </div>
+                    <div class="info-perihal" id="infoPerihal">Pengajuan Magang Mahasiswa Prodi Sistem Informasi</div>
                   </div>
                   <div class="info-item info-full">
                     <div class="info-label">File</div>
                     <div class="info-file" onclick="downloadFile()">
                       <i class="bi bi-file-earmark-pdf-fill"></i>
-                      <div class="file-name" id="infoFileName">
-                        Pengajuan_MagangMahasiswa_UPNVJ.pdf
-                      </div>
+                      <div class="file-name" id="infoFileName">Pengajuan_MagangMahasiswa_UPNVJ.pdf</div>
                     </div>
-                  </div>
-                </div>
+                  
 
                 <!-- Riwayat Disposisi -->
                 <div class="disposisi-section">
@@ -262,6 +238,72 @@
                     </div>
                   </div>
 
+                  <div class="disposisi-list">
+                    <!-- Disposisi Item 1 -->
+                    <div class="disposisi-item proses">
+                      <div class="disposisi-header">
+                        <div>
+                          <div class="disposisi-title">ACC Untuk ditindaklanjuti</div>
+                        </div>
+                        <span class="disposisi-badge proses">Proses</span>
+                      </div>
+                      <div class="disposisi-meta">
+                        <div class="meta-row">
+                          <i class="bi bi-person"></i>
+                          <span>Kepada: Kepala Bidang Banglola Sisfohan</span>
+                        </div>
+                        <div class="meta-row">
+                          <i class="bi bi-person-check"></i>
+                          <span>Oleh: Kabag TU</span>
+                        </div>
+                        <div class="meta-row">
+                          <i class="bi bi-calendar3"></i>
+                          <span>Dibuat: 04/08/2025</span>
+                        </div>
+                        <div class="meta-row">
+                          <i class="bi bi-clock"></i>
+                          <span>Deadline: 08/08/2025</span>
+                        </div>
+                      </div>
+                      <div class="disposisi-note">
+                        <strong>Catatan:</strong> Mohon segera ditindaklanjuti dan di proses
+                      </div>
+                    </div>
+
+                    <!-- Disposisi Item 2 -->
+                    <div class="disposisi-item selesai">
+                      <div class="disposisi-header">
+                        <div>
+                          <div class="disposisi-title">Disiapkan Jawaban</div>
+                        </div>
+                        <span class="disposisi-badge selesai">Selesai</span>
+                      </div>
+                      <div class="disposisi-meta">
+                        <div class="meta-row">
+                          <i class="bi bi-person"></i>
+                          <span>Kepada: Kepala Bidang Infra TIK</span>
+                        </div>
+                        <div class="meta-row">
+                          <i class="bi bi-person-check"></i>
+                          <span>Oleh: Kabag TU</span>
+                        </div>
+                        <div class="meta-row">
+                          <i class="bi bi-calendar3"></i>
+                          <span>Dibuat: 01/08/2025</span>
+                        </div>
+                        <div class="meta-row">
+                          <i class="bi bi-clock"></i>
+                          <span>Deadline: 04/08/2025</span>
+                        </div>
+                      </div>
+                      <div class="disposisi-note">
+                        <strong>Catatan:</strong> Mohon dipersiapkan
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
                   <div class="disposisi-list" id="disposisiList">
                     <!-- Disposisi items will be populated by JavaScript -->
                   </div>
@@ -271,31 +313,27 @@
               <!-- Status Surat -->
               <div class="status-card">
                 <div class="status-header">Status Surat</div>
-
+                
                 <div class="status-current">
                   <div class="status-label">Status Saat ini</div>
-                  <span class="status-value" id="statusValue">Proses</span>
+                  <span class="status-value">Proses</span>
                 </div>
 
                 <div class="progress-section">
                   <div class="progress-label">Progress Disposisi</div>
                   <div class="progress-bar-container">
-                    <div
-                      class="progress-bar"
-                      id="progressBar"
-                      style="width: 50%"
-                    ></div>
+                    <div class="progress-bar" style="width: 50%"></div>
                   </div>
-                  <div class="progress-text" id="progressText">50%</div>
+                  <div class="progress-text">50%</div>
                 </div>
 
                 <div class="update-section">
                   <div class="update-label">Update Surat</div>
-                  <select class="update-select" id="updateStatusSelect">
-                    <option value="">Update Surat</option>
-                    <option value="Proses">Proses</option>
-                    <option value="Selesai">Selesai</option>
-                    <option value="Ditolak">Ditolak</option>
+                  <select class="update-select">
+                    <option>Update Surat</option>
+                    <option>Proses</option>
+                    <option>Selesai</option>
+                    <option>Ditolak</option>
                   </select>
                 </div>
               </div>
@@ -318,133 +356,160 @@
 
         <!-- FORM TAMBAH/EDIT SURAT -->
         <div class="form-view-container" id="formViewContainer">
-          <div class="page-title-section">
-            <button class="btn-back" onclick="closeForm()">
-              <i class="bi bi-chevron-left"></i>
-            </button>
-            <h1 class="page-title" id="formTitle">Tambah Surat Masuk</h1>
-          </div>
-
-          <div class="surat-masuk-card">
-            <form id="suratForm" onsubmit="submitForm(event)">
-              <div class="form-grid">
-                <div class="form-group">
-                  <label class="form-label">Nomor Surat *</label>
-                  <input
-                    type="text"
-                    class="form-input"
-                    id="formNoSurat"
-                    required
-                  />
+          <div class="content-container" style="max-width: 1200px; margin: 0 auto;">
+            <div class="form-header">
+              <h1 class="form-header-title">Form Registrasi Surat Masuk</h1>
+              
+              <div class="form-steps">
+                <div class="form-step">
+                  <div class="step-number active">1</div>
+                  <div class="step-label">Surat</div>
                 </div>
-
-                <div class="form-group">
-                  <label class="form-label">Asal Surat *</label>
-                  <input
-                    type="text"
-                    class="form-input"
-                    id="formDari"
-                    required
-                  />
+                <div class="step-connector"></div>
+                <div class="form-step">
+                  <div class="step-number inactive">2</div>
+                  <div class="step-label">Tujuan</div>
                 </div>
-
-                <div class="form-group">
-                  <label class="form-label">Tanggal Surat *</label>
-                  <input
-                    type="date"
-                    class="form-input"
-                    id="formTanggalSurat"
-                    required
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">Tanggal Diterima *</label>
-                  <input
-                    type="date"
-                    class="form-input"
-                    id="formTanggalDiterima"
-                    required
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">Jenis Surat *</label>
-                  <select class="form-input" id="formJenisSurat" required>
-                    <option value="">Pilih Jenis</option>
-                    <option value="Masuk">Masuk</option>
-                    <option value="Keluar">Keluar</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">Sifat Surat *</label>
-                  <select class="form-input" id="formSifatSurat" required>
-                    <option value="">Pilih Sifat</option>
-                    <option value="Umum">Umum</option>
-                    <option value="Penting">Penting</option>
-                    <option value="Rahasia">Rahasia</option>
-                  </select>
-                </div>
-
-                <div class="form-group form-full">
-                  <label class="form-label">Kepada *</label>
-                  <input
-                    type="text"
-                    class="form-input"
-                    id="formKepada"
-                    required
-                  />
-                </div>
-
-                <div class="form-group form-full">
-                  <label class="form-label">Perihal *</label>
-                  <textarea
-                    class="form-input"
-                    id="formPerihal"
-                    rows="3"
-                    required
-                  ></textarea>
-                </div>
-
-                <div class="form-group form-full">
-                  <label class="form-label">Nama File</label>
-                  <input
-                    type="text"
-                    class="form-input"
-                    id="formFile"
-                    placeholder="contoh: Pengajuan_Magang.pdf"
-                  />
+                <div class="step-connector"></div>
+                <div class="form-step">
+                  <div class="step-number inactive">3</div>
+                  <div class="step-label">Preview</div>
                 </div>
               </div>
+            </div>
 
-              <div class="form-actions">
-                <button type="button" class="btn-cancel" onclick="closeForm()">
-                  Batal
-                </button>
-                <button type="submit" class="btn-submit">
-                  <i class="bi bi-save"></i>
-                  Simpan
-                </button>
-              </div>
-            </form>
-          </div>
+            <div class="surat-masuk-card">
+              <form id="suratForm" onsubmit="submitForm(event)">
+                <!-- Identitas Pengirim -->
+                <div class="form-section">
+                  <h2 class="form-section-title">IDENTITAS PENGIRIM NASKAH</h2>
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label class="form-label">Nama Pengirim</label>
+                      <input
+                        type="text"
+                        class="form-input"
+                        id="formNamaPengirim"
+                        placeholder="Masukkan Nama Pengirim"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Jabatan Pengirim</label>
+                      <input
+                        type="text"
+                        class="form-input"
+                        id="formJabatanPengirim"
+                        placeholder="Masukkan Jabatan Pengirim"
+                      />
+                    </div>
+                  </div>
+                </div>
 
-          <!-- Footer -->
-          <div class="content-footer">
-            <p>
-              © 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik
-              Indonesia
-            </p>
-            <div class="footer-links">
-              <a href="#">About</a>
-              <a href="#">Support</a>
-              <a href="#">Contact Us</a>
+                <!-- Detail Isi Naskah -->
+                <div class="form-section">
+                  <h2 class="form-section-title">DETAIL ISI NASKAH</h2>
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label class="form-label">Jenis Naskah</label>
+                      <select class="form-input" id="formJenisSurat">
+                        <option value="">Pilih Jenis Naskah</option>
+                        <option value="Undangan">Undangan</option>
+                        <option value="Pemberitahuan">Pemberitahuan</option>
+                        <option value="Permohonan Kerja Sama">Permohonan Kerja Sama</option>
+                        <option value="Surat Tugas">Surat Tugas</option>
+                        <option value="Surat Balasan">Surat Balasan</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Sifat Naskah</label>
+                      <select class="form-input" id="formSifatSurat">
+                        <option value="">Pilih Sifat Naskah...</option>
+                        <option value="Umum">Umum</option>
+                        <option value="Penting">Penting</option>
+                        <option value="Segera">Segera</option>
+                        <option value="Rahasia">Rahasia</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Nomor Naskah</label>
+                      <input
+                        type="text"
+                        class="form-input"
+                        id="formNoSurat"
+                        placeholder="Masukkan Nomor Naskah..."
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Perihal</label>
+                      <input
+                        type="text"
+                        class="form-input"
+                        id="formPerihal"
+                        placeholder="Masukkan Perihal Surat"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Tanggal Naskah</label>
+                      <input
+                        type="date"
+                        class="form-input"
+                        id="formTanggalSurat"
+                        placeholder="DD/MM/YYYY"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Tanggal Diterima</label>
+                      <input
+                        type="date"
+                        class="form-input"
+                        id="formTanggalDiterima"
+                        placeholder="DD/MM/YYYY"
+                      />
+                    </div>
+                    <div class="form-group form-full">
+                      <label class="form-label">Catatan</label>
+                      <textarea
+                        class="form-input"
+                        id="formCatatan"
+                        placeholder="Masukkan Catatan"
+                        rows="4"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- File Naskah -->
+                <div class="form-section">
+                  <div class="form-grid">
+                    <div class="form-group form-full">
+                      <label class="form-label">File Naskah</label>
+                      <div class="form-upload-area" onclick="document.getElementById('fileInput').click()">
+                        <div class="upload-icon">
+                          <i class="bi bi-cloud-arrow-up"></i>
+                        </div>
+                        <div class="upload-text">Unggah Surat</div>
+                      </div>
+                      <input type="file" id="fileInput" style="display: none;" accept=".pdf,.doc,.docx">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" class="btn-cancel" onclick="closeForm()">
+                    Batal
+                  </button>
+                  <button type="submit" class="btn-submit">
+                    Tambahkan
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+          
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
