@@ -277,6 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("popstate", handleRouting);
   }
 
+
   // =============================
   // VIEW MANAGEMENT
   // =============================
@@ -388,12 +389,6 @@ document.addEventListener("DOMContentLoaded", () => {
               surat.id
             })">
               <i class="bi bi-eye"></i>
-            </button>
-            <div class="btn-action-separator"></div>
-            <button class="btn-action" title="Edit" onclick="editSurat(${
-              surat.id
-            })">
-              <i class="bi bi-pencil"></i>
             </button>
             <div class="btn-action-separator"></div>
             <button class="btn-action" title="Disposisi" onclick="disposisiSurat(${
