@@ -90,44 +90,52 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
   // =============================
   // SURAT MASUK - COMPLETE SYSTEM
   // =============================
 
-  // Storage Key
+  // =============================
+  // GLOBAL VARIABLES
+  // =============================
   const STORAGE_KEY = "suratMasukData";
-  let currentEditId = null;
-
-  // Pagination
+  let currentStep = 1;
+  let uploadedFile = null;
   let currentPage = 1;
   const itemsPerPage = 6;
 
   // =============================
-  // INIT & ROUTING
+  // INITIALIZATION
   // =============================
   window.addEventListener("DOMContentLoaded", function () {
-    console.log("Page loaded");
+    console.log("Application initialized");
     initializeData();
-    handleRouting();
+    renderTable();
     setupEventListeners();
   });
 
-  // Make functions globally accessible
-  window.lihatSurat = lihatSurat;
-  window.editSurat = editSurat;
-  window.hapusSurat = hapusSurat;
-  window.disposisiSurat = disposisiSurat;
-  window.showTambahForm = showTambahForm;
-  window.closePreview = closePreview;
-  window.closeForm = closeForm;
-  window.submitForm = submitForm;
-  window.downloadFile = downloadFile;
-  window.printFile = printFile;
-  window.deleteFile = deleteFile;
-  window.previousPage = previousPage;
-  window.nextPage = nextPage;
+  // Setup all event listeners
+  function setupEventListeners() {
+    // File upload
+    const fileInput = document.getElementById("fileInput");
+    if (fileInput) {
+      fileInput.addEventListener("change", handleFileUpload);
+    }
 
-  // Initialize dummy data if not exists
+    // Search
+    const tableSearch = document.getElementById("tableSearch");
+    if (tableSearch) {
+      tableSearch.addEventListener("input", handleSearch);
+    }
+
+    // Form submit
+    const suratForm = document.getElementById("suratForm");
+    if (suratForm) {
+      suratForm.addEventListener("submit", handleSubmit);
+    }
+  }
+
+  // Initialize dummy data
   function initializeData() {
     if (!localStorage.getItem(STORAGE_KEY)) {
       const dummyData = [
@@ -139,30 +147,9 @@ document.addEventListener("DOMContentLoaded", () => {
           perihal: "Pengajuan Magang Mahasiswa Prodi Sistem Informasi",
           dari: "UPN Veteran Jakarta",
           kepada: "Kepala Bidang Banglola Sisfohan",
-          jenisSurat: "Masuk",
+          jenisSurat: "Surat Masuk",
           sifatSurat: "Umum",
           file: "Pengajuan_MagangMahasiswa_UPNVJ.pdf",
-          status: "Proses",
-          disposisi: [
-            {
-              judul: "ACC Untuk ditindaklanjuti",
-              status: "Proses",
-              kepada: "Kepala Bidang Banglola Sisfohan",
-              oleh: "Kabag TU",
-              dibuat: "04/08/2025",
-              deadline: "08/08/2025",
-              catatan: "Mohon segera ditindaklanjuti dan di proses",
-            },
-            {
-              judul: "Disiapkan Jawaban",
-              status: "Selesai",
-              kepada: "Kepala Bidang Infra TIK",
-              oleh: "Kabag TU",
-              dibuat: "01/08/2025",
-              deadline: "04/08/2025",
-              catatan: "Mohon dipersiapkan",
-            },
-          ],
         },
         {
           id: 2,
@@ -172,11 +159,9 @@ document.addEventListener("DOMContentLoaded", () => {
           perihal: "Pengajuan Magang Mahasiswa Prodi Informatika",
           dari: "Universitas Pertahanan",
           kepada: "Kepala Bidang Infra TIK",
-          jenisSurat: "Masuk",
+          jenisSurat: "Surat Masuk",
           sifatSurat: "Umum",
           file: "Pengajuan_MagangMahasiswa_UNHAN.pdf",
-          status: "Selesai",
-          disposisi: [],
         },
         {
           id: 3,
@@ -186,11 +171,9 @@ document.addEventListener("DOMContentLoaded", () => {
           perihal: "Undangan Seminar Nasional",
           dari: "UPN Veteran Jakarta",
           kepada: "Kasubbag TU",
-          jenisSurat: "Masuk",
+          jenisSurat: "Surat Masuk",
           sifatSurat: "Penting",
           file: "Undangan_Seminar_Nasional.pdf",
-          status: "Proses",
-          disposisi: [],
         },
         {
           id: 4,
@@ -200,11 +183,9 @@ document.addEventListener("DOMContentLoaded", () => {
           perihal: "Permintaan Data Penelitian",
           dari: "Universitas Pertahanan",
           kepada: "Kabid MSI",
-          jenisSurat: "Masuk",
+          jenisSurat: "Surat Masuk",
           sifatSurat: "Umum",
           file: "Permintaan_Data_Penelitian.pdf",
-          status: "Pending",
-          disposisi: [],
         },
         {
           id: 5,
@@ -214,11 +195,9 @@ document.addEventListener("DOMContentLoaded", () => {
           perihal: "Permohonan Izin Kegiatan",
           dari: "Institut Teknologi Bandung",
           kepada: "Kepala Bidang Banglola Sisfohan",
-          jenisSurat: "Masuk",
+          jenisSurat: "Surat Masuk",
           sifatSurat: "Umum",
           file: "Permohonan_Izin_Kegiatan.pdf",
-          status: "Proses",
-          disposisi: [],
         },
         {
           id: 6,
@@ -228,100 +207,284 @@ document.addEventListener("DOMContentLoaded", () => {
           perihal: "Laporan Kegiatan Bulan Agustus",
           dari: "Kasubbag TU",
           kepada: "Kepala Pusat",
-          jenisSurat: "Masuk",
+          jenisSurat: "Surat Masuk",
           sifatSurat: "Umum",
           file: "Laporan_Kegiatan_Agustus.pdf",
-          status: "Selesai",
-          disposisi: [],
         },
       ];
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dummyData));
-    }
-    console.log("Data initialized:", getSuratData());
-  }
-
-  // Handle URL routing
-  function handleRouting() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const view = urlParams.get("view");
-    const id = urlParams.get("id");
-
-    console.log("Routing:", view, id);
-
-    if (view === "detail" && id) {
-      showDetailView(parseInt(id));
-    } else if (view === "tambah") {
-      showTambahForm();
-    } else if (view === "edit" && id) {
-      showEditForm(parseInt(id));
-    } else {
-      showListView();
+      console.log("Dummy data initialized");
     }
   }
 
-  // Setup event listeners
-  function setupEventListeners() {
-    // Search functionality
-    const tableSearch = document.getElementById("tableSearch");
-    if (tableSearch) {
-      tableSearch.addEventListener("input", handleSearch);
+  // =============================
+  // FILE UPLOAD HANDLER
+  // =============================
+  function handleFileUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      alert("Format file tidak didukung. Gunakan PDF, DOC, atau DOCX");
+      e.target.value = "";
+      return;
     }
 
-    // Status update
-    const updateSelect = document.getElementById("updateStatusSelect");
-    if (updateSelect) {
-      updateSelect.addEventListener("change", handleStatusUpdate);
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    if (file.size > maxSize) {
+      alert("Ukuran file maksimal 5MB");
+      e.target.value = "";
+      return;
     }
 
-    // Handle browser back button
-    window.addEventListener("popstate", handleRouting);
+    uploadedFile = file;
+
+    const uploadArea = document.getElementById("uploadArea");
+    const fileInfoDisplay = document.getElementById("fileInfoDisplay");
+
+    uploadArea.classList.add("has-file");
+    fileInfoDisplay.innerHTML = `
+    <div class="file-info">
+      <i class="bi bi-file-earmark-pdf-fill"></i>
+      <div>
+        <div class="file-name">${file.name}</div>
+        <div class="preview-label">${(file.size / 1024).toFixed(2)} KB</div>
+      </div>
+    </div>
+  `;
+
+    console.log("File uploaded:", file.name);
   }
 
+  // =============================
+  // STEP NAVIGATION
+  // =============================
+  function nextStep() {
+    if (currentStep === 1) {
+      if (!validateStep1()) return;
+      currentStep = 2;
+    } else if (currentStep === 2) {
+      if (!validateStep2()) return;
+      loadPreview();
+      currentStep = 3;
+    }
+    updateStepDisplay();
+  }
+
+  function prevStep() {
+    if (currentStep > 1) {
+      currentStep--;
+      updateStepDisplay();
+    }
+  }
+
+  // =============================
+  // STEP VALIDATION
+  // =============================
+  function validateStep1() {
+    const required = [
+      "namaPengirim",
+      "jabatanPengirim",
+      "jenisSurat",
+      "sifatSurat",
+      "noSurat",
+      "perihal",
+      "tanggalSurat",
+      "tanggalDiterima",
+    ];
+
+    for (let id of required) {
+      const el = document.getElementById(id);
+      if (!el || !el.value.trim()) {
+        alert("Mohon lengkapi semua field yang bertanda *");
+        if (el) el.focus();
+        return false;
+      }
+    }
+
+    if (!uploadedFile) {
+      alert("Mohon upload file terlebih dahulu");
+      return false;
+    }
+
+    return true;
+  }
+
+  function validateStep2() {
+    const kepada = document.getElementById("kepada");
+    if (!kepada || !kepada.value.trim()) {
+      alert("Mohon isi tujuan surat");
+      if (kepada) kepada.focus();
+      return false;
+    }
+    return true;
+  }
+
+  // =============================
+  // STEP DISPLAY UPDATE
+  // =============================
+  function updateStepDisplay() {
+    // Hide all steps
+    document.querySelectorAll(".step-content").forEach((el) => {
+      el.classList.remove("active");
+    });
+
+    // Show current step
+    const currentContent = document.getElementById(`step${currentStep}Content`);
+    if (currentContent) {
+      currentContent.classList.add("active");
+    }
+
+    // Update step indicators
+    for (let i = 1; i <= 3; i++) {
+      const stepNum = document.getElementById(`step${i}Number`);
+      if (stepNum) {
+        if (i < currentStep) {
+          stepNum.className = "step-number completed";
+        } else if (i === currentStep) {
+          stepNum.className = "step-number active";
+        } else {
+          stepNum.className = "step-number inactive";
+        }
+      }
+    }
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // =============================
+  // PREVIEW LOADING
+  // =============================
+  function loadPreview() {
+    const fields = {
+      previewNamaPengirim: "namaPengirim",
+      previewJabatan: "jabatanPengirim",
+      previewJenis: "jenisSurat",
+      previewSifat: "sifatSurat",
+      previewNoSurat: "noSurat",
+      previewPerihal: "perihal",
+      previewKepada: "kepada",
+    };
+
+    // Load text fields
+    for (let previewId in fields) {
+      const inputId = fields[previewId];
+      const inputEl = document.getElementById(inputId);
+      const previewEl = document.getElementById(previewId);
+
+      if (inputEl && previewEl) {
+        previewEl.textContent = inputEl.value || "-";
+      }
+    }
+
+    // Load dates
+    const tanggalSurat = document.getElementById("tanggalSurat");
+    const tanggalDiterima = document.getElementById("tanggalDiterima");
+
+    if (tanggalSurat) {
+      document.getElementById("previewTanggalSurat").textContent =
+        formatDateDisplay(tanggalSurat.value);
+    }
+
+    if (tanggalDiterima) {
+      document.getElementById("previewTanggalDiterima").textContent =
+        formatDateDisplay(tanggalDiterima.value);
+    }
+
+    // Load file
+    document.getElementById("previewFile").textContent = uploadedFile
+      ? uploadedFile.name
+      : "-";
+  }
+
+  // =============================
+  // FORM SUBMIT
+  // =============================
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    const data = getSuratData();
+    const newSurat = {
+      id: getNextId(),
+      tanggalDiterima: formatDateDisplay(
+        document.getElementById("tanggalDiterima").value
+      ),
+      tanggalSurat: formatDateShort(
+        document.getElementById("tanggalSurat").value
+      ),
+      noSurat: document.getElementById("noSurat").value,
+      perihal: document.getElementById("perihal").value,
+      dari: document.getElementById("namaPengirim").value,
+      kepada: document.getElementById("kepada").value,
+      jenisSurat: document.getElementById("jenisSurat").value,
+      sifatSurat: document.getElementById("sifatSurat").value,
+      file: uploadedFile ? uploadedFile.name : "dokumen.pdf",
+    };
+
+    data.push(newSurat);
+    saveSuratData(data);
+
+    console.log("Surat saved:", newSurat);
+
+    // Show success
+    document.querySelectorAll(".step-content").forEach((el) => {
+      el.classList.remove("active");
+    });
+
+    const successContent = document.getElementById("successContent");
+    if (successContent) {
+      successContent.classList.add("active");
+    }
+
+    // Reset after 2 seconds
+    setTimeout(() => {
+      closeForm();
+    }, 2000);
+  }
 
   // =============================
   // VIEW MANAGEMENT
   // =============================
-  function showListView() {
-    hideAllViews();
-    document.getElementById("listViewContainer").classList.remove("hidden");
-    updateURL("");
-    renderTable();
-  }
-
-  function showDetailView(id) {
-    hideAllViews();
-    document.getElementById("detailViewContainer").classList.add("active");
-    updateURL(`?view=detail&id=${id}`);
-    loadDetailData(id);
-  }
-
   function showTambahForm() {
-    hideAllViews();
-    document.getElementById("formViewContainer").style.display = "block";
-    document.getElementById("formTitle").textContent = "Tambah Surat Masuk";
-    updateURL("?view=tambah");
-    resetForm();
-    currentEditId = null;
+    const listView = document.getElementById("listViewContainer");
+    const formView = document.getElementById("formViewContainer");
+
+    if (listView) listView.classList.add("hidden");
+    if (formView) formView.classList.add("active");
+
+    // Reset form
+    currentStep = 1;
+    uploadedFile = null;
+
+    const form = document.getElementById("suratForm");
+    if (form) form.reset();
+
+    const uploadArea = document.getElementById("uploadArea");
+    if (uploadArea) uploadArea.classList.remove("has-file");
+
+    const fileInfoDisplay = document.getElementById("fileInfoDisplay");
+    if (fileInfoDisplay) fileInfoDisplay.innerHTML = "";
+
+    updateStepDisplay();
   }
 
-  function showEditForm(id) {
-    hideAllViews();
-    document.getElementById("formViewContainer").style.display = "block";
-    document.getElementById("formTitle").textContent = "Edit Surat Masuk";
-    updateURL(`?view=edit&id=${id}`);
-    loadFormData(id);
-    currentEditId = id;
-  }
+  function closeForm() {
+    const formView = document.getElementById("formViewContainer");
+    const listView = document.getElementById("listViewContainer");
 
-  function hideAllViews() {
-    document.getElementById("listViewContainer").classList.add("hidden");
-    document.getElementById("detailViewContainer").classList.remove("active");
-    document.getElementById("formViewContainer").style.display = "none";
-  }
+    if (formView) formView.classList.remove("active");
+    if (listView) listView.classList.remove("hidden");
 
-  function updateURL(params) {
-    const newURL = window.location.pathname + params;
-    window.history.pushState({}, "", newURL);
+    renderTable();
   }
 
   // =============================
@@ -336,11 +499,6 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 
-  function getSuratById(id) {
-    const data = getSuratData();
-    return data.find((item) => item.id === id);
-  }
-
   function getNextId() {
     const data = getSuratData();
     return data.length > 0 ? Math.max(...data.map((item) => item.id)) + 1 : 1;
@@ -353,14 +511,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const data = getSuratData();
     const tbody = document.getElementById("tableBody");
 
-    console.log("Rendering table with data:", data);
-
     if (!tbody) {
-      console.error("Table body not found!");
+      console.error("Table body not found");
       return;
     }
 
-    // Pagination
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const paginatedData = data.slice(startIndex, endIndex);
@@ -369,20 +524,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (paginatedData.length === 0) {
       tbody.innerHTML =
-        '<tr><td colspan="7" style="text-align: center; padding: 40px;">Tidak ada data</td></tr>';
+        '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #999;">Tidak ada data</td></tr>';
       return;
     }
 
     paginatedData.forEach((surat, index) => {
       const row = document.createElement("tr");
       row.innerHTML = `
-      <td class="td-no">${startIndex + index + 1}</td>
-      <td class="td-tanggal">${surat.tanggalDiterima}</td>
-      <td class="td-nosurat">${surat.noSurat}</td>
-      <td class="td-perihal">${surat.perihal}</td>
-      <td class="td-dari">${surat.dari}</td>
-      <td class="td-kepada">${surat.kepada}</td>
-      <td class="td-opsi">
+      <td style="text-align: center; font-weight: 600; width: 50px;">${
+        startIndex + index + 1
+      }</td>
+      <td style="width: 130px;">${surat.tanggalDiterima}</td>
+      <td style="width: 110px;">${surat.noSurat}</td>
+      <td style="min-width: 200px;">${surat.perihal}</td>
+      <td style="width: 150px;">${surat.dari}</td>
+      <td style="min-width: 180px;">${surat.kepada}</td>
+      <td style="width: 150px; text-align: center;">
         <div class="action-buttons">
           <div class="btn-action-group">
             <button class="btn-action" title="Lihat" onclick="lihatSurat(${
@@ -420,7 +577,6 @@ document.addEventListener("DOMContentLoaded", () => {
       infoElement.textContent = `Showing ${startIndex}-${endIndex} of ${totalItems}`;
     }
 
-    // Update pagination buttons
     const prevBtn = document.getElementById("prevBtn");
     const nextBtn = document.getElementById("nextBtn");
 
@@ -429,221 +585,22 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // =============================
-  // DETAIL VIEW
-  // =============================
-  function loadDetailData(id) {
-    const surat = getSuratById(id);
-
-    if (!surat) {
-      alert("Surat tidak ditemukan");
-      showListView();
-      return;
-    }
-
-    // Update info
-    document.getElementById("previewDocTitle").textContent = surat.perihal;
-    document.getElementById("infoNomorSurat").textContent = surat.noSurat;
-    document.getElementById("infoAsalSurat").textContent = surat.dari;
-    document.getElementById("infoTanggalSurat").textContent =
-      surat.tanggalSurat;
-    document.getElementById("infoTanggalDiterima").textContent =
-      surat.tanggalDiterima;
-    document.getElementById("infoKepada").textContent = surat.kepada;
-    document.getElementById("infoPerihal").textContent = surat.perihal;
-    document.getElementById("infoFileName").textContent = surat.file;
-    document.getElementById("infoJenisSurat").textContent = surat.jenisSurat;
-    document.getElementById("infoSifatSurat").textContent = surat.sifatSurat;
-
-    // Update status
-    document.getElementById("statusValue").textContent = surat.status;
-
-    // Update progress
-    const progress = calculateProgress(surat.disposisi);
-    document.getElementById("progressBar").style.width = progress + "%";
-    document.getElementById("progressText").textContent = progress + "%";
-
-    // Render disposisi
-    renderDisposisi(surat.disposisi);
-  }
-
-  function renderDisposisi(disposisiList) {
-    const container = document.getElementById("disposisiList");
-    if (!container) return;
-
-    if (!disposisiList || disposisiList.length === 0) {
-      container.innerHTML =
-        '<p style="color: #999; text-align: center; padding: 20px;">Belum ada disposisi</p>';
-      return;
-    }
-
-    container.innerHTML = "";
-
-    disposisiList.forEach((disp) => {
-      const item = document.createElement("div");
-      item.className = `disposisi-item ${disp.status.toLowerCase()}`;
-      item.innerHTML = `
-      <div class="disposisi-header">
-        <div>
-          <div class="disposisi-title">${disp.judul}</div>
-        </div>
-        <span class="disposisi-badge ${disp.status.toLowerCase()}">${
-        disp.status
-      }</span>
-      </div>
-      <div class="disposisi-meta">
-        <div class="meta-row">
-          <i class="bi bi-person"></i>
-          <span>Kepada: ${disp.kepada}</span>
-        </div>
-        <div class="meta-row">
-          <i class="bi bi-person-check"></i>
-          <span>Oleh: ${disp.oleh}</span>
-        </div>
-        <div class="meta-row">
-          <i class="bi bi-calendar3"></i>
-          <span>Dibuat: ${disp.dibuat}</span>
-        </div>
-        <div class="meta-row">
-          <i class="bi bi-clock"></i>
-          <span>Deadline: ${disp.deadline}</span>
-        </div>
-      </div>
-      <div class="disposisi-note">
-        <strong>Catatan:</strong> ${disp.catatan}
-      </div>
-    `;
-      container.appendChild(item);
-    });
-  }
-
-  function calculateProgress(disposisiList) {
-    if (!disposisiList || disposisiList.length === 0) return 0;
-
-    const selesai = disposisiList.filter((d) => d.status === "Selesai").length;
-    return Math.round((selesai / disposisiList.length) * 100);
-  }
-
-  // =============================
-  // FORM OPERATIONS
-  // =============================
-  function resetForm() {
-    document.getElementById("suratForm").reset();
-  }
-
-  function loadFormData(id) {
-    const surat = getSuratById(id);
-
-    if (!surat) {
-      alert("Surat tidak ditemukan");
-      showListView();
-      return;
-    }
-
-    document.getElementById("formNoSurat").value = surat.noSurat;
-    document.getElementById("formDari").value = surat.dari;
-    document.getElementById("formTanggalSurat").value = formatDateForInput(
-      surat.tanggalSurat
-    );
-    document.getElementById("formTanggalDiterima").value = formatDateForInput(
-      surat.tanggalDiterima
-    );
-    document.getElementById("formJenisSurat").value = surat.jenisSurat;
-    document.getElementById("formSifatSurat").value = surat.sifatSurat;
-    document.getElementById("formKepada").value = surat.kepada;
-    document.getElementById("formPerihal").value = surat.perihal;
-    document.getElementById("formFile").value = surat.file;
-  }
-
-  function submitForm(event) {
-    event.preventDefault();
-
-    const formData = {
-      noSurat: document.getElementById("formNoSurat").value,
-      dari: document.getElementById("formDari").value,
-      tanggalSurat: document.getElementById("formTanggalSurat").value,
-      tanggalDiterima: document.getElementById("formTanggalDiterima").value,
-      jenisSurat: document.getElementById("formJenisSurat").value,
-      sifatSurat: document.getElementById("formSifatSurat").value,
-      kepada: document.getElementById("formKepada").value,
-      perihal: document.getElementById("formPerihal").value,
-      file: document.getElementById("formFile").value || "dokumen.pdf",
-    };
-
-    if (currentEditId) {
-      updateSurat(currentEditId, formData);
-    } else {
-      createSurat(formData);
-    }
-  }
-
-  function createSurat(formData) {
-    const data = getSuratData();
-
-    const newSurat = {
-      id: getNextId(),
-      tanggalDiterima: formatDateDisplay(formData.tanggalDiterima),
-      tanggalSurat: formatDateShort(formData.tanggalSurat),
-      noSurat: formData.noSurat,
-      perihal: formData.perihal,
-      dari: formData.dari,
-      kepada: formData.kepada,
-      jenisSurat: formData.jenisSurat,
-      sifatSurat: formData.sifatSurat,
-      file: formData.file,
-      status: "Pending",
-      disposisi: [],
-    };
-
-    data.push(newSurat);
-    saveSuratData(data);
-
-    alert("Surat berhasil ditambahkan!");
-    showListView();
-  }
-
-  function updateSurat(id, formData) {
-    const data = getSuratData();
-    const index = data.findIndex((item) => item.id === id);
-
-    if (index === -1) {
-      alert("Surat tidak ditemukan");
-      return;
-    }
-
-    data[index] = {
-      ...data[index],
-      tanggalDiterima: formatDateDisplay(formData.tanggalDiterima),
-      tanggalSurat: formatDateShort(formData.tanggalSurat),
-      noSurat: formData.noSurat,
-      perihal: formData.perihal,
-      dari: formData.dari,
-      kepada: formData.kepada,
-      jenisSurat: formData.jenisSurat,
-      sifatSurat: formData.sifatSurat,
-      file: formData.file,
-    };
-
-    saveSuratData(data);
-
-    alert("Surat berhasil diupdate!");
-    showDetailView(id);
-  }
-
-  // =============================
   // BUTTON ACTIONS
   // =============================
   function lihatSurat(id) {
-    console.log("Lihat surat:", id);
-    showDetailView(id);
+    const surat = getSuratData().find((item) => item.id === id);
+    if (surat) {
+      alert(
+        `Detail Surat:\n\nNo: ${surat.noSurat}\nPerihal: ${surat.perihal}\nDari: ${surat.dari}\nKepada: ${surat.kepada}`
+      );
+    }
   }
 
-  function editSurat(id) {
-    console.log("Edit surat:", id);
-    showEditForm(id);
+  function disposisiSurat(id) {
+    alert("Fitur disposisi akan segera tersedia untuk surat ID: " + id);
   }
 
   function hapusSurat(id) {
-    console.log("Hapus surat:", id);
     if (!confirm("Apakah Anda yakin ingin menghapus surat ini?")) return;
 
     const data = getSuratData();
@@ -654,54 +611,6 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTable();
   }
 
-  function disposisiSurat(id) {
-    alert("Fitur disposisi akan segera tersedia");
-  }
-
-  function closePreview() {
-    showListView();
-  }
-
-  function closeForm() {
-    showListView();
-  }
-
-  function downloadFile() {
-    alert("File akan didownload");
-  }
-
-  function printFile() {
-    alert("File akan diprint");
-  }
-
-  function deleteFile() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = parseInt(urlParams.get("id"));
-
-    if (confirm("Apakah Anda yakin ingin menghapus surat ini?")) {
-      hapusSurat(id);
-      showListView();
-    }
-  }
-
-  function handleStatusUpdate(event) {
-    const newStatus = event.target.value;
-    if (!newStatus) return;
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = parseInt(urlParams.get("id"));
-
-    const data = getSuratData();
-    const surat = data.find((item) => item.id === id);
-
-    if (surat) {
-      surat.status = newStatus;
-      saveSuratData(data);
-      loadDetailData(id);
-      alert("Status berhasil diupdate!");
-    }
-  }
-
   // =============================
   // PAGINATION
   // =============================
@@ -709,6 +618,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (currentPage > 1) {
       currentPage--;
       renderTable();
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }
 
@@ -719,14 +629,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (currentPage < maxPage) {
       currentPage++;
       renderTable();
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }
 
   // =============================
   // SEARCH
   // =============================
-  function handleSearch(event) {
-    const searchTerm = event.target.value.toLowerCase();
+  function handleSearch(e) {
+    const searchTerm = e.target.value.toLowerCase();
     const rows = document.querySelectorAll("#tableBody tr");
 
     rows.forEach((row) => {
@@ -739,6 +650,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // UTILITY FUNCTIONS
   // =============================
   function formatDateDisplay(dateStr) {
+    if (!dateStr) return "-";
+
     const date = new Date(dateStr);
     const months = [
       "Januari",
@@ -755,25 +668,38 @@ document.addEventListener("DOMContentLoaded", () => {
       "Desember",
     ];
 
-    return `${date.getDate().toString().padStart(2, "0")} ${
-      months[date.getMonth()]
-    } ${date.getFullYear()}`;
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+
+    return `${day} ${month} ${year}`;
   }
 
   function formatDateShort(dateStr) {
+    if (!dateStr) return "-";
+
     const date = new Date(dateStr);
-    return `${date.getDate().toString().padStart(2, "0")}/${(
-      date.getMonth() + 1
-    )
-      .toString()
-      .padStart(2, "0")}/${date.getFullYear()}`;
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
   }
 
-  function formatDateForInput(dateStr) {
-    // Convert "01/08/2025" to "2025-08-01"
-    const parts = dateStr.split("/");
-    return `${parts[2]}-${parts[1]}-${parts[0]}`;
-  }
+  // =============================
+  // EXPOSE GLOBAL FUNCTIONS
+  // =============================
+  window.showTambahForm = showTambahForm;
+  window.closeForm = closeForm;
+  window.nextStep = nextStep;
+  window.prevStep = prevStep;
+  window.lihatSurat = lihatSurat;
+  window.disposisiSurat = disposisiSurat;
+  window.hapusSurat = hapusSurat;
+  window.previousPage = previousPage;
+  window.nextPage = nextPage;
+
+  console.log("All functions loaded successfully");
 
   // =============================
   // SURAT KELUAR
