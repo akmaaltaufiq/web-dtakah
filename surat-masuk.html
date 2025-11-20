@@ -4,51 +4,53 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Surat Masuk - Dashboard</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
     />
-    <link rel="stylesheet" href="assets/css/style.css" />
   </head>
   <body>
     <!-- Sidebar placeholder -->
     <div id="sidebar-placeholder"></div>
 
+    <!-- Main content -->
     <div class="main-content">
       <!-- Header -->
-      <div class="content-header">
+        <div class="content-header">
         <div class="header-left">
           <div class="logo-emblem"></div>
-          <div class="header-title">
-            Tata Naskah Digital Kementerian Pertahanan Republik Indonesia
+          <div class="header-title">Tata Naskah Digital Kementerian Pertahanan Republik Indonesia</div>
+        </div>
+          <div class="header-right">
+            <button class="header-btn">
+              <i class="bi bi-bell-fill"></i>
+              <span class="notification-badge">4</span>
+            </button>
+            <div class="language-selector">
+              <img src="https://flagcdn.com/w40/id.png" alt="Indonesia">
+              <span style="font-size: 14px; font-weight: 500;">Indonesia</span>
+              <i class="bi bi-chevron-down" style="font-size: 12px;"></i>
+            </div>
+            <div class="user-info">
+              <div class="user-details">
+                <div class="user-details-name">Staff TU Puslapbinkunhan</div>
+                <div class="user-details-role">Admin</div>
+              </div>
+              <div class="user-avatar-header">
+                <i class="bi bi-person-fill"></i>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="header-right">
-          <button class="header-btn">
-            <i class="bi bi-bell-fill"></i>
-            <span class="notification-badge">4</span>
-          </button>
-          <div class="language-selector">
-            <img src="https://flagcdn.com/w40/id.png" alt="Indonesia" />
-            <span style="font-size: 14px; font-weight: 500">Indonesia</span>
-            <i class="bi bi-chevron-down" style="font-size: 12px"></i>
-          </div>
-          <div class="user-info">
-            <div class="user-details">
-              <div class="user-details-name">Staff TU Puslapbinkunhan</div>
-              <div class="user-details-role">Admin</div>
-            </div>
-            <div class="user-avatar-header">
-              <i class="bi bi-person-fill"></i>
-            </div>
-          </div>
-        </div>
-      </div>
+      
 
+      <!-- Page content -->
       <div class="content-container">
         <!-- LIST VIEW -->
         <div class="list-view-container" id="listViewContainer">
           <h1 class="page-title">Surat Masuk</h1>
+
           <div class="surat-masuk-card">
             <div class="card-header-section">
               <button class="btn-tambah" onclick="showTambahForm()">
@@ -74,7 +76,10 @@
                     <th>Opsi</th>
                   </tr>
                 </thead>
-                <tbody id="tableBody"></tbody>
+                <tbody id="tableBody">
+                  <!-- Data will be populated by JavaScript -->
+                </tbody>
+                 <tbody id="tableBody"></tbody>
               </table>
             </div>
 
@@ -101,33 +106,45 @@
               </div>
             </div>
           </div>
+
+          <!-- Footer -->
+          <div class="content-footer">
+            <p>
+              © 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik
+              Indonesia
+            </p>
+            <div class="footer-links">
+              <a href="#">About</a>
+              <a href="#">Support</a>
+              <a href="#">Contact Us</a>
+            </div>
+          </div>
         </div>
 
-        <!-- FORM VIEW -->
+         <!-- FORM VIEW -->
         <div class="form-view-container" id="formViewContainer">
           <div class="form-header">
             <h1 class="form-header-title">Form Registrasi Surat Masuk</h1>
-
             <div class="form-steps">
               <div class="form-step">
                 <div class="step-number active" id="step1Number">1</div>
                 <div class="step-label">Surat</div>
-              </div>
+                </div>
               <div class="step-connector"></div>
               <div class="form-step">
                 <div class="step-number inactive" id="step2Number">2</div>
                 <div class="step-label">Tujuan</div>
               </div>
-              <div class="step-connector"></div>
+            <div class="step-connector"></div>
               <div class="form-step">
                 <div class="step-number inactive" id="step3Number">3</div>
                 <div class="step-label">Preview</div>
               </div>
             </div>
           </div>
-
-          <div class="surat-masuk-card">
+         <div class="surat-masuk-card">
             <form id="suratForm">
+
               <!-- STEP 1: SURAT -->
               <div class="step-content active" id="step1Content">
                 <div class="form-section">
@@ -140,11 +157,11 @@
                         class="form-input"
                         id="namaPengirim"
                         placeholder="Masukkan Nama Pengirim"
-                        required
+                      required
                       />
                     </div>
-                    <div class="form-group">
-                      <label class="form-label">Jabatan Pengirim *</label>
+                  <div class="form-group">
+                  <label class="form-label">Jabatan Pengirim *</label>
                       <input
                         type="text"
                         class="form-input"
@@ -156,30 +173,34 @@
                   </div>
                 </div>
 
+                <!-- Detail Isi Naskah -->
                 <div class="form-section">
                   <h2 class="form-section-title">DETAIL ISI NASKAH</h2>
                   <div class="form-grid">
                     <div class="form-group">
-                      <label class="form-label">Jenis Naskah *</label>
+                       <label class="form-label">Jenis Naskah *</label>
                       <select class="form-input" id="jenisSurat" required>
                         <option value="">Pilih Jenis Naskah</option>
-                        <option value="Surat Masuk">Surat Masuk</option>
-                        <option value="Surat Keluar">Surat Keluar</option>
-                        <option value="Nota Dinas">Nota Dinas</option>
+                        <option value="Undangan">Undangan</option>
+                        <option value="Pemberitahuan">Pemberitahuan</option>
+                        <option value="Permohonan Kerja Sama">Permohonan Kerja Sama</option>
+                        <option value="Surat Balasan">Surat Balasan</option>
+                        <option value="Surat Tugas">Surat Tugas</option>
                       </select>
                     </div>
                     <div class="form-group">
-                      <label class="form-label">Sifat Naskah *</label>
+                        <label class="form-label">Sifat Naskah *</label>
                       <select class="form-input" id="sifatSurat" required>
                         <option value="">Pilih Sifat Naskah...</option>
                         <option value="Umum">Umum</option>
                         <option value="Penting">Penting</option>
-                        <option value="Segera">Segera</option>
                         <option value="Rahasia">Rahasia</option>
+                        <option value="Sangat Rahasia">Sangat Rahasia</option>
+                        <option value="Konfidensial">Konfidensial</option>
                       </select>
                     </div>
                     <div class="form-group">
-                      <label class="form-label">Nomor Naskah *</label>
+                        <label class="form-label">Nomor Naskah *</label>
                       <input
                         type="text"
                         class="form-input"
@@ -189,7 +210,7 @@
                       />
                     </div>
                     <div class="form-group">
-                      <label class="form-label">Perihal *</label>
+                       <label class="form-label">Perihal *</label>
                       <input
                         type="text"
                         class="form-input"
@@ -199,20 +220,20 @@
                       />
                     </div>
                     <div class="form-group">
-                      <label class="form-label">Tanggal Naskah *</label>
+                       <label class="form-label">Tanggal Naskah *</label>
                       <input
                         type="date"
                         class="form-input"
-                        id="tanggalSurat"
+                         id="tanggalSurat"
                         required
                       />
                     </div>
                     <div class="form-group">
-                      <label class="form-label">Tanggal Diterima *</label>
-                      <input
-                        type="date"
-                        class="form-input"
-                        id="tanggalDiterima"
+                    <label class="form-label">Tanggal Diterima *</label>
+                    <input
+                      type="date"
+                      class="form-input"
+                       id="tanggalDiterima"
                         required
                       />
                     </div>
@@ -227,7 +248,8 @@
                     </div>
                   </div>
                 </div>
-
+                
+                <!-- File Naskah -->
                 <div class="form-section">
                   <div class="form-group form-full">
                     <label class="form-label">File Naskah *</label>
@@ -319,8 +341,7 @@
                         <div class="preview-value" id="previewNamaPengirim">
                           -
                         </div>
-                      </div>
-                      <div class="preview-item">
+                        <div class="preview-item">
                         <div class="preview-label">Jabatan</div>
                         <div class="preview-value" id="previewJabatan">-</div>
                       </div>
@@ -381,10 +402,10 @@
                 </div>
 
                 <div class="form-actions">
-                  <button type="button" class="btn-prev" onclick="prevStep()">
+                <button type="button" class="btn-prev" onclick="prevStep()">
                     Kembali
                   </button>
-                  <button type="submit" class="btn-submit">Simpan Surat</button>
+                <button type="submit" class="btn-submit">Simpan Surat</button>
                 </div>
               </div>
 
@@ -405,12 +426,15 @@
                     Kembali ke Daftar
                   </button>
                 </div>
-              </div>
+                 </div>
             </form>
           </div>
         </div>
       </div>
     </div>
+   
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- JS -->
     <script src="assets/js/main.js"></script>
