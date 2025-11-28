@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
     <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/daftar-agenda.css" />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
@@ -14,36 +15,11 @@
     <!-- Sidebar placeholder -->
     <div id="sidebar-placeholder"></div>
 
-     <!-- Main content -->
+    <!-- Main content -->
     <div class="main-content">
       <!-- Header -->
-        <div class="content-header">
-        <div class="header-left">
-          <div class="logo-emblem"></div>
-          <div class="header-title">Tata Naskah Digital Kementerian Pertahanan Republik Indonesia</div>
-        </div>
-          <div class="header-right">
-            <button class="header-btn">
-              <i class="bi bi-bell-fill"></i>
-              <span class="notification-badge">4</span>
-            </button>
-            <div class="language-selector">
-              <img src="https://flagcdn.com/w40/id.png" alt="Indonesia">
-              <span style="font-size: 14px; font-weight: 500;">Indonesia</span>
-              <i class="bi bi-chevron-down" style="font-size: 12px;"></i>
-            </div>
-            <div class="user-info">
-              <div class="user-details">
-                <div class="user-details-name">Staff TU Puslapbinkunhan</div>
-                <div class="user-details-role">Admin</div>
-              </div>
-              <div class="user-avatar-header">
-                <i class="bi bi-person-fill"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-        
+      <div id="header-placeholder"></div>
+
       <!-- Page content -->
       <div class="content-container">
         <div class="agenda-container">
@@ -52,17 +28,32 @@
           <div class="agenda-controls">
             <div class="date-filters">
               <div class="date-input-group">
-                <input type="date" class="date-input" placeholder="Start Date" id="startDate">
+                <input
+                  type="date"
+                  class="date-input"
+                  placeholder="Start Date"
+                  id="startDate"
+                />
               </div>
               <div class="date-input-group">
-                <input type="date" class="date-input" placeholder="End Date" id="endDate">
+                <input
+                  type="date"
+                  class="date-input"
+                  placeholder="End Date"
+                  id="endDate"
+                />
               </div>
             </div>
 
             <div class="search-group">
               <div class="search-input-wrapper">
                 <i class="bi bi-search"></i>
-                <input type="text" class="search-input" placeholder="Cari Surat" id="searchSurat">
+                <input
+                  type="text"
+                  class="search-input"
+                  placeholder="Cari Surat"
+                  id="searchSurat"
+                />
               </div>
               <button class="btn-search">
                 <i class="bi bi-search"></i>
@@ -78,22 +69,26 @@
           <table class="agenda-table">
             <thead>
               <tr>
-                <th style="width: 60px;">No</th>
-                <th style="width: 20%;">Perihal</th>
-                <th style="width: 35%;">Deskripsi Surat</th>
-                <th style="width: 10%;">Sifat</th>
-                <th style="width: 10%;">No Naskah</th>
-                <th style="width: 12%; text-align: center;">Action</th>
+                <th style="width: 60px">No</th>
+                <th style="width: 20%">Perihal</th>
+                <th style="width: 35%">Deskripsi Surat</th>
+                <th style="width: 10%">Sifat</th>
+                <th style="width: 10%">No Naskah</th>
+                <th style="width: 12%; text-align: center">Action</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>1</td>
                 <td>
-                  <div class="perihal-title">Surat Pemberitahuan Kegiatan Minggu Bela Negara</div>
+                  <div class="perihal-title">
+                    Surat Pemberitahuan Kegiatan Minggu Bela Negara
+                  </div>
                 </td>
                 <td>
-                  <div class="deskripsi-text">Memberikan pemberitahuan kegiatan bulanan</div>
+                  <div class="deskripsi-text">
+                    Memberikan pemberitahuan kegiatan bulanan
+                  </div>
                 </td>
                 <td><span class="sifat-badge">Umum</span></td>
                 <td>63</td>
@@ -111,7 +106,9 @@
                   <div class="perihal-title">Pemberitahuan Cuti Bersama</div>
                 </td>
                 <td>
-                  <div class="deskripsi-text">Memberikan pemberitahuan cuti bersama Natal & Tahun Baru</div>
+                  <div class="deskripsi-text">
+                    Memberikan pemberitahuan cuti bersama Natal & Tahun Baru
+                  </div>
                 </td>
                 <td><span class="sifat-badge">Umum</span></td>
                 <td>13</td>
@@ -126,10 +123,15 @@
               <tr>
                 <td>3</td>
                 <td>
-                  <div class="perihal-title">Pemberitahuan Pemberian Anggaran</div>
+                  <div class="perihal-title">
+                    Pemberitahuan Pemberian Anggaran
+                  </div>
                 </td>
                 <td>
-                  <div class="deskripsi-text">Menyampaikan informasi realisasi penggunaan anggaran untuk transparansi.</div>
+                  <div class="deskripsi-text">
+                    Menyampaikan informasi realisasi penggunaan anggaran untuk
+                    transparansi.
+                  </div>
                 </td>
                 <td><span class="sifat-badge">Umum</span></td>
                 <td>635</td>
@@ -144,10 +146,15 @@
               <tr>
                 <td>4</td>
                 <td>
-                  <div class="perihal-title">Pemberitahuan Perubahan Kebijakan</div>
+                  <div class="perihal-title">
+                    Pemberitahuan Perubahan Kebijakan
+                  </div>
                 </td>
                 <td>
-                  <div class="deskripsi-text">Menginformasikan perubahan aturan, prosedur, atau kebijakan yang berlaku.</div>
+                  <div class="deskripsi-text">
+                    Menginformasikan perubahan aturan, prosedur, atau kebijakan
+                    yang berlaku.
+                  </div>
                 </td>
                 <td><span class="sifat-badge">Umum</span></td>
                 <td>67</td>
@@ -162,10 +169,15 @@
               <tr>
                 <td>5</td>
                 <td>
-                  <div class="perihal-title">Pemberitahuan Penyerahan Dokumen</div>
+                  <div class="perihal-title">
+                    Pemberitahuan Penyerahan Dokumen
+                  </div>
                 </td>
                 <td>
-                  <div class="deskripsi-text">Mengingatkan divisi Banglola untuk menyerahkan dan melengkapi dokumen.</div>
+                  <div class="deskripsi-text">
+                    Mengingatkan divisi Banglola untuk menyerahkan dan
+                    melengkapi dokumen.
+                  </div>
                 </td>
                 <td><span class="sifat-badge">Umum</span></td>
                 <td>52</td>
@@ -183,7 +195,9 @@
                   <div class="perihal-title">Undangan Sosialisasi Program</div>
                 </td>
                 <td>
-                  <div class="deskripsi-text">Menginformasikan akan dilaksanakannya Program Pelatihan</div>
+                  <div class="deskripsi-text">
+                    Menginformasikan akan dilaksanakannya Program Pelatihan
+                  </div>
                 </td>
                 <td><span class="sifat-badge">Umum</span></td>
                 <td>635</td>
@@ -213,12 +227,7 @@
       </div>
 
       <!-- Footer -->
-      <footer class="content-footer">
-        <p>
-          © 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik
-          Indonesia
-        </p>
-      </footer>
+      <div id="footer-placeholder"></div>
     </div>
 
     <!-- Calendar Modal -->
@@ -259,5 +268,6 @@
 
     <!-- JS -->
     <script src="assets/js/main.js"></script>
+    <script src="assets/js/database.js"></script>
   </body>
 </html>

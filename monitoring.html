@@ -3,119 +3,94 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
+    <title>Monitoring Surat - Dashboard</title>
     <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/monitoring.css" />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
     />
   </head>
   <body>
-    <!-- Sidebar placeholder -->
     <div id="sidebar-placeholder"></div>
 
-    <!-- Main content -->
     <div class="main-content">
-      <!-- Header -->
-        <div class="content-header">
-        <div class="header-left">
-          <div class="logo-emblem"></div>
-          <div class="header-title">Tata Naskah Digital Kementerian Pertahanan Republik Indonesia</div>
-        </div>
-          <div class="header-right">
-            <button class="header-btn">
-              <i class="bi bi-bell-fill"></i>
-              <span class="notification-badge">4</span>
-            </button>
-            <div class="language-selector">
-              <img src="https://flagcdn.com/w40/id.png" alt="Indonesia">
-              <span style="font-size: 14px; font-weight: 500;">Indonesia</span>
-              <i class="bi bi-chevron-down" style="font-size: 12px;"></i>
-            </div>
-            <div class="user-info">
-              <div class="user-details">
-                <div class="user-details-name">Staff TU Puslapbinkunhan</div>
-                <div class="user-details-role">Admin</div>
-              </div>
-              <div class="user-avatar-header">
-                <i class="bi bi-person-fill"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-       <!-- Page content -->
+      <div id="header-placeholder"></div>
+
       <div class="content-container">
         <div class="monitoring-container">
           <h1 class="monitoring-title">Monitoring Surat</h1>
 
-          <!-- Tabs -->
           <div class="tabs-container">
             <button class="tab-btn active" data-tab="masuk">Masuk</button>
             <button class="tab-btn" data-tab="keluar">Keluar</button>
             <button class="tab-btn" data-tab="nota-dinas">Nota Dinas</button>
           </div>
 
-          <!-- Filters -->
           <div class="filters-container">
             <div class="filter-icon">
               <i class="bi bi-funnel"></i>
               <span>Filter By</span>
             </div>
-               </select>
-             <button class="date-picker-btn" id="datePickerBtn">
-                <span id="selectedDateText">Tanggal</span>
-                    <i class="bi bi-chevron-down"></i>
+
+            <button class="date-picker-btn" id="datePickerBtn">
+              <span id="selectedDateText">Tanggal</span>
+              <i class="bi bi-chevron-down"></i>
             </button>
-          <!-- Calendar Modal -->
+
             <div class="calendar-modal" id="calendarModal">
-               <div class="calendar-container">
-                  <div class="calendar-header">
-                     <h3 id="calendarMonth">February 2025</h3>
-                        <div class="calendar-nav">
-                     <button id="prevMonth">
-                        <i class="bi bi-chevron-left"></i>
+              <div class="calendar-container">
+                <div class="calendar-header">
+                  <h3 id="calendarMonth">February 2025</h3>
+                  <div class="calendar-nav">
+                    <button id="prevMonth">
+                      <i class="bi bi-chevron-left"></i>
                     </button>
                     <button id="nextMonth">
-                        <i class="bi bi-chevron-right"></i>
+                      <i class="bi bi-chevron-right"></i>
                     </button>
+                  </div>
                 </div>
-            </div>
 
-            <div class="calendar-weekdays">
-                <div class="calendar-weekday">S</div>
-                <div class="calendar-weekday">M</div>
-                <div class="calendar-weekday">T</div>
-                <div class="calendar-weekday">W</div>
-                <div class="calendar-weekday">T</div>
-                <div class="calendar-weekday">F</div>
-                <div class="calendar-weekday">S</div>
-            </div>
+                <div class="calendar-weekdays">
+                  <div class="calendar-weekday">S</div>
+                  <div class="calendar-weekday">M</div>
+                  <div class="calendar-weekday">T</div>
+                  <div class="calendar-weekday">W</div>
+                  <div class="calendar-weekday">T</div>
+                  <div class="calendar-weekday">F</div>
+                  <div class="calendar-weekday">S</div>
+                </div>
 
-            <div class="calendar-days" id="calendarDays">
-                <!-- Days will be generated by JavaScript -->
-            </div>
+                <div class="calendar-days" id="calendarDays"></div>
 
-            <div class="calendar-footer">
-                <button class="calendar-apply-btn" id="applyDate">Terapkan</button>
+                <div class="calendar-footer">
+                  <button class="calendar-apply-btn" id="applyDate">
+                    Terapkan
+                  </button>
+                </div>
+              </div>
             </div>
-        </div>
-    </div>
-        
 
             <div class="filter-group">
-              <select class="filter-select" id="sifatFilter">
-                <option value="">Sifat: Umum</option>
-                <option value="umum">Umum</option>
-                <option value="rahasia">Rahasia</option>
-                <option value="sangat-rahasia">Sangat Rahasia</option>
-                <option value="penting">Penting</option>
+              <select class="filter-select" id="statusFilter">
+                <option value="">Status Surat</option>
+                <option value="pending">Pending</option>
+                <option value="proses">Proses</option>
+                <option value="selesai">Selesai</option>
+                <option value="siap kirim">Siap Kirim</option>
+                <option value="diterima">Diterima</option>
+                <option value="ditolak">Ditolak</option>
               </select>
             </div>
 
             <div class="search-filter">
               <i class="bi bi-search"></i>
-              <input type="text" placeholder="Ketik Perihal Surat" id="searchPerihal">
+              <input
+                type="text"
+                placeholder="Ketik Perihal Surat"
+                id="searchPerihal"
+              />
             </div>
 
             <button class="reset-filter" id="resetBtn">
@@ -124,214 +99,45 @@
             </button>
           </div>
 
-          <!-- Table -->
-          <table class="monitoring-table">
-            <thead>
-              <tr>
-                <th>Dari</th>
-                <th>Nomor Agenda Surat</th>
-                <th>Nomor Surat</th>
-                <th>Kepada</th>
-                <th>Perihal</th>
-                <th>Status</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody">
-              <tr>
-                <td>
-                  <div class="dari-cell">
-                    <div class="dari-icon">
-                      <i class="bi bi-person-circle"></i>
-                    </div>
-                    <span class="dari-name">UPN Veteran Jakarta</span>
-                  </div>
-                </td>
-                <td>001/VII/2025/PermohonanMagang</td>
-                <td>B/350/VII/2025</td>
-                <td>Kepala Bidang Banglola Sisfohan</td>
-                <td>Pengajuan Magang Mahasiswa Prodi Sistem Informasi</td>
-                <td>
-                  <span class="status-badge siap-kirim">Siap Kirim</span>
-                </td>
-                <td>
-                  <div class="action-icons">
-                    <i class="bi bi-eye action-icon view"></i>
-                    <i class="bi bi-trash action-icon delete"></i>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="dari-cell">
-                    <div class="dari-icon">
-                      <i class="bi bi-person-circle"></i>
-                    </div>
-                    <span class="dari-name">Kapushansiber</span>
-                  </div>
-                </td>
-                <td>002/VII/2025/Kabid Banglola</td>
-                <td>B/10/XII/2025</td>
-                <td>Kabid APK</td>
-                <td>Percobaan DWP</td>
-                <td>
-                  <span class="status-badge selesai">Selesai</span>
-                </td>
-                <td>
-                  <div class="action-icons">
-                    <i class="bi bi-eye action-icon view"></i>
-                    <i class="bi bi-trash action-icon delete"></i>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="dari-cell">
-                    <div class="dari-icon">
-                      <i class="bi bi-person-circle"></i>
-                    </div>
-                    <span class="dari-name">Banglola Sisfohan</span>
-                  </div>
-                </td>
-                <td>015/VII/2025/Kapushansiber</td>
-                <td>B/12/X/2025</td>
-                <td>Kasubbid Infosan</td>
-                <td>Perbaikan Jaringan</td>
-                <td>
-                  <span class="status-badge pending">Pending</span>
-                </td>
-                <td>
-                  <div class="action-icons">
-                    <i class="bi bi-eye action-icon view"></i>
-                    <i class="bi bi-trash action-icon delete"></i>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="dari-cell">
-                    <div class="dari-icon">
-                      <i class="bi bi-person-circle"></i>
-                    </div>
-                    <span class="dari-name">Kasubbag TU</span>
-                  </div>
-                </td>
-                <td>022/XII/2025/Kapusbanglola</td>
-                <td>B/24/IX/2025</td>
-                <td>Kasubbid Banglola</td>
-                <td>Tes Uji Coba</td>
-                <td>
-                  <span class="status-badge diterima">Diterima</span>
-                </td>
-                <td>
-                  <div class="action-icons">
-                    <i class="bi bi-eye action-icon view"></i>
-                    <i class="bi bi-trash action-icon delete"></i>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="dari-cell">
-                    <div class="dari-icon">
-                      <i class="bi bi-person-circle"></i>
-                    </div>
-                    <span class="dari-name">Kasubbag MSI</span>
-                  </div>
-                </td>
-                <td>030/III/2025/KasubbagTU</td>
-                <td>B/26/X/2025</td>
-                <td>Kabid APK</td>
-                <td>Tes Uji Coba</td>
-                <td>
-                  <span class="status-badge ditolak">Ditolak</span>
-                </td>
-                <td>
-                  <div class="action-icons">
-                    <i class="bi bi-eye action-icon view"></i>
-                    <i class="bi bi-trash action-icon delete"></i>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="dari-cell">
-                    <div class="dari-icon">
-                      <i class="bi bi-person-circle"></i>
-                    </div>
-                    <span class="dari-name">Kasubagum</span>
-                  </div>
-                </td>
-                <td>030/III/2025/KasubbagTU</td>
-                <td>B/26/X/2025</td>
-                <td>Kabid APK</td>
-                <td>Tes Uji Coba</td>
-                <td>
-                  <span class="status-badge selesai">Selesai</span>
-                </td>
-                <td>
-                  <div class="action-icons">
-                    <i class="bi bi-eye action-icon view"></i>
-                    <i class="bi bi-trash action-icon delete"></i>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="dari-cell">
-                    <div class="dari-icon">
-                      <i class="bi bi-person-circle"></i>
-                    </div>
-                    <span class="dari-name">Kasubbag MSI</span>
-                  </div>
-                </td>
-                <td>030/III/2025/KasubbagTU</td>
-                <td>B/26/X/2025</td>
-                <td>Kabid APK</td>
-                <td>Tes Uji Coba</td>
-                <td>
-                  <span class="status-badge ditolak">Ditolak</span>
-                </td>
-                <td>
-                  <div class="action-icons">
-                    <i class="bi bi-eye action-icon view"></i>
-                    <i class="bi bi-trash action-icon delete"></i>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="dari-cell">
-                    <div class="dari-icon">
-                      <i class="bi bi-person-circle"></i>
-                    </div>
-                    <span class="dari-name">Kasubbag MSI</span>
-                  </div>
-                </td>
-                <td>030/III/2025/KasubbagTU</td>
-                <td>B/26/X/2025</td>
-                <td>Kabid APK</td>
-                <td>Tes Uji Coba</td>
-                <td>
-                  <span class="status-badge ditolak">Ditolak</span>
-                </td>
-                <td>
-                  <div class="action-icons">
-                    <i class="bi bi-eye action-icon view"></i>
-                    <i class="bi bi-trash action-icon delete"></i>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-responsive">
+            <table class="monitoring-table">
+              <thead>
+                <tr>
+                  <th style="text-align: left; width: 200px">Dari</th>
+                  <th style="text-align: left; width: 200px">
+                    Nomor Agenda Surat
+                  </th>
+                  <th style="text-align: left; width: 130px">Tanggal Surat</th>
+                  <th style="text-align: left; width: 180px">Kepada</th>
+                  <th style="text-align: left">Perihal</th>
+                  <th style="text-align: center; width: 130px">Status</th>
+                  <th style="text-align: center; width: 100px">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="monitoringTableBody">
+                <!-- Data will be loaded here -->
+              </tbody>
+            </table>
+          </div>
 
           <div class="table-footer">
-            <div class="showing-info">Showing 1-8 of 1,253</div>
+            <div class="showing-info" id="monitoringPaginationInfo">
+              Showing 1-8 of 1,253
+            </div>
             <div class="pagination">
-              <button class="pagination-btn" disabled>
+              <button
+                class="pagination-btn"
+                id="prevBtnMonitoring"
+                disabled
+                onclick="previousPageMonitoring()"
+              >
                 <i class="bi bi-chevron-left"></i>
               </button>
-              <button class="pagination-btn">
+              <button
+                class="pagination-btn"
+                id="nextBtnMonitoring"
+                onclick="nextPageMonitoring()"
+              >
                 <i class="bi bi-chevron-right"></i>
               </button>
             </div>
@@ -339,21 +145,11 @@
         </div>
       </div>
 
-      <!-- Footer -->
-      <footer class="content-footer">
-        <p>
-          © 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik
-          Indonesia
-        </p>
-        <div class="footer-links">
-          <a href="#">About</a>
-          <a href="#">Support</a>
-          <a href="#">Contact Us</a>
-        </div>
-      </footer>
+      <div id="footer-placeholder"></div>
     </div>
 
-    <!-- JS -->
+    <script src="assets/js/database.js"></script>
     <script src="assets/js/main.js"></script>
+    <script src="assets/js/monitoring.js"></script>
   </body>
 </html>

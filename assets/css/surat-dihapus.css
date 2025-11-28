@@ -1,0 +1,175 @@
+/* ==========================================
+   SURAT DIHAPUS - CARD GRID STYLES
+   ========================================== */
+
+/* Container untuk Filter Bar */
+.filters-container-deleted {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 10px 0;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.filter-select-deleted {
+  padding: 10px 40px 10px 16px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  appearance: none;
+  color: #495057;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23495057' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  min-width: 150px;
+  transition: border-color 0.2s;
+}
+
+.search-filter-deleted {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-filter-deleted input {
+  width: 100%;
+  padding: 10px 15px 10px 40px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+}
+
+.search-filter-deleted i {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  font-size: 16px;
+}
+
+/* Grid Layout */
+.deleted-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 24px;
+  /* padding-top: 20px; Dihapus karena sudah ada di filters-container-deleted */
+}
+
+/* Individual Card */
+.deleted-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.deleted-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header-deleted {
+  padding: 16px 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title-deleted {
+  font-size: 16px;
+  font-weight: 700;
+  color: #202224;
+  margin: 0;
+  flex: 1;
+}
+
+.badge-deleted {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Badge Sifat Surat (Menggunakan class yang sudah ada) */
+.badge-deleted.badge-umum {
+  background: #fef3c7;
+  color: #92400e;
+}
+.badge-deleted.badge-penting {
+  background: #ffe4e6;
+  color: #c2185b;
+}
+
+.card-body-deleted {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: #495057;
+}
+
+.card-info-row i {
+  font-size: 18px;
+  color: #8b0000;
+  flex-shrink: 0;
+}
+
+.card-actions-deleted {
+  display: flex;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid #f0f0f0;
+  background: #fff;
+}
+
+.btn-pulihkan {
+  background: #4285f4;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-pulihkan:hover {
+  background: #357abd;
+}
+
+.btn-hapus-permanen {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-hapus-permanen:hover {
+  background: #c82333;
+}

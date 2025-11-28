@@ -11,29 +11,11 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
     />
-    <link rel="stylesheet" href="assets/css/globals.css" />
-    <link rel="stylesheet" href="assets/css/styleguide.css" />
     <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/styleguide.css" />
+    <link rel="stylesheet" href="assets/css/dashboard.css" />
   </head>
   <body>
-    <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen">
-      <div class="loading-content">
-        <div class="loading-logo">
-          <img src="assets/img/logo_kemhan_ri.png" alt="Logo Kemhan" />
-        </div>
-        <div class="loading-spinner">
-          <div class="spinner-ring"></div>
-          <div class="spinner-ring"></div>
-          <div class="spinner-ring"></div>
-        </div>
-        <div class="loading-text">
-          Sedang Memproses<span class="loading-dots"></span>
-        </div>
-        <div class="loading-subtext">Mohon tunggu sebentar</div>
-      </div>
-    </div>
-
     <div class="dashboard-overview">
       <!-- Sidebar -->
       <div id="sidebar-placeholder"></div>
@@ -43,8 +25,8 @@
         <!-- Header -->
         <div class="content-header">
           <div class="header-left">
-            <button><i class="bi bi-list"></i></button>
-            <button><i class="bi bi-star"></i></button>
+            <i class="bi bi-list"></i>
+            <i class="bi bi-star"></i>
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="#">Dashboards</a></li>
@@ -392,7 +374,7 @@
                 </tr>
               </tbody>
             </table>
-            <a href="#" class="more-link">Lihat Selengkapnya...</a>
+            <a href="monitoring.html" class="more-link">Lihat Selengkapnya...</a>
           </div>
 
           <!-- Footer -->
@@ -412,28 +394,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-      const notifBtn = document.querySelector(".notification");
-      const sidebar = document.getElementById("notificationSidebar");
-      const closeBtn = document.getElementById("closeSidebarBtn");
 
-      notifBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        sidebar.classList.toggle("active");
-      });
-
-      closeBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        sidebar.classList.remove("active");
-      });
-
-      // Klik di luar sidebar untuk menutup
-      document.addEventListener("click", (e) => {
-        if (!sidebar.contains(e.target) && !notifBtn.contains(e.target)) {
-          sidebar.classList.remove("active");
-        }
-      });
-    </script>
     <script src="assets/js/main.js"></script>
   </body>
 </html>

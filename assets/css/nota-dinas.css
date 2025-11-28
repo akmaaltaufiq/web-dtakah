@@ -1,0 +1,1480 @@
+/* =============================
+    NOTA DINAS - COMPLETE STYLES
+    ============================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, sans-serif;
+  background-color: #f5f5f5;
+  color: #1a1a1a;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* =============================
+    TOGGLE VIEW SYSTEM
+    ============================= */
+.table-view {
+  display: block;
+}
+
+.table-view.hidden {
+  display: none !important;
+}
+
+.form-view {
+  /* STATUS AWAL HARUS NONE */
+  display: none;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background-color: #f5f5f5;
+  z-index: 10;
+}
+
+.form-view.active {
+  display: block !important;
+}
+
+.disposisi-view {
+  display: none;
+}
+
+.disposisi-view.active {
+  display: block !important;
+}
+
+/* =============================
+    NEW PAGE HEADER LAYOUT
+    ============================= */
+.page-header-new {
+  margin-bottom: 30px;
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 20px 0;
+}
+
+/* CONTAINER BARU UNTUK LIST HEADER (SESUAI GAMBAR) */
+.header-controls-list {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* Jarak antara tombol dan filter group */
+  flex-wrap: wrap;
+}
+
+/* =============================
+    TAMBAH BARU BUTTON
+    ============================= */
+.btn-tambah {
+  background-color: #7f1d1d;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  flex-shrink: 0; /* Pastikan tombol tidak mengecil */
+}
+
+.btn-tambah:hover {
+  background-color: #991b1b;
+  box-shadow: 0 4px 12px rgba(127, 29, 29, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-tambah i {
+  font-size: 16px;
+}
+
+/* =============================
+    FILTERS GROUP (KOMPAK)
+    ============================= */
+
+/* Hapus .filters-group lama, ganti dengan tata letak horizontal tanpa border besar */
+.filters-group-compact {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+/* Untuk kompatibilitas dengan HTML lama (jika tidak diganti) */
+.filters-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  /* Ubah padding/background/border yang membuat kotak besar */
+  padding: 0;
+  background: transparent;
+  border: none;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.filter-icon-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  white-space: nowrap;
+  /* Hapus padding dan border dari versi sebelumnya */
+  padding-right: 0;
+  border-right: none;
+}
+
+.date-picker-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  color: #374151;
+  transition: all 0.2s;
+  white-space: nowrap;
+  height: 40px; /* Seragamkan tinggi */
+}
+
+.date-picker-btn:hover {
+  border-color: #9ca3af;
+  background-color: #f9fafb;
+}
+
+.date-picker-btn i {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.filter-group {
+  position: relative;
+}
+
+.filter-select {
+  padding: 8px 32px 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  appearance: none;
+  color: #374151;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  min-width: 140px;
+  transition: border-color 0.2s;
+  height: 40px; /* Seragamkan tinggi */
+}
+
+.filter-select:hover {
+  border-color: #9ca3af;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #7f1d1d;
+  box-shadow: 0 0 0 3px rgba(127, 29, 29, 0.1);
+}
+
+.search-filter {
+  position: relative;
+  flex: 1;
+  max-width: 250px; /* Dibuat lebih ramping */
+}
+
+.search-filter input {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  color: #374151;
+  height: 40px; /* Seragamkan tinggi */
+}
+
+.search-filter input::placeholder {
+  color: #9ca3af;
+}
+
+.search-filter input:focus {
+  outline: none;
+  border-color: #7f1d1d;
+  box-shadow: 0 0 0 3px rgba(127, 29, 29, 0.1);
+}
+
+.search-filter i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  font-size: 16px;
+}
+
+.reset-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  margin-left: 0; /* Pastikan tidak ada margin auto yang memisahkan */
+  border-radius: 6px;
+}
+
+.reset-filter:hover {
+  background: #fee2e2;
+}
+
+.reset-filter i {
+  font-size: 16px;
+}
+
+/* =============================
+    CALENDAR MODAL
+    ============================= */
+.calendar-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.calendar-modal.active {
+  display: flex;
+}
+
+.calendar-container {
+  background-color: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  max-width: 500px;
+  width: 90%;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.calendar-header h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.calendar-nav {
+  display: flex;
+  gap: 10px;
+}
+
+.calendar-nav button {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background-color: #f1f3f5;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #495057;
+  transition: all 0.2s ease;
+}
+
+.calendar-nav button:hover {
+  background-color: #e9ecef;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.calendar-weekday {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6c757d;
+  padding: 10px 0;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #6c757d;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  background: transparent;
+}
+
+.calendar-day:hover:not(.empty):not(.selected) {
+  background-color: #f8f9fa;
+}
+
+.calendar-day.selected {
+  background-color: #7f1d1d;
+  color: white;
+  font-weight: 600;
+}
+
+.calendar-day.today {
+  border: 2px solid #7f1d1d;
+  color: #7f1d1d;
+  font-weight: 600;
+}
+
+.calendar-day.empty {
+  cursor: default;
+}
+
+.calendar-footer {
+  text-align: center;
+}
+
+.calendar-apply-btn {
+  background-color: #7f1d1d;
+  color: white;
+  border: none;
+  padding: 12px 40px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.calendar-apply-btn:hover {
+  background-color: #991b1b;
+}
+
+/* =============================
+    TABLE
+    ============================= */
+.table-wrapper {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.table-nota {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-nota thead {
+  background-color: #f8f9fa;
+}
+
+.table-nota th {
+  padding: 16px 20px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  border-bottom: 1px solid #e9ecef;
+  white-space: nowrap;
+}
+
+.table-nota tbody tr {
+  border-bottom: 1px solid #f1f3f5;
+  transition: background-color 0.15s ease;
+}
+
+.table-nota tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.table-nota tbody tr:last-child {
+  border-bottom: none;
+}
+
+.table-nota td {
+  padding: 20px;
+  font-size: 14px;
+  color: #495057;
+  vertical-align: middle;
+}
+
+.table-nota tbody td[colspan] {
+  text-align: center;
+  padding: 60px 20px;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* =============================
+    ACTION BUTTONS
+    ============================= */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.btn-disposisi {
+  background-color: #3b5998;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-disposisi:hover {
+  background-color: #2d4373;
+  box-shadow: 0 2px 8px rgba(59, 89, 152, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+  transform: translateY(-1px);
+}
+
+/* =============================
+    TABLE FOOTER
+    ============================= */
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  border-top: 1px solid #f1f3f5;
+  background-color: #fafafa;
+}
+
+.table-footer span {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.pagination {
+  display: flex;
+  gap: 8px;
+}
+
+.pagination button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background-color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #495057;
+  transition: all 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #f8f9fa;
+  border-color: #7f1d1d;
+  color: #7f1d1d;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===================
+    FORM VIEW STYLES 
+    ================== */
+
+/* Kontainer form untuk tampilan penuh */
+.container-form {
+  /* PERUBAHAN: Lebarkan maksimum menjadi 1100px */
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 40px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  position: relative;
+  margin-bottom: 40px;
+}
+
+/* Header Form: Tombol Kembali & Judul */
+.form-header-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 50px;
+}
+
+.back-btn-form {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #dee2e6;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: #495057;
+  z-index: 10;
+}
+
+.back-btn-form:hover {
+  background-color: #f8f9fa;
+  border-color: #7f1d1d;
+  color: #7f1d1d;
+}
+
+/* Memastikan judul form terpusat */
+.form-main-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #7f1d1d;
+  margin: 0;
+  text-align: center;
+}
+
+/* =============================
+    PROGRESS STEPS
+    ============================= */
+.progress-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 100px;
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto 50px auto;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+/* Mengatur garis penghubung antar step */
+.step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: calc(100% + 15px);
+  top: 24px;
+  width: 80px;
+  height: 2px;
+  background: #e5e7eb;
+  z-index: 1;
+}
+
+.step.active:not(:last-child)::after {
+  background: #7f1d1d;
+}
+
+.step-number {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  z-index: 5;
+}
+
+.step.active .step-number {
+  background: #7f1d1d;
+  color: white;
+}
+
+.step-label {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.step.active .step-label {
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.step-line {
+  display: none;
+}
+
+/* =============================
+    STEP CONTENT
+    ============================= */
+.step-content {
+  display: none;
+}
+
+.step-content.active {
+  display: block;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f1f3f5;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group-half {
+  flex: 1;
+}
+
+.form-group-full {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #495057;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #7f1d1d;
+  box-shadow: 0 0 0 3px rgba(127, 29, 29, 0.1);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Menambahkan style untuk date input agar ikon kalender muncul */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  padding: 0;
+  margin: 0;
+  margin-right: 5px;
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+/* =============================
+    UPLOAD AREA
+    ============================= */
+.upload-area {
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-area:hover {
+  border-color: #7f1d1d;
+  background: #fef2f2;
+}
+
+.upload-area.has-file {
+  border-style: solid;
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.upload-content i {
+  font-size: 32px;
+  color: #9ca3af;
+}
+
+.upload-content p {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.file-info-display {
+  display: none;
+}
+
+.upload-area.has-file .upload-content {
+  display: none;
+}
+
+.upload-area.has-file .file-info-display {
+  display: block;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+.file-info i {
+  font-size: 32px;
+  color: #10b981;
+}
+
+.file-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.preview-label {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* =============================
+    FORM ACTIONS
+    ============================= */
+.form-actions-bottom {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid #f1f3f5;
+}
+
+.btn-next,
+.btn-submit {
+  background-color: #7f1d1d;
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-next:hover,
+.btn-submit:hover {
+  background-color: #991b1b;
+  box-shadow: 0 4px 12px rgba(127, 29, 29, 0.3);
+}
+
+.btn-secondary {
+  background-color: white;
+  color: #495057;
+  border: 1px solid #dee2e6;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+/* =============================
+    PREVIEW STYLES
+    ============================= */
+.preview-row {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 20px;
+  padding: 16px 0;
+  border-bottom: 1px solid #f1f3f5;
+}
+
+.preview-row:last-child {
+  border-bottom: none;
+}
+
+.preview-label {
+  font-weight: 600;
+  color: #495057;
+  font-size: 14px;
+}
+
+.preview-value {
+  color: #1a1a1a;
+  font-size: 14px;
+  word-wrap: break-word;
+}
+
+.preview-file {
+  margin: 30px 0;
+  text-align: left;
+}
+
+.btn-view-pdf {
+  background-color: white;
+  color: #7f1d1d;
+  border: 1px solid #dee2e6;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-view-pdf:hover {
+  background-color: #f8f9fa;
+  border-color: #7f1d1d;
+}
+
+/* =============================
+    SUCCESS POPUP STYLES
+    ============================= */
+.success-popup {
+  /* KUNCI: Gunakan display none sebagai default, tapi siapkan flex untuk centering */
+  display: none;
+
+  /* KUNCI: Fixed position untuk memastikan pop-up di tengah layar penuh */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 99999;
+}
+
+.success-popup.active {
+  /* SOLUSI: Aktifkan flex hanya saat class active ditambahkan */
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+
+.success-content {
+  background-color: white;
+  border-radius: 12px;
+  padding: 40px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.close-btn-popup {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 18px;
+  transition: color 0.2s;
+  /* Z-index tinggi agar responsif terhadap klik */
+  z-index: 10000;
+}
+
+.close-btn-popup:hover {
+  color: #1a1a1a;
+}
+
+.popup-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 20px 0;
+}
+
+.check-circle-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #10b981;
+  font-size: 40px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 15px auto;
+}
+
+.popup-note {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 20px;
+  margin-bottom: 0; /* Penting, hilangkan margin bawah dari tombol yang dihapus */
+}
+
+/* HILANGKAN SEMUA STYLE POPUP ACTIONS KARENA DIHAPUS DARI HTML */
+.popup-actions-grid,
+.btn-view-pdf-popup,
+.popup-actions,
+.popup-actions-grid .btn-secondary,
+.popup-actions-grid .btn-submit {
+  display: none !important;
+}
+
+/* =============================
+    DISPOSISI VIEW
+    ============================= */
+.disposisi-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.disposisi-header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #dee2e6;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: #495057;
+}
+
+.back-btn:hover {
+  background-color: #f8f9fa;
+  border-color: #7f1d1d;
+  color: #7f1d1d;
+}
+
+.disposisi-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #dee2e6;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: #495057;
+}
+
+.icon-btn:hover {
+  background-color: #f8f9fa;
+  border-color: #7f1d1d;
+  color: #7f1d1d;
+}
+
+.disposisi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  margin-bottom: 25px;
+}
+
+.data-surat-card,
+.preview-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.card-header {
+  background-color: #7f1d1d;
+  color: white;
+  padding: 15px 20px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.data-row {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 15px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f3f5;
+}
+
+.data-row:last-child {
+  border-bottom: none;
+}
+
+.data-label {
+  font-weight: 600;
+  color: #495057;
+  font-size: 14px;
+}
+
+.data-value {
+  color: #6c757d;
+  font-size: 14px;
+  word-wrap: break-word;
+}
+
+.preview-card {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.preview-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.preview-navigation {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.nav-arrow {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #dee2e6;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: #495057;
+}
+
+.nav-arrow:hover {
+  background-color: #f8f9fa;
+  border-color: #7f1d1d;
+  color: #7f1d1d;
+}
+
+.disposisi-action-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.disposisi-action-header {
+  background-color: #7f1d1d;
+  color: white;
+  padding: 15px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.disposisi-options {
+  padding: 25px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px 40px;
+}
+
+.disposisi-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.disposisi-checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #7f1d1d;
+}
+
+.disposisi-checkbox label {
+  font-size: 14px;
+  color: #495057;
+  cursor: pointer;
+  user-select: none;
+}
+
+.disposisi-checkbox:hover label {
+  color: #1a1a1a;
+}
+
+.disposisi-form {
+  padding: 0 25px 25px 25px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #495057;
+  background-color: white;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23495057' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 40px;
+  transition: border-color 0.2s;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: #7f1d1d;
+  box-shadow: 0 0 0 3px rgba(127, 29, 29, 0.1);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 25px 25px 25px;
+}
+
+.btn-kirim {
+  background-color: #a91d1d;
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-kirim:hover {
+  background-color: #8b1818;
+  box-shadow: 0 4px 12px rgba(169, 29, 29, 0.3);
+}
+
+/* =============================
+    RESPONSIVE
+    ============================= */
+@media (max-width: 1024px) {
+  .disposisi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .data-row {
+    grid-template-columns: 130px 1fr;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  /* Penyesuaian untuk header-controls-list di mobile/tablet */
+  .header-controls-list {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-tambah {
+    width: 100%;
+  }
+
+  .filters-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 15px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .header-controls {
+    width: 100%;
+  }
+
+  .btn-tambah {
+    width: 100%;
+  }
+
+  /* REVISI FILTER GROUP DI MOBILE */
+  .header-controls-list {
+    /* Mengubah tata letak agar tombol dan filter berada di baris terpisah */
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters-group-compact,
+  .filters-group {
+    flex-wrap: wrap; /* Izinkan filter wrap di mobile */
+    justify-content: space-between;
+    padding: 0; /* Pastikan padding tidak terlalu besar */
+  }
+
+  .filter-icon-btn {
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 12px;
+    width: 100%;
+  }
+
+  .date-picker-btn,
+  .filter-select {
+    width: 48%; /* Bagi 2 kolom untuk date dan sifat */
+    flex-grow: 1;
+  }
+
+  .search-filter {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .reset-filter {
+    margin-left: 0;
+    justify-content: center;
+  }
+  /* END REVISI FILTER GROUP DI MOBILE */
+
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  .table-nota {
+    min-width: 900px;
+  }
+
+  /* Penyesuaian form view di mobile */
+  .container-form {
+    padding: 20px 15px;
+    box-shadow: none;
+  }
+
+  .form-header-top {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    margin-bottom: 40px;
+    position: relative;
+  }
+
+  .back-btn-form {
+    position: static;
+    order: 1;
+  }
+
+  .form-main-title {
+    font-size: 22px;
+    order: 2;
+    text-align: left;
+  }
+
+  .progress-steps {
+    gap: 10px;
+  }
+
+  .step:not(:last-child)::after {
+    left: calc(100% + 5px);
+    width: 40px;
+  }
+
+  .step-number {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .step-label {
+    font-size: 12px;
+  }
+
+  .step-line {
+    width: 40px;
+  }
+
+  .disposisi-title {
+    font-size: 20px;
+  }
+
+  .data-row {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .data-label {
+    font-weight: 700;
+  }
+
+  .disposisi-options {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .preview-row {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .form-actions-bottom {
+    flex-direction: column;
+  }
+
+  .btn-next,
+  .btn-submit,
+  .btn-secondary {
+    width: 100%;
+  }
+}

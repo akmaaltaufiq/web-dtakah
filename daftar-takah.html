@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
     <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/daftar-takah.css" />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
@@ -17,34 +18,8 @@
     <!-- Main content -->
     <div class="main-content">
       <!-- Header -->
-        <div class="content-header">
-        <div class="header-left">
-          <div class="logo-emblem"></div>
-          <div class="header-title">Tata Naskah Digital Kementerian Pertahanan Republik Indonesia</div>
-        </div>
-          <div class="header-right">
-            <button class="header-btn">
-              <i class="bi bi-bell-fill"></i>
-              <span class="notification-badge">4</span>
-            </button>
-            <div class="language-selector">
-              <img src="https://flagcdn.com/w40/id.png" alt="Indonesia">
-              <span style="font-size: 14px; font-weight: 500;">Indonesia</span>
-              <i class="bi bi-chevron-down" style="font-size: 12px;"></i>
-            </div>
-            <div class="user-info">
-              <div class="user-details">
-                <div class="user-details-name">Staff TU Puslapbinkunhan</div>
-                <div class="user-details-role">Admin</div>
-              </div>
-              <div class="user-avatar-header">
-                <i class="bi bi-person-fill"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-       <!-- Page content -->
+      <div id="header-placeholder"></div>
+      <!-- Page content -->
       <div class="content-container">
         <div class="takah-container">
           <h1 class="takah-title">Daftar Takah</h1>
@@ -61,7 +36,12 @@
 
             <div class="search-group">
               <div class="search-input-wrapper">
-                <input type="text" class="search-input" placeholder="Cari Daftar Takah" id="searchTakah">
+                <input
+                  type="text"
+                  class="search-input"
+                  placeholder="Cari Daftar Takah"
+                  id="searchTakah"
+                />
               </div>
               <button class="btn-search">
                 <i class="bi bi-search"></i>
@@ -80,7 +60,9 @@
             <div class="takah-card" data-year="2024">
               <div class="card-header">
                 <div class="card-number">TKH/01/X/2025</div>
-                <div class="card-title">Surat Pemberitahuan Kegiatan Minggu Bela Negara</div>
+                <div class="card-title">
+                  Surat Pemberitahuan Kegiatan Minggu Bela Negara
+                </div>
               </div>
               <div class="card-body">
                 <div class="card-description">
@@ -118,7 +100,8 @@
               </div>
               <div class="card-body">
                 <div class="card-description">
-                  Menyampaikan informasi realisasi penggunaan anggaran untuk transparansi
+                  Menyampaikan informasi realisasi penggunaan anggaran untuk
+                  transparansi
                 </div>
                 <div class="card-footer">
                   <span class="badge badge-umum">Umum</span>
@@ -131,11 +114,14 @@
             <div class="takah-card" data-year="2022">
               <div class="card-header">
                 <div class="card-number">TKH/04/X/2025</div>
-                <div class="card-title">Pemberitahuan Pembaharuan Kebijakan</div>
+                <div class="card-title">
+                  Pemberitahuan Pembaharuan Kebijakan
+                </div>
               </div>
               <div class="card-body">
                 <div class="card-description">
-                  Menginformasikan perubahan aturan, prosedur, atau kebijakan yang berlaku.
+                  Menginformasikan perubahan aturan, prosedur, atau kebijakan
+                  yang berlaku.
                 </div>
                 <div class="card-footer">
                   <span class="badge badge-umum">Umum</span>
@@ -152,7 +138,8 @@
               </div>
               <div class="card-body">
                 <div class="card-description">
-                  Mengingatkan divisi Banglola untuk menyerahkan dan melengkapi dokumen.
+                  Mengingatkan divisi Banglola untuk menyerahkan dan melengkapi
+                  dokumen.
                 </div>
                 <div class="card-footer">
                   <span class="badge badge-umum">Umum</span>
@@ -182,21 +169,11 @@
       </div>
 
       <!-- Footer -->
-      <footer class="content-footer">
-        <p>
-          © 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik
-          Indonesia
-        </p>
-        <div class="footer-links">
-          <a href="#">About</a>
-          <a href="#">Support</a>
-          <a href="#">Contact Us</a>
-        </div>
-      </footer>
+      <div id="footer-placeholder"></div>
     </div>
 
-
     <!-- JS -->
-    <script src="assets/js/main.js"></script>
   </body>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/database.js"></script>
 </html>
