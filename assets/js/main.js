@@ -11,10 +11,17 @@ document.addEventListener("DOMContentLoaded", () => {
   // LOAD SWEETALERT2 SECARA DINAMIS
   // =============================
   window.loadSwal = function (callback) {
-    if (window.Swal) return callback();
+    if (window.Swal) {
+      console.log("✅ SweetAlert2 already loaded");
+      return callback();
+    }
+    console.log("🔄 Loading SweetAlert2...");
     const script = document.createElement("script");
     script.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11";
-    script.onload = callback;
+    script.onload = () => {
+      console.log("✅ SweetAlert2 loaded successfully");
+      callback();
+    };
     document.head.appendChild(script);
   };
 
@@ -200,9 +207,11 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // =============================
-  // SIDEBAR & LOGOUT LOGIC
+  // SIDEBAR & LOGOUT LOGIC - FIXED
   // =============================
   window.attachSidebarEvents = function () {
+    console.log("🔧 Attaching sidebar events...");
+
     document.querySelectorAll(".menu-dropdown").forEach((dropdown) => {
       dropdown
         .querySelector(".menu-dropdown-toggle")
@@ -212,12 +221,43 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    const logoutLink = document.getElementById("logoutBtn");
+    // PERBAIKAN UTAMA: Cari logout button dengan berbagai cara
+    let logoutLink = document.getElementById("logoutLink");
+
+    if (!logoutLink) {
+      logoutLink = document.getElementById("logoutBtn");
+    }
+
+    if (!logoutLink) {
+      // Cari berdasarkan selector lainnya
+      logoutLink = document.querySelector('a[href="#"][id*="logout"]');
+    }
+
+    if (!logoutLink) {
+      logoutLink = document.querySelector(
+        ".menu-link:has(.bi-box-arrow-right)"
+      );
+    }
+
     if (logoutLink) {
-      logoutLink.addEventListener("click", (e) => {
+      console.log("✅ Logout button found:", logoutLink);
+
+      // Hapus event listener lama jika ada
+      const newLogoutLink = logoutLink.cloneNode(true);
+      logoutLink.parentNode.replaceChild(newLogoutLink, logoutLink);
+
+      // Tambah event listener baru
+      newLogoutLink.addEventListener("click", function (e) {
         e.preventDefault();
-        window.loadSwal(window.attachLogoutEvent);
+        e.stopPropagation();
+        console.log("🚪 Logout clicked, loading SweetAlert2...");
+        window.loadSwal(() => {
+          console.log("✅ SweetAlert2 loaded, showing logout dialog...");
+          window.showLogoutDialog();
+        });
       });
+    } else {
+      console.warn("⚠️ Logout button NOT found in sidebar");
     }
   };
 
@@ -244,45 +284,65 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
+  // FUNGSI BARU: Dialog logout yang terpisah
+  window.showLogoutDialog = function () {
+    console.log("🔓 Showing logout dialog...");
+
+    if (!window.Swal) {
+      console.error("❌ SweetAlert2 not loaded!");
+      if (confirm("Yakin ingin logout?")) {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = "login.html";
+      }
+      return;
+    }
+
+    Swal.fire({
+      title: "Yakin ingin logout?",
+      text: "Anda akan keluar dari sesi saat ini.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Ya, logout",
+      cancelButtonText: "Batal",
+      reverseButtons: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("✅ User confirmed logout");
+        localStorage.clear();
+        sessionStorage.clear();
+
+        Swal.fire({
+          title: "Logout berhasil",
+          text: "Anda akan diarahkan ke halaman login.",
+          icon: "success",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 1600);
+      } else {
+        console.log("❌ User cancelled logout");
+      }
+    });
+  };
+
+  // Legacy function untuk backward compatibility
   window.attachLogoutEvent = function () {
-    const logoutLink = document.getElementById("logoutBtn");
-    if (!logoutLink) return;
-
-    logoutLink.onclick = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      Swal.fire({
-        title: "Yakin ingin logout?",
-        text: "Anda akan keluar dari sesi saat ini.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Ya, logout",
-        cancelButtonText: "Batal",
-        reverseButtons: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          localStorage.clear();
-          sessionStorage.clear();
-          Swal.fire({
-            title: "Logout berhasil",
-            text: "Anda akan diarahkan ke halaman login.",
-            icon: "success",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          setTimeout(() => (window.location.href = "login.html"), 1600);
-        }
-      });
-    };
+    console.log("⚠️ attachLogoutEvent called (legacy)");
+    window.showLogoutDialog();
   };
 
   // =============================
   // LOAD INCLUDES DINAMIS
   // =============================
   window.loadIncludes = async function () {
+    console.log("🔄 Loading includes...");
+
     await fetch("assets/includes/sidebar.html")
       .then((res) => res.text())
       .then((html) => {
@@ -291,10 +351,16 @@ document.addEventListener("DOMContentLoaded", () => {
         );
         if (sidebarPlaceholder) {
           sidebarPlaceholder.innerHTML = html;
-          window.attachSidebarEvents();
-          window.highlightActiveMenu();
+          console.log("✅ Sidebar loaded");
+
+          // Setup events setelah sidebar dimuat
+          setTimeout(() => {
+            window.attachSidebarEvents();
+            window.highlightActiveMenu();
+          }, 100);
         }
-      });
+      })
+      .catch((err) => console.error("❌ Error loading sidebar:", err));
 
     const isDashboard =
       window.location.pathname.endsWith("index.html") ||
@@ -311,7 +377,8 @@ document.addEventListener("DOMContentLoaded", () => {
             headerPlaceholder.innerHTML = html;
             attachHeaderEvents();
           }
-        });
+        })
+        .catch((err) => console.error("❌ Error loading header:", err));
 
       await fetch("assets/includes/footer.html")
         .then((res) => res.text())
@@ -321,12 +388,15 @@ document.addEventListener("DOMContentLoaded", () => {
           if (footerPlaceholder) {
             footerPlaceholder.innerHTML = html;
           }
-        });
+        })
+        .catch((err) => console.error("❌ Error loading footer:", err));
     }
 
     // Trigger page-specific initialization
     if (window.initializePage) {
-      window.initializePage();
+      setTimeout(() => {
+        window.initializePage();
+      }, 150);
     }
   };
 
@@ -336,7 +406,6 @@ document.addEventListener("DOMContentLoaded", () => {
   window.handleFileUpload = function (e) {
     const file = e.target.files[0];
     if (!file) {
-      // Hapus tampilan jika file dibatalkan
       const uploadArea = e.target.closest(".upload-area");
       if (uploadArea) uploadArea.classList.remove("has-file");
       window.uploadedFile = null;
@@ -373,7 +442,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Menyimpan file secara global
     window.uploadedFile = file;
 
     const uploadArea = e.target.closest(".upload-area");
@@ -398,4 +466,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Start loading includes
   loadIncludes();
+
+  console.log("✅ Main.js initialization complete");
 });

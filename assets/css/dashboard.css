@@ -23,6 +23,16 @@
   min-height: 100vh;
 }
 
+.main-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-container {
+  flex: 1 0 auto; /* Grow untuk push footer */
+}
+
 /* Hamburger Menu Button */
 .menu-toggle-btn {
   border: none;
@@ -347,7 +357,6 @@
 
 .progress-label.blue {
   color: #1565c0;
-  
 }
 
 .progress-label.red {
@@ -600,7 +609,6 @@
   transition: width 0.8s ease;
 }
 
-
 /* Monitoring Section */
 .monitoring-section {
   background: white;
@@ -709,10 +717,8 @@
 
 /* Footer */
 .content-footer {
-  text-align: center;
-  padding: 24px;
-  color: #666;
-  font-size: 13px;
+  margin-top: auto; /* Push ke bawah otomatis */
+  flex-shrink: 0;
 }
 
 .footer-links {

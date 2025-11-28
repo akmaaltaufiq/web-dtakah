@@ -1,3 +1,9 @@
+.content-container {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 60px);
+}
+
 /* Surat Masuk Card */
 .surat-masuk-card {
   background: #fff;
@@ -730,6 +736,13 @@
 /* =============================
    VIEW MANAGEMENT
    ============================= */
+.list-view-container,
+.form-view-container,
+.detail-preview-view,
+.disposisi-view {
+  flex: 1 0 auto; /* Grow untuk push footer */
+}
+
 .list-view-container.hidden {
   display: none;
 }
@@ -740,6 +753,11 @@
 
 .form-view-container.active {
   display: block;
+}
+
+#footer-placeholder {
+  margin-top: auto; /* Push ke bawah */
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 /* =============================
