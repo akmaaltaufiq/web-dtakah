@@ -29,42 +29,6 @@
       </div>
     </div>
 
-    <!-- Tambah di bawah logo, sebelum form login -->
-    <div style="text-align: center; margin-bottom: 15px">
-      <button
-        onclick="forceLogout()"
-        style="
-          background: #dc2626;
-          color: white;
-          border: none;
-          padding: 8px 16px;
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 14px;
-        "
-      >
-        <i class="bi bi-power"></i> Force Logout (Jika Stuck)
-      </button>
-    </div>
-
-    <script>
-      function forceLogout() {
-        if (window.auth) {
-          auth.signOut().then(() => {
-            sessionStorage.clear();
-            localStorage.clear();
-            alert("✅ Logout berhasil! Silakan login.");
-            location.reload();
-          });
-        } else {
-          sessionStorage.clear();
-          localStorage.clear();
-          alert("✅ Session cleared! Silakan login.");
-          location.reload();
-        }
-      }
-    </script>
-
     <!-- Login Page -->
     <div class="login-page">
       <div class="login-container">
