@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charset="utf-8" />
+    <title>Dashboard - D-Takah Kemenhan</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -12,14 +13,12 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
     />
     <link rel="stylesheet" href="assets/css/style.css" />
-    <link rel="stylesheet" href="assets/css/styleguide.css" />
     <link rel="stylesheet" href="assets/css/dashboard.css" />
   </head>
   <body>
     <div class="dashboard-overview">
-      <!-- Sidebar -->
+      <!-- Sidebar placeholder -->
       <div id="sidebar-placeholder"></div>
-
       <!-- Main Content -->
       <div class="main-content">
         <!-- Header -->
@@ -46,8 +45,13 @@
               <i class="bi bi-bell-fill"></i>
               <span class="notification-badge">4</span>
             </button>
+            <div class="user-info" id="userInfoHeader">
+              <i class="bi bi-person-circle"></i>
+              <span id="userNameDisplay">Loading...</span>
+            </div>
           </div>
         </div>
+
         <!-- Content Container -->
         <div class="content-container">
           <!-- Stats Cards -->
@@ -55,7 +59,7 @@
             <div class="stat-card blue">
               <div class="stat-card-content">
                 <div class="stat-card-title">Surat Masuk</div>
-                <div class="stat-card-value">253</div>
+                <div class="stat-card-value" id="statSuratMasuk">0</div>
                 <div class="stat-card-change">+11</div>
               </div>
               <div class="stat-card-icon">
@@ -65,7 +69,7 @@
             <div class="stat-card red">
               <div class="stat-card-content">
                 <div class="stat-card-title">Surat Keluar</div>
-                <div class="stat-card-value">61</div>
+                <div class="stat-card-value" id="statSuratKeluar">0</div>
                 <div class="stat-card-change">+3</div>
               </div>
               <div class="stat-card-icon">
@@ -75,7 +79,7 @@
             <div class="stat-card maroon">
               <div class="stat-card-content">
                 <div class="stat-card-title">Arsip</div>
-                <div class="stat-card-value">8</div>
+                <div class="stat-card-value" id="statArsip">0</div>
               </div>
               <div class="stat-card-icon">
                 <i class="bi bi-folder-fill"></i>
@@ -84,7 +88,7 @@
             <div class="stat-card light-blue">
               <div class="stat-card-content">
                 <div class="stat-card-title">Surat Nota Dinas</div>
-                <div class="stat-card-value">132</div>
+                <div class="stat-card-value" id="statNotaDinas">0</div>
                 <div class="stat-card-change">+5</div>
               </div>
               <div class="stat-card-icon">
@@ -133,148 +137,7 @@
             </div>
           </div>
 
-          <!-- Summary Information Document -->
-          <div class="chart-section">
-            <div class="chart-header">
-              <h3 class="chart-title">Summary Information Document</h3>
-              <div class="chart-filter">
-                <div class="chart-legend">
-                  <div class="legend-color"></div>
-                  <span>Jumlah Surat</span>
-                </div>
-                <select class="filter-dropdown">
-                  <option>Week</option>
-                  <option>Month</option>
-                  <option>Year</option>
-                </select>
-                <button class="header-btn">
-                  <i class="bi bi-three-dots"></i>
-                </button>
-              </div>
-            </div>
-            <div class="chart-content">
-              <div class="bar-chart">
-                <div class="chart-row">
-                  <div class="chart-label">Amanat/Sambutan</div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 60%"></div>
-                  </div>
-                </div>
-                <div class="chart-row">
-                  <div class="chart-label">Ijazah/Surat Tanda Lulus Ujian</div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 45%"></div>
-                  </div>
-                </div>
-                <div class="chart-row">
-                  <div class="chart-label">Keputusan</div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 75%"></div>
-                  </div>
-                </div>
-                <div class="chart-row">
-                  <div class="chart-label">Laporan/Memorandum</div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 35%"></div>
-                  </div>
-                </div>
-                <div class="chart-row">
-                  <div class="chart-label">Notulen</div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 15%"></div>
-                  </div>
-                </div>
-                <div class="chart-row">
-                  <div class="chart-label">Peraturan Direktur Jenderal</div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 55%"></div>
-                  </div>
-                </div>
-                <div class="chart-row">
-                  <div class="chart-label">Peraturan Kepala Badan</div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 40%"></div>
-                  </div>
-                </div>
-                <div class="chart-row">
-                  <div class="chart-label">
-                    Peraturan Rektor Universitas Pertahanan
-                  </div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 25%"></div>
-                  </div>
-                </div>
-                <div class="chart-row">
-                  <div class="chart-label">Perjanjian Kerja Sama</div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 70%"></div>
-                  </div>
-                </div>
-                <div class="chart-row">
-                  <div class="chart-label">Piagam Penghargaan</div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 30%"></div>
-                  </div>
-                </div>
-                <div class="chart-row">
-                  <div class="chart-label">Sertifikat</div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 20%"></div>
-                  </div>
-                </div>
-                <div class="chart-row">
-                  <div class="chart-label">Surat Berbahasa Asing</div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 50%"></div>
-                  </div>
-                </div>
-                <div class="chart-row">
-                  <div class="chart-label">Surat Edaran</div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 65%"></div>
-                  </div>
-                </div>
-                <div class="chart-row">
-                  <div class="chart-label">Surat Izin Cuti</div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 40%"></div>
-                  </div>
-                </div>
-                <div class="chart-row">
-                  <div class="chart-label">Surat Keterangan</div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 35%"></div>
-                  </div>
-                </div>
-                <div class="chart-row">
-                  <div class="chart-label">Surat Pengantar</div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 45%"></div>
-                  </div>
-                </div>
-                <div class="chart-row">
-                  <div class="chart-label">Surat Pernyataan</div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 55%"></div>
-                  </div>
-                </div>
-                <div class="chart-row">
-                  <div class="chart-label">Surat Tugas</div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 30%"></div>
-                  </div>
-                </div>
-                <div class="chart-row">
-                  <div class="chart-label">Undangan</div>
-                  <div class="chart-bar-container">
-                    <div class="chart-bar" style="width: 40%"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Monitoring Surat Table -->
+          <!-- Monitoring Surat Table (DARI FIREBASE) -->
           <div class="monitoring-section">
             <div class="monitoring-header">
               <h3 class="monitoring-title">Monitoring Surat</h3>
@@ -304,73 +167,11 @@
                   <th>Status</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="monitoringTableBody">
                 <tr>
-                  <td>
-                    <span class="organization-icon">
-                      <i class="bi bi-person-circle"></i>
-                    </span>
-                    UPN Veteran Jakarta
+                  <td colspan="6" style="text-align: center; padding: 20px">
+                    Loading data...
                   </td>
-                  <td>001/VII/2025/Permohonan/Magang</td>
-                  <td>B/350/VII/2025</td>
-                  <td>Kepala Bidang Banglola Sisfohan</td>
-                  <td>Pengajuan Magang Mahasiswa Prodi Sistem Informasi</td>
-                  <td>
-                    <span class="status-badge siap-kirim">Siap Kirim</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <span class="organization-icon">
-                      <i class="bi bi-person-circle"></i>
-                    </span>
-                    Kapushansiber
-                  </td>
-                  <td>002/VII/2025/Kabid Banglola</td>
-                  <td>B/10/XII/2025</td>
-                  <td>Kabid APK</td>
-                  <td>Percobaan DWP</td>
-                  <td><span class="status-badge selesai">Selesai</span></td>
-                </tr>
-                <tr>
-                  <td>
-                    <span class="organization-icon">
-                      <i class="bi bi-person-circle"></i>
-                    </span>
-                    Banglola Sisfohan
-                  </td>
-                  <td>015/VII/2025/Kapushansiber</td>
-                  <td>B/12/X/2025</td>
-                  <td>Kasubbid Infosan</td>
-                  <td>Perbaikan Jaringan</td>
-                  <td><span class="status-badge pending">Pending</span></td>
-                </tr>
-                <tr>
-                  <td>
-                    <span class="organization-icon">
-                      <i class="bi bi-person-circle"></i>
-                    </span>
-                    Kasubbag TU
-                  </td>
-                  <td>022/XII/2025/Kapusbanglola</td>
-                  <td>B/24/IX/2025</td>
-                  <td>Kasubbid Banglola</td>
-                  <td>Tes Uji Coba</td>
-                  <td><span class="status-badge disetujui">Disetujui</span></td>
-                </tr>
-                <tr>
-                  <td>
-                    <span class="organization-icon">
-                      <i class="bi bi-person-circle"></i>
-                    </span>
-                    Kasubbag MSI
-                  </td>
-                  <td>030/III/2025/KasubbagTU</td>
-                  <td>B/26/X/2025</td>
-                  <td>Kabid APK</td>
-                  <td>Tes Uji Coba</td>
-                  <td><span class="status-badge ditolak">Ditolak</span></td>
                 </tr>
               </tbody>
             </table>
@@ -380,24 +181,142 @@
           </div>
 
           <!-- Footer -->
-          <div class="content-footer">
-            <p>
-              © 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik
-              Indonesia
-            </p>
-            <div class="footer-links">
-              <a href="#">About</a>
-              <a href="#">Support</a>
-              <a href="#">Contact Us</a>
-            </div>
-          </div>
+          <div id="footer-placeholder"></div>
         </div>
       </div>
     </div>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <!-- Firebase Config -->
+    <script src="assets/js/firebase-config.js"></script>
+
+    <!-- Auth Functions -->
+    <script src="assets/js/auth.js"></script>
+
+    <!-- Main Functions -->
     <script src="assets/js/main.js"></script>
+
+    <!-- Database Functions -->
     <script src="assets/js/database.js"></script>
+
+    <!-- Page Protection & Initialization -->
+    <script>
+      console.log("📄 Dashboard page loaded");
+
+      // PROTECT PAGE - HANYA ADMIN
+      checkUserRole(["admin"])
+        .then((userData) => {
+          console.log("✅ Access granted:", userData);
+
+          // Tampilkan nama user di header
+          const userNameDisplay = document.getElementById("userNameDisplay");
+          if (userNameDisplay) {
+            userNameDisplay.textContent = userData.nama || userData.email;
+          }
+
+          window.loadIncludes();
+          // Load dashboard data
+          loadDashboardStats();
+        })
+        .catch((error) => {
+          console.error("❌ Access denied:", error);
+        });
+
+      // Load Dashboard Statistics dari Firebase
+      function loadDashboardStats() {
+        console.log("📊 Loading dashboard statistics...");
+
+        // Ini akan diganti dengan Firebase query nanti
+        // Sementara pakai fungsi yang sudah ada dari database.js
+        if (typeof KemhanDatabase !== "undefined") {
+          const stats = KemhanDatabase.getStatistics();
+
+          document.getElementById("statSuratMasuk").textContent =
+            stats.totalMasuk;
+          document.getElementById("statSuratKeluar").textContent =
+            stats.totalKeluar;
+          document.getElementById("statNotaDinas").textContent =
+            stats.totalNotaDinas;
+          document.getElementById("statArsip").textContent = stats.totalDeleted;
+
+          // Load monitoring table (5 terbaru)
+          loadMonitoringTable();
+        }
+      }
+
+      // Load Monitoring Table
+      function loadMonitoringTable() {
+        const tbody = document.getElementById("monitoringTableBody");
+
+        if (!tbody) return;
+
+        // Get latest 5 surat (combine masuk, keluar, nota dinas)
+        const allSurat = [];
+
+        if (typeof KemhanDatabase !== "undefined") {
+          const masuk = KemhanDatabase.getSuratMasuk().slice(0, 3);
+          const keluar = KemhanDatabase.getSuratKeluar().slice(0, 1);
+          const notaDinas = KemhanDatabase.getNotaDinas().slice(0, 1);
+
+          allSurat.push(...masuk, ...keluar, ...notaDinas);
+        }
+
+        if (allSurat.length === 0) {
+          tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 20px; color: #6b7280;">
+              Belum ada data surat
+            </td>
+          </tr>
+        `;
+          return;
+        }
+
+        tbody.innerHTML = allSurat
+          .map(
+            (surat) => `
+        <tr>
+          <td>
+            <span class="organization-icon">
+              <i class="bi bi-person-circle"></i>
+            </span>
+            ${surat.dari || surat.pengirim || "N/A"}
+          </td>
+          <td>${surat.noAgenda || "-"}</td>
+          <td>${surat.noSurat || surat.noNaskah || "N/A"}</td>
+          <td>${surat.kepada || surat.tujuan || "N/A"}</td>
+          <td>${surat.perihal || "N/A"}</td>
+          <td>
+            <span class="status-badge ${getStatusClass(surat.status)}">
+              ${surat.status || "Pending"}
+            </span>
+          </td>
+        </tr>
+      `
+          )
+          .join("");
+      }
+
+      function getStatusClass(status) {
+        const statusMap = {
+          Selesai: "selesai",
+          Proses: "proses",
+          Pending: "pending",
+          Ditolak: "ditolak",
+          Disetujui: "disetujui",
+          "Siap Kirim": "siap-kirim",
+        };
+        return statusMap[status] || "pending";
+      }
+
+      console.log("✅ Dashboard page scripts loaded");
+    </script>
   </body>
 </html>

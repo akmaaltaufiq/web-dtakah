@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <title>Dashboard Kapus - D-Takah Kemenhan</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/styleguide.css" />
+    <link rel="stylesheet" href="assets/css/dashboard.css" />
+    <link rel="stylesheet" href="assets/css/dashboard-kapus.css" />
+  </head>
+  <body>
+    <div class="dashboard-overview">
+      <!-- Sidebar -->
+      <div id="sidebar-placeholder"></div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Header -->
+        <div class="content-header">
+          <div class="header-left">
+            <i class="bi bi-list"></i>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item active">Kepala Pusat</li>
+              </ol>
+            </nav>
+          </div>
+          <div class="header-right">
+            <button class="header-btn notification">
+              <i class="bi bi-bell-fill"></i>
+              <span class="notification-badge" id="notifBadge">0</span>
+            </button>
+            <div class="user-info" id="userInfoHeader">
+              <i class="bi bi-person-circle"></i>
+              <span id="userNameDisplay">Loading...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content Container -->
+        <div class="content-container">
+          <!-- Welcome Header -->
+          <div class="kapus-header">
+            <h1>Selamat Datang, <span id="kapusName">Kepala Pusat</span></h1>
+            <p>Dashboard Persetujuan & Disposisi Surat</p>
+          </div>
+
+          <!-- Stats Cards -->
+          <div class="stats-cards">
+            <div class="stat-card blue">
+              <div class="stat-card-content">
+                <div class="stat-card-title">Surat Masuk</div>
+                <div class="stat-card-value" id="statSuratMasuk">0</div>
+                <div class="stat-card-subtitle">Menunggu Tindakan</div>
+              </div>
+              <div class="stat-card-icon">
+                <i class="bi bi-envelope-fill"></i>
+              </div>
+            </div>
+            <div class="stat-card red">
+              <div class="stat-card-content">
+                <div class="stat-card-title">Surat Keluar</div>
+                <div class="stat-card-value" id="statSuratKeluar">0</div>
+                <div class="stat-card-subtitle">Menunggu Tindakan</div>
+              </div>
+              <div class="stat-card-icon">
+                <i class="bi bi-send-fill"></i>
+              </div>
+            </div>
+            <div class="stat-card light-blue">
+              <div class="stat-card-content">
+                <div class="stat-card-title">Nota Dinas</div>
+                <div class="stat-card-value" id="statNotaDinas">0</div>
+                <div class="stat-card-subtitle">Menunggu Tindakan</div>
+              </div>
+              <div class="stat-card-icon">
+                <i class="bi bi-file-text-fill"></i>
+              </div>
+            </div>
+            <div class="stat-card maroon">
+              <div class="stat-card-content">
+                <div class="stat-card-title">Total Disetujui</div>
+                <div class="stat-card-value" id="statDisetujui">0</div>
+                <div class="stat-card-subtitle">Bulan Ini</div>
+              </div>
+              <div class="stat-card-icon">
+                <i class="bi bi-check-circle-fill"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Surat Perlu Tindakan -->
+          <div class="action-card">
+            <div class="action-card-header">
+              <div class="action-card-title">
+                <div class="action-card-icon icon-masuk">
+                  <i class="bi bi-envelope-fill"></i>
+                </div>
+                Surat Masuk Perlu Tindakan
+              </div>
+              <span class="badge-count" id="badgeSuratMasuk">0</span>
+            </div>
+            <div id="suratMasukList">
+              <div class="empty-state">
+                <i class="bi bi-inbox"></i>
+                <p>Tidak ada surat masuk yang perlu ditindaklanjuti</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Surat Keluar Perlu Approval -->
+          <div class="action-card">
+            <div class="action-card-header">
+              <div class="action-card-title">
+                <div class="action-card-icon icon-keluar">
+                  <i class="bi bi-send-fill"></i>
+                </div>
+                Surat Keluar Perlu Persetujuan
+              </div>
+              <span class="badge-count" id="badgeSuratKeluar">0</span>
+            </div>
+            <div id="suratKeluarList">
+              <div class="empty-state">
+                <i class="bi bi-send"></i>
+                <p>Tidak ada surat keluar yang perlu disetujui</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nota Dinas Perlu Approval -->
+          <div class="action-card">
+            <div class="action-card-header">
+              <div class="action-card-title">
+                <div class="action-card-icon icon-notdin">
+                  <i class="bi bi-file-text-fill"></i>
+                </div>
+                Nota Dinas Perlu Persetujuan
+              </div>
+              <span class="badge-count" id="badgeNotaDinas">0</span>
+            </div>
+            <div id="notaDinasList">
+              <div class="empty-state">
+                <i class="bi bi-file-text"></i>
+                <p>Tidak ada nota dinas yang perlu disetujui</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="content-footer">
+            <p>
+              © 2025 Pusat Data dan Informasi Kementerian Pertahanan Republik
+              Indonesia
+            </p>
+            <div class="footer-links">
+              <a href="#">About</a>
+              <a href="#">Support</a>
+              <a href="#">Contact Us</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Disposisi -->
+    <div class="modal fade" id="disposisiModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Buat Disposisi</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="disposisiForm">
+              <input type="hidden" id="disposisiSuratId" />
+              <input type="hidden" id="disposisiSuratType" />
+
+              <div class="mb-3">
+                <label class="form-label">Tujuan Disposisi *</label>
+                <select class="form-select" id="disposisiKepada" required>
+                  <option value="">-- Pilih Tujuan --</option>
+                  <option value="Kabid Banglola Sisfohan">
+                    Kabid Banglola Sisfohan
+                  </option>
+                  <option value="Kasubbid Infosan">Kasubbid Infosan</option>
+                  <option value="Kasubbag TU">Kasubbag TU</option>
+                  <option value="Kasubbag MSI">Kasubbag MSI</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Judul Disposisi *</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="disposisiJudul"
+                  placeholder="Misal: Mohon ditindaklanjuti"
+                  required
+                />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Instruksi/Catatan *</label>
+                <textarea
+                  class="form-control"
+                  id="disposisiInstruksi"
+                  rows="4"
+                  placeholder="Masukkan instruksi atau catatan disposisi"
+                  required
+                ></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Prioritas</label>
+                <select class="form-select" id="disposisiPrioritas">
+                  <option value="Normal">Normal</option>
+                  <option value="Penting">Penting</option>
+                  <option value="Sangat Penting">Sangat Penting</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Batas Waktu</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="disposisiBatasWaktu"
+                />
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Batal
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="submitDisposisi()"
+            >
+              <i class="bi bi-send-fill"></i> Kirim Disposisi
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <!-- Firebase Config -->
+    <script src="assets/js/firebase-config.js"></script>
+
+    <!-- Auth Functions -->
+    <script src="assets/js/auth.js"></script>
+
+    <!-- Database Functions -->
+    <script src="assets/js/database.js"></script>
+
+    <!-- Main Functions -->
+    <script src="assets/js/main.js"></script>
+
+    <!-- Kapus Dashboard Script -->
+    <script>
+      console.log("📄 Dashboard Kapus loaded");
+
+      let currentUserData = null;
+
+      // PROTECT PAGE - HANYA KAPUS
+      checkUserRole(["kapus"])
+        .then((userData) => {
+          console.log("✅ Access granted:", userData);
+          currentUserData = userData;
+
+          // Tampilkan nama kapus
+          document.getElementById("kapusName").textContent =
+            userData.nama || "Kepala Pusat";
+          document.getElementById("userNameDisplay").textContent =
+            userData.nama || userData.email;
+
+          // Load dashboard data
+          loadKapusDashboard();
+        })
+        .catch((error) => {
+          console.error("❌ Access denied:", error);
+        });
+
+      // Load Dashboard Kapus
+      function loadKapusDashboard() {
+        console.log("📊 Loading Kapus dashboard...");
+
+        if (typeof KemhanDatabase === "undefined") {
+          console.error("❌ KemhanDatabase not loaded");
+          return;
+        }
+
+        // Get surat yang perlu tindakan Kapus
+        const suratMasuk = KemhanDatabase.getSuratMasuk().filter(
+          (s) =>
+            s.status === "Terkirim ke Kapus" ||
+            s.status === "Menunggu Persetujuan Kapus"
+        );
+
+        const suratKeluar = KemhanDatabase.getSuratKeluar().filter(
+          (s) => s.status === "Menunggu Persetujuan Kapus"
+        );
+
+        const notaDinas = KemhanDatabase.getNotaDinas().filter(
+          (s) => s.status === "Menunggu Persetujuan Kapus"
+        );
+
+        // Update stats
+        document.getElementById("statSuratMasuk").textContent =
+          suratMasuk.length;
+        document.getElementById("statSuratKeluar").textContent =
+          suratKeluar.length;
+        document.getElementById("statNotaDinas").textContent = notaDinas.length;
+
+        document.getElementById("badgeSuratMasuk").textContent =
+          suratMasuk.length;
+        document.getElementById("badgeSuratKeluar").textContent =
+          suratKeluar.length;
+        document.getElementById("badgeNotaDinas").textContent =
+          notaDinas.length;
+
+        // Update notif badge
+        const totalNotif =
+          suratMasuk.length + suratKeluar.length + notaDinas.length;
+        document.getElementById("notifBadge").textContent = totalNotif;
+
+        // Render lists
+        renderSuratMasukList(suratMasuk);
+        renderSuratKeluarList(suratKeluar);
+        renderNotaDinasList(notaDinas);
+      }
+
+      // Render Surat Masuk List
+      function renderSuratMasukList(data) {
+        const container = document.getElementById("suratMasukList");
+
+        if (data.length === 0) {
+          container.innerHTML = `
+          <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <p>Tidak ada surat masuk yang perlu ditindaklanjuti</p>
+          </div>
+        `;
+          return;
+        }
+
+        container.innerHTML = data
+          .map(
+            (surat) => `
+        <div class="surat-item">
+          <strong>${surat.perihal || "Tanpa Perihal"}</strong>
+          <div class="surat-meta">
+            <span><i class="bi bi-calendar3"></i> ${Utils.formatDate(
+              surat.tanggalSurat
+            )}</span>
+            <span><i class="bi bi-person"></i> Dari: ${
+              surat.dari || "N/A"
+            }</span>
+            <span><i class="bi bi-hash"></i> ${surat.noSurat || "N/A"}</span>
+          </div>
+          <div class="surat-actions">
+            <button class="btn-disposisi" onclick="buatDisposisi(${
+              surat.id
+            }, 'masuk')">
+              <i class="bi bi-send"></i> Buat Disposisi
+            </button>
+            <button class="btn-approve" onclick="approveSurat(${
+              surat.id
+            }, 'masuk')">
+              <i class="bi bi-check-circle"></i> Setujui
+            </button>
+            <button class="btn-reject" onclick="rejectSurat(${
+              surat.id
+            }, 'masuk')">
+              <i class="bi bi-x-circle"></i> Tolak
+            </button>
+          </div>
+        </div>
+      `
+          )
+          .join("");
+      }
+
+      // Render Surat Keluar List
+      function renderSuratKeluarList(data) {
+        const container = document.getElementById("suratKeluarList");
+
+        if (data.length === 0) {
+          container.innerHTML = `
+          <div class="empty-state">
+            <i class="bi bi-send"></i>
+            <p>Tidak ada surat keluar yang perlu disetujui</p>
+          </div>
+        `;
+          return;
+        }
+
+        container.innerHTML = data
+          .map(
+            (surat) => `
+        <div class="surat-item">
+          <strong>${surat.perihal || "Tanpa Perihal"}</strong>
+          <div class="surat-meta">
+            <span><i class="bi bi-calendar3"></i> ${Utils.formatDate(
+              surat.tanggalSurat
+            )}</span>
+            <span><i class="bi bi-building"></i> Tujuan: ${
+              surat.tujuan || "N/A"
+            }</span>
+            <span><i class="bi bi-hash"></i> ${surat.noNaskah || "N/A"}</span>
+          </div>
+          <div class="surat-actions">
+            <button class="btn-approve" onclick="approveSurat(${
+              surat.id
+            }, 'keluar')">
+              <i class="bi bi-check-circle"></i> Setujui & TTD Digital
+            </button>
+            <button class="btn-reject" onclick="rejectSurat(${
+              surat.id
+            }, 'keluar')">
+              <i class="bi bi-x-circle"></i> Tolak
+            </button>
+          </div>
+        </div>
+      `
+          )
+          .join("");
+      }
+
+      // Render Nota Dinas List
+      function renderNotaDinasList(data) {
+        const container = document.getElementById("notaDinasList");
+
+        if (data.length === 0) {
+          container.innerHTML = `
+          <div class="empty-state">
+            <i class="bi bi-file-text"></i>
+            <p>Tidak ada nota dinas yang perlu disetujui</p>
+          </div>
+        `;
+          return;
+        }
+
+        container.innerHTML = data
+          .map(
+            (surat) => `
+        <div class="surat-item">
+          <strong>${surat.perihal || "Tanpa Perihal"}</strong>
+          <div class="surat-meta">
+            <span><i class="bi bi-calendar3"></i> ${Utils.formatDate(
+              surat.tanggalSurat
+            )}</span>
+            <span><i class="bi bi-person"></i> Dari: ${
+              surat.dari || "N/A"
+            }</span>
+            <span><i class="bi bi-hash"></i> ${surat.noSurat || "N/A"}</span>
+          </div>
+          <div class="surat-actions">
+            <button class="btn-approve" onclick="approveSurat(${
+              surat.id
+            }, 'nota-dinas')">
+              <i class="bi bi-check-circle"></i> Setujui & TTD Digital
+            </button>
+            <button class="btn-reject" onclick="rejectSurat(${
+              surat.id
+            }, 'nota-dinas')">
+              <i class="bi bi-x-circle"></i> Tolak
+            </button>
+          </div>
+        </div>
+      `
+          )
+          .join("");
+      }
+
+      // Buat Disposisi
+      window.buatDisposisi = function (suratId, type) {
+        document.getElementById("disposisiSuratId").value = suratId;
+        document.getElementById("disposisiSuratType").value = type;
+
+        const modal = new bootstrap.Modal(
+          document.getElementById("disposisiModal")
+        );
+        modal.show();
+      };
+
+      // Submit Disposisi
+      window.submitDisposisi = function () {
+        const suratId = parseInt(
+          document.getElementById("disposisiSuratId").value
+        );
+        const type = document.getElementById("disposisiSuratType").value;
+        const kepada = document.getElementById("disposisiKepada").value;
+        const judul = document.getElementById("disposisiJudul").value;
+        const instruksi = document.getElementById("disposisiInstruksi").value;
+        const prioritas = document.getElementById("disposisiPrioritas").value;
+        const batasWaktu = document.getElementById("disposisiBatasWaktu").value;
+
+        if (!kepada || !judul || !instruksi) {
+          Swal.fire("Error", "Field bertanda * wajib diisi!", "error");
+          return;
+        }
+
+        const disposisi = {
+          kepada: kepada,
+          judul: judul,
+          instruksi: instruksi,
+          prioritas: prioritas,
+          batasWaktu: batasWaktu,
+          dari: currentUserData.nama,
+          jabatanDari: "Kepala Pusat",
+          tanggal: new Date().toISOString(),
+          status: "Proses",
+        };
+
+        KemhanDatabase.addDisposisi(suratId, disposisi);
+
+        Swal.fire({
+          icon: "success",
+          title: "Disposisi Berhasil Dikirim!",
+          text: `Disposisi telah dikirim ke ${kepada}`,
+          timer: 2000,
+        });
+
+        // Close modal & reset form
+        bootstrap.Modal.getInstance(
+          document.getElementById("disposisiModal")
+        ).hide();
+        document.getElementById("disposisiForm").reset();
+
+        // Reload dashboard
+        loadKapusDashboard();
+      };
+
+      // Approve Surat
+      window.approveSurat = function (suratId, type) {
+        Swal.fire({
+          title: "Setujui Surat?",
+          text: "Surat akan disetujui dengan TTD Digital Anda",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Ya, Setujui",
+          confirmButtonColor: "#10b981",
+          cancelButtonText: "Batal",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            if (type === "masuk") {
+              KemhanDatabase.updateSuratMasuk(suratId, {
+                status: "Disetujui Kapus",
+                approvedBy: currentUserData.nama,
+                approvedAt: new Date().toISOString(),
+              });
+            } else if (type === "keluar") {
+              KemhanDatabase.updateSuratKeluar(suratId, {
+                status: "Disetujui Kapus",
+                approvedBy: currentUserData.nama,
+                approvedAt: new Date().toISOString(),
+                ttdDigital: `TTD_${currentUserData.nama}_${Date.now()}`,
+              });
+            } else if (type === "nota-dinas") {
+              KemhanDatabase.updateNotaDinas(suratId, {
+                status: "Disetujui Kapus",
+                approvedBy: currentUserData.nama,
+                approvedAt: new Date().toISOString(),
+                ttdDigital: `TTD_${currentUserData.nama}_${Date.now()}`,
+              });
+            }
+
+            Swal.fire({
+              icon: "success",
+              title: "Surat Disetujui!",
+              text: "Surat telah disetujui dengan TTD Digital",
+              timer: 2000,
+            });
+
+            loadKapusDashboard();
+          }
+        });
+      };
+
+      // Reject Surat
+      window.rejectSurat = function (suratId, type) {
+        Swal.fire({
+          title: "Tolak Surat?",
+          input: "textarea",
+          inputLabel: "Alasan Penolakan",
+          inputPlaceholder: "Masukkan alasan penolakan...",
+          showCancelButton: true,
+          confirmButtonText: "Ya, Tolak",
+          confirmButtonColor: "#dc2626",
+          cancelButtonText: "Batal",
+          inputValidator: (value) => {
+            if (!value) {
+              return "Alasan penolakan wajib diisi!";
+            }
+          },
+        }).then((result) => {
+          if (result.isConfirmed) {
+            if (type === "masuk") {
+              KemhanDatabase.updateSuratMasuk(suratId, {
+                status: "Ditolak Kapus",
+                rejectedBy: currentUserData.nama,
+                rejectedAt: new Date().toISOString(),
+                rejectionReason: result.value,
+              });
+            } else if (type === "keluar") {
+              KemhanDatabase.updateSuratKeluar(suratId, {
+                status: "Ditolak Kapus",
+                rejectedBy: currentUserData.nama,
+                rejectedAt: new Date().toISOString(),
+                rejectionReason: result.value,
+              });
+            } else if (type === "nota-dinas") {
+              KemhanDatabase.updateNotaDinas(suratId, {
+                status: "Ditolak Kapus",
+                rejectedBy: currentUserData.nama,
+                rejectedAt: new Date().toISOString(),
+                rejectionReason: result.value,
+              });
+            }
+
+            Swal.fire({
+              icon: "info",
+              title: "Surat Ditolak",
+              text: "Surat telah ditolak",
+              timer: 2000,
+            });
+
+            loadKapusDashboard();
+          }
+        });
+      };
+
+      console.log("✅ Dashboard Kapus scripts loaded");
+    </script>
+  </body>
+</html>

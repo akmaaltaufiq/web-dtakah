@@ -93,12 +93,14 @@
         </div>
 
         <!-- FORM VIEW -->
-        <div class="container" id="formView" style="display: none;">
+        <div class="container" id="formView" style="display: none">
           <div class="form-header">
             <button class="btn-back" onclick="backToTable()">
               <i class="bi bi-arrow-left"></i>
             </button>
-            <h1 class="page-title" id="formTitle">Form Registrasi Surat Keluar</h1>
+            <h1 class="page-title" id="formTitle">
+              Form Registrasi Surat Keluar
+            </h1>
           </div>
 
           <div class="form-steps">
@@ -207,9 +209,7 @@
                       <i class="bi bi-cloud-arrow-up"></i>
                     </div>
                     <div class="upload-text">Unggah Surat</div>
-                    <div class="upload-hint">
-                      docx, pdf, jpeg - Up to 50MB
-                    </div>
+                    <div class="upload-hint">docx, pdf, jpeg - Up to 50MB</div>
                     <div id="fileInfoDisplay"></div>
                   </div>
                   <input
@@ -264,35 +264,67 @@
                     <label class="form-label">Ditujukan Kepada *</label>
                     <div class="kepada-checkbox-grid">
                       <label class="kepada-checkbox-item">
-                        <input type="checkbox" name="kepada" value="Kepala Pusat" />
+                        <input
+                          type="checkbox"
+                          name="kepada"
+                          value="Kepala Pusat"
+                        />
                         <span>Kepala Pusat</span>
                       </label>
                       <label class="kepada-checkbox-item">
-                        <input type="checkbox" name="kepada" value="Kepala Bidang Banglola Sisfohan" />
+                        <input
+                          type="checkbox"
+                          name="kepada"
+                          value="Kepala Bidang Banglola Sisfohan"
+                        />
                         <span>Kepala Bagian Tata Usaha</span>
                       </label>
                       <label class="kepada-checkbox-item">
-                        <input type="checkbox" name="kepada" value="Kepala Bidang Infra TIK" />
+                        <input
+                          type="checkbox"
+                          name="kepada"
+                          value="Kepala Bidang Infra TIK"
+                        />
                         <span>Kepala Bidang Infra TIK</span>
                       </label>
                       <label class="kepada-checkbox-item">
-                        <input type="checkbox" name="kepada" value="Kabid MSI" />
+                        <input
+                          type="checkbox"
+                          name="kepada"
+                          value="Kabid MSI"
+                        />
                         <span>Kabid MSI</span>
                       </label>
                       <label class="kepada-checkbox-item">
-                        <input type="checkbox" name="kepada" value="Kasubbag TU" />
+                        <input
+                          type="checkbox"
+                          name="kepada"
+                          value="Kasubbag TU"
+                        />
                         <span>Kasubbag TU</span>
                       </label>
                       <label class="kepada-checkbox-item">
-                        <input type="checkbox" name="kepada" value="Staff Bidang Banglola" />
+                        <input
+                          type="checkbox"
+                          name="kepada"
+                          value="Staff Bidang Banglola"
+                        />
                         <span>Staff Bidang Banglola</span>
                       </label>
                       <label class="kepada-checkbox-item">
-                        <input type="checkbox" name="kepada" value="Staff Bidang Infra TIK" />
+                        <input
+                          type="checkbox"
+                          name="kepada"
+                          value="Staff Bidang Infra TIK"
+                        />
                         <span>Staff Bidang Infra TIK</span>
                       </label>
                       <label class="kepada-checkbox-item">
-                        <input type="checkbox" name="kepada" value="Staff MSI" />
+                        <input
+                          type="checkbox"
+                          name="kepada"
+                          value="Staff MSI"
+                        />
                         <span>Staff MSI</span>
                       </label>
                     </div>
@@ -314,17 +346,21 @@
             <div class="step-content" id="step3Content">
               <div class="form-section">
                 <h2 class="form-section-title">PREVIEW DATA SURAT KELUAR</h2>
-                
+
                 <div class="preview-section">
                   <h3 class="preview-subtitle">Detail Isi Naskah</h3>
                   <div class="preview-grid">
                     <div class="preview-item">
                       <span class="preview-label">Jenis Naskah:</span>
-                      <span class="preview-value" id="previewJenisSurat">-</span>
+                      <span class="preview-value" id="previewJenisSurat"
+                        >-</span
+                      >
                     </div>
                     <div class="preview-item">
                       <span class="preview-label">Sifat Naskah:</span>
-                      <span class="preview-value" id="previewSifatSurat">-</span>
+                      <span class="preview-value" id="previewSifatSurat"
+                        >-</span
+                      >
                     </div>
                     <div class="preview-item">
                       <span class="preview-label">Nomor Naskah:</span>
@@ -336,11 +372,15 @@
                     </div>
                     <div class="preview-item">
                       <span class="preview-label">Tanggal Naskah:</span>
-                      <span class="preview-value" id="previewTanggalNaskah">-</span>
+                      <span class="preview-value" id="previewTanggalNaskah"
+                        >-</span
+                      >
                     </div>
                     <div class="preview-item">
                       <span class="preview-label">Tanggal Diterima:</span>
-                      <span class="preview-value" id="previewTanggalDiterima">-</span>
+                      <span class="preview-value" id="previewTanggalDiterima"
+                        >-</span
+                      >
                     </div>
                     <div class="preview-item preview-full">
                       <span class="preview-label">Catatan:</span>
@@ -358,15 +398,21 @@
                   <div class="preview-grid">
                     <div class="preview-item">
                       <span class="preview-label">Nama Pengirim:</span>
-                      <span class="preview-value" id="previewNamaPengirim">-</span>
+                      <span class="preview-value" id="previewNamaPengirim"
+                        >-</span
+                      >
                     </div>
                     <div class="preview-item">
                       <span class="preview-label">Jabatan Pengirim:</span>
-                      <span class="preview-value" id="previewJabatanPengirim">-</span>
+                      <span class="preview-value" id="previewJabatanPengirim"
+                        >-</span
+                      >
                     </div>
                     <div class="preview-item preview-full">
                       <span class="preview-label">Ditujukan Kepada:</span>
-                      <span class="preview-value" id="previewDitujukanKepada">-</span>
+                      <span class="preview-value" id="previewDitujukanKepada"
+                        >-</span
+                      >
                     </div>
                   </div>
                 </div>
@@ -376,7 +422,11 @@
                 <button type="button" class="btn-prev" onclick="prevStep()">
                   Kembali
                 </button>
-                <button type="button" class="btn-submit" onclick="submitFinalForm()">
+                <button
+                  type="button"
+                  class="btn-submit"
+                  onclick="submitFinalForm()"
+                >
                   Kirim Surat
                 </button>
               </div>
@@ -385,7 +435,7 @@
         </div>
 
         <!-- PREVIEW VIEW -->
-        <div class="container" id="previewView" style="display: none;">
+        <div class="container" id="previewView" style="display: none">
           <div class="detail-header">
             <button class="btn-back" onclick="backToTable()">
               <i class="bi bi-arrow-left"></i>
@@ -394,8 +444,10 @@
           </div>
 
           <div class="document-preview">
-            <div class="document-title" id="previewDocTitle">Pemberitahuan Perubahan Kebijakan</div>
-            
+            <div class="document-title" id="previewDocTitle">
+              Pemberitahuan Perubahan Kebijakan
+            </div>
+
             <div class="document-actions">
               <button class="doc-action-btn" title="Download">
                 <i class="bi bi-download"></i>
@@ -431,7 +483,9 @@
               <div class="section-content">
                 <div class="detail-row">
                   <div class="detail-label">Tanggal Terima</div>
-                  <div class="detail-value" id="detailTanggalTerima">04 Agustus 2025</div>
+                  <div class="detail-value" id="detailTanggalTerima">
+                    04 Agustus 2025
+                  </div>
                 </div>
                 <div class="detail-row">
                   <div class="detail-label">No Surat</div>
@@ -439,7 +493,9 @@
                 </div>
                 <div class="detail-row">
                   <div class="detail-label">Tanggal Surat</div>
-                  <div class="detail-value" id="detailTanggalSurat">01 Agustus 2025</div>
+                  <div class="detail-value" id="detailTanggalSurat">
+                    01 Agustus 2025
+                  </div>
                 </div>
                 <div class="detail-row">
                   <div class="detail-label">Dari</div>
@@ -447,15 +503,21 @@
                 </div>
                 <div class="detail-row">
                   <div class="detail-label">Kepada</div>
-                  <div class="detail-value" id="detailKepada">Kepada Bidang Banglola Sisfohan</div>
+                  <div class="detail-value" id="detailKepada">
+                    Kepada Bidang Banglola Sisfohan
+                  </div>
                 </div>
                 <div class="detail-row">
                   <div class="detail-label">Perihal</div>
-                  <div class="detail-value" id="detailPerihal">Pemberitahuan Perubahan Kebijakan</div>
+                  <div class="detail-value" id="detailPerihal">
+                    Pemberitahuan Perubahan Kebijakan
+                  </div>
                 </div>
                 <div class="detail-row">
                   <div class="detail-label">Lampiran</div>
-                  <div class="detail-value" id="detailLampiran">Pemberitahuan Perubahan Kebijakan.pdf</div>
+                  <div class="detail-value" id="detailLampiran">
+                    Pemberitahuan Perubahan Kebijakan.pdf
+                  </div>
                 </div>
                 <div class="detail-row">
                   <div class="detail-label">Sifat</div>
@@ -463,11 +525,16 @@
                 </div>
                 <div class="detail-row">
                   <div class="detail-label">Jenis Naskah</div>
-                  <div class="detail-value" id="detailJenisNaskah">Pemberitahuan</div>
+                  <div class="detail-value" id="detailJenisNaskah">
+                    Pemberitahuan
+                  </div>
                 </div>
                 <div class="detail-row">
                   <div class="detail-label">Catatan</div>
-                  <div class="detail-value" id="detailCatatan">Menginformasikan perubahan aturan, atau kebijakan yang berlaku.</div>
+                  <div class="detail-value" id="detailCatatan">
+                    Menginformasikan perubahan aturan, atau kebijakan yang
+                    berlaku.
+                  </div>
                 </div>
               </div>
             </div>
@@ -546,7 +613,9 @@
                   </select>
                 </div>
 
-                <button class="btn-kirim" onclick="submitDisposisi()">Kirim</button>
+                <button class="btn-kirim" onclick="submitDisposisi()">
+                  Kirim
+                </button>
               </div>
             </div>
           </div>
@@ -605,6 +674,13 @@
       </div>
       <div id="footer-placeholder"></div>
     </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <!-- Firebase Config -->
+    <script src="assets/js/firebase-config.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="assets/js/database.js"></script>

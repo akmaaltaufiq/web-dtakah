@@ -30,37 +30,37 @@
                   <span>Filter By</span>
                 </div>
 
-              <div class="filter-group-select">
-                <select class="filter-select-deleted" id="dateFilterDeleted">
-                  <option value="">Tanggal Hapus: Semua</option>
-                </select>
-              </div>
+                <div class="filter-group-select">
+                  <select class="filter-select-deleted" id="dateFilterDeleted">
+                    <option value="">Tanggal Hapus: Semua</option>
+                  </select>
+                </div>
 
-              <div class="filter-group-select">
-                <select class="filter-select-deleted" id="sifatFilterDeleted">
-                  <option value="">Sifat: Semua</option>
-                  <option value="Umum">Umum</option>
-                  <option value="Penting">Penting</option>
-                  <option value="Rahasia">Rahasia</option>
-                  <option value="Sangat Rahasia">Sangat Rahasia</option>
-                  <option value="Konfidensial">Konfidensial</option>
-                </select>
-              </div>
+                <div class="filter-group-select">
+                  <select class="filter-select-deleted" id="sifatFilterDeleted">
+                    <option value="">Sifat: Semua</option>
+                    <option value="Umum">Umum</option>
+                    <option value="Penting">Penting</option>
+                    <option value="Rahasia">Rahasia</option>
+                    <option value="Sangat Rahasia">Sangat Rahasia</option>
+                    <option value="Konfidensial">Konfidensial</option>
+                  </select>
+                </div>
 
-              <div class="search-filter-deleted">
-                <input
-                  type="text"
-                  placeholder="Ketik Perihal Surat atau Nomor Surat"
-                  id="tableSearchDeleted"
-                />
-                <i class="bi bi-search"></i>
-              </div>
+                <div class="search-filter-deleted">
+                  <input
+                    type="text"
+                    placeholder="Ketik Perihal Surat atau Nomor Surat"
+                    id="tableSearchDeleted"
+                  />
+                  <i class="bi bi-search"></i>
+                </div>
 
-              <button class="reset-filter" id="resetBtnDeleted">
-                <i class="bi bi-arrow-clockwise"></i>
-                Reset Filter
-              </button>
-            </div>
+                <button class="reset-filter" id="resetBtnDeleted">
+                  <i class="bi bi-arrow-clockwise"></i>
+                  Reset Filter
+                </button>
+              </div>
             </div>
 
             <div class="deleted-card-grid" id="deletedCardGrid"></div>
@@ -92,6 +92,13 @@
       </div>
       <div id="footer-placeholder"></div>
     </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <!-- Firebase Config -->
+    <script src="assets/js/firebase-config.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/database.js"></script>

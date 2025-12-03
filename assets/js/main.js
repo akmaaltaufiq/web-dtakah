@@ -1,265 +1,4 @@
 // ========================================
-// LOGIN PAGE FUNCTIONS
-// Tambahkan ke main.js yang sudah ada
-// ========================================
-
-// Valid credentials (sesuaikan dengan kebutuhan)
-const validCredentials = {
-  username: "magang",
-  password: "123",
-};
-
-// ========================================
-// INITIALIZE LOGIN PAGE
-// ========================================
-function initializeLoginPage() {
-  console.log("🔐 Initializing login page...");
-
-  // Check if we're on login page
-  const loginForm = document.getElementById("loginForm");
-  if (!loginForm) {
-    console.log("ℹ️ Not on login page");
-    return;
-  }
-
-  // Setup toggle password
-  setupPasswordToggle();
-
-  // Setup form submission
-  setupLoginFormSubmit();
-
-  // Setup keyboard shortcuts
-  setupLoginKeyboardShortcuts();
-
-  // Check auto-login
-  checkAutoLogin();
-
-  console.log("✅ Login page initialized");
-}
-
-// ========================================
-// PASSWORD TOGGLE
-// ========================================
-function setupPasswordToggle() {
-  const togglePassword = document.getElementById("togglePassword");
-  const passwordInput = document.getElementById("password");
-
-  if (!togglePassword || !passwordInput) return;
-
-  togglePassword.addEventListener("click", function () {
-    const type = passwordInput.type === "password" ? "text" : "password";
-    passwordInput.type = type;
-
-    const icon = this.querySelector("i");
-    icon.classList.toggle("bi-eye-slash");
-    icon.classList.toggle("bi-eye");
-  });
-
-  console.log("✅ Password toggle setup complete");
-}
-
-// ========================================
-// LOGIN FORM SUBMISSION
-// ========================================
-function setupLoginFormSubmit() {
-  const loginForm = document.getElementById("loginForm");
-  if (!loginForm) return;
-
-  loginForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    handleLogin();
-  });
-
-  console.log("✅ Login form submission setup complete");
-}
-
-// ========================================
-// HANDLE LOGIN
-// ========================================
-function handleLogin() {
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value;
-  const remember = document.getElementById("remember").checked;
-
-  // Validation
-  if (!username || !password) {
-    alert("Silakan isi username dan password");
-    return;
-  }
-
-  // Show loading
-  if (window.showLoading) {
-    window.showLoading();
-  }
-
-  // Simulate server request
-  setTimeout(() => {
-    if (
-      username === validCredentials.username &&
-      password === validCredentials.password
-    ) {
-      // Login successful
-      console.log("✅ Login successful:", {
-        username,
-        remember,
-        timestamp: new Date().toISOString(),
-      });
-
-      const userData = {
-        username,
-        loginTime: new Date().toISOString(),
-      };
-
-      // Store login data
-      const storage = remember ? localStorage : sessionStorage;
-      storage.setItem("isLoggedIn", "true");
-      storage.setItem("userData", JSON.stringify(userData));
-
-      // Redirect to dashboard
-      window.location.href = "index.html";
-    } else {
-      // Login failed
-      if (window.hideLoading) {
-        window.hideLoading();
-      }
-
-      alert(
-        "Username atau password salah!\n\nGunakan:\nUsername: magang\nPassword: 123"
-      );
-
-      // Clear password and focus
-      document.getElementById("password").value = "";
-      document.getElementById("password").focus();
-    }
-  }, 1500); // 1.5 second delay for UX
-}
-
-// ========================================
-// KEYBOARD SHORTCUTS
-// ========================================
-function setupLoginKeyboardShortcuts() {
-  const usernameInput = document.getElementById("username");
-  const passwordInput = document.getElementById("password");
-
-  if (!usernameInput || !passwordInput) return;
-
-  // Username: Enter to move to password
-  usernameInput.addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      passwordInput.focus();
-    }
-  });
-
-  // Password: Enter to submit
-  passwordInput.addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleLogin();
-    }
-  });
-
-  console.log("✅ Keyboard shortcuts setup complete");
-}
-
-// ========================================
-// CHECK AUTO LOGIN
-// ========================================
-function checkAutoLogin() {
-  const isLoggedIn =
-    localStorage.getItem("isLoggedIn") || sessionStorage.getItem("isLoggedIn");
-
-  if (isLoggedIn === "true") {
-    console.log("🔄 User already logged in, redirecting...");
-
-    if (window.showLoading) {
-      window.showLoading();
-    }
-
-    setTimeout(() => {
-      window.location.href = "index.html";
-    }, 500);
-  }
-}
-
-// ========================================
-// LOGOUT FUNCTION
-// ========================================
-function handleLogout() {
-  console.log("🚪 Logging out...");
-
-  // Clear all storage
-  localStorage.clear();
-  sessionStorage.clear();
-
-  // Show notification if available
-  if (window.Notification && window.Notification.success) {
-    window.Notification.success("Logout berhasil!");
-  }
-
-  // Redirect to login
-  setTimeout(() => {
-    window.location.href = "login.html";
-  }, 500);
-}
-
-// ========================================
-// CHECK LOGIN STATUS (untuk halaman lain)
-// ========================================
-function checkLoginStatus() {
-  const isLoggedIn =
-    localStorage.getItem("isLoggedIn") || sessionStorage.getItem("isLoggedIn");
-
-  if (isLoggedIn !== "true") {
-    console.log("⚠️ User not logged in, redirecting to login...");
-    window.location.href = "login.html";
-    return false;
-  }
-
-  return true;
-}
-
-// ========================================
-// GET USER DATA
-// ========================================
-function getUserData() {
-  const userDataStr =
-    localStorage.getItem("userData") || sessionStorage.getItem("userData");
-
-  if (!userDataStr) return null;
-
-  try {
-    return JSON.parse(userDataStr);
-  } catch (error) {
-    console.error("❌ Error parsing user data:", error);
-    return null;
-  }
-}
-
-// ========================================
-// INITIALIZE ON DOM LOADED
-// ========================================
-document.addEventListener("DOMContentLoaded", function () {
-  // Check if we're on login page
-  if (document.getElementById("loginForm")) {
-    initializeLoginPage();
-  }
-
-  // For other pages, check login status (optional, uncomment if needed)
-  // else {
-  //   checkLoginStatus();
-  // }
-});
-
-// ========================================
-// EXPOSE FUNCTIONS GLOBALLY
-// ========================================
-window.handleLogin = handleLogin;
-window.handleLogout = handleLogout;
-window.checkLoginStatus = checkLoginStatus;
-window.getUserData = getUserData;
-
-// ========================================
 // MAIN.JS - GLOBAL FUNCTIONS & UTILITIES
 // ========================================
 
@@ -302,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!dateString) return "-";
       const date = new Date(dateString);
       if (isNaN(date.getTime())) return dateString;
-      
+
       return date.toLocaleDateString("id-ID", {
         day: "2-digit",
         month: "long",
@@ -314,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!dateString) return "-";
       const date = new Date(dateString);
       if (isNaN(date.getTime())) return dateString;
-      
+
       return date.toLocaleDateString("id-ID", {
         day: "2-digit",
         month: "2-digit",
@@ -324,11 +63,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     getSifatBadge: (sifat) => {
       const badges = {
-        "Umum": "badge-umum",
-        "Penting": "badge-penting",
-        "Rahasia": "badge-rahasia",
+        Umum: "badge-umum",
+        Penting: "badge-penting",
+        Rahasia: "badge-rahasia",
         "Sangat Rahasia": "badge-sangat-rahasia",
-        "Konfidensial": "badge-konfidensial",
+        Konfidensial: "badge-konfidensial",
       };
       return badges[sifat] || "badge-umum";
     },
@@ -339,20 +78,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     getStatusClass: (status) => {
       const statusMap = {
-        "Selesai": "selesai",
-        "Proses": "proses",
-        "Ditolak": "ditolak",
-        "Ditunda": "ditunda",
-        "Terkirim": "selesai",
-        "Pending": "ditunda",
+        Selesai: "selesai",
+        Proses: "proses",
+        Ditolak: "ditolak",
+        Ditunda: "ditunda",
+        Terkirim: "selesai",
+        Pending: "ditunda",
       };
       return statusMap[status] || "ditunda";
     },
 
     getMonthName: (monthIndex) => {
       const months = [
-        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-        "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember",
       ];
       return months[monthIndex] || "";
     },
@@ -366,14 +115,14 @@ document.addEventListener("DOMContentLoaded", () => {
     escapeHtml: (text) => {
       if (!text) return "";
       const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;",
       };
       return String(text).replace(/[&<>"']/g, (m) => map[m]);
-    }
+    },
   };
 
   // =============================
@@ -471,9 +220,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // HEADER & NOTIFICATION LOGIC
   // =============================
   window.createNotifItem = (data) => {
-    const icon = data.type === "masuk" 
-      ? "bi-send-check-fill" 
-      : "bi-file-earmark-check-fill";
+    const icon =
+      data.type === "masuk"
+        ? "bi-send-check-fill"
+        : "bi-file-earmark-check-fill";
     const isReadClass = data.isRead ? "read" : "unread";
 
     return `
@@ -484,7 +234,9 @@ document.addEventListener("DOMContentLoaded", () => {
         <i class="bi ${icon}"></i>
         <div>
           <div class="notif-title">${Utils.escapeHtml(data.title)}</div>
-          <div class="notif-time">${Utils.escapeHtml(data.time || "Beberapa Waktu Lalu")}</div>
+          <div class="notif-time">${Utils.escapeHtml(
+            data.time || "Beberapa Waktu Lalu"
+          )}</div>
         </div>
       </a>
     `;
@@ -501,20 +253,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const unreadNotifs = notifications.filter((n) => !n.isRead);
 
     if (countBadge) {
-      countBadge.textContent = unreadNotifs.length > 99 
-        ? "99+" 
-        : unreadNotifs.length > 0 
-        ? unreadNotifs.length 
-        : "";
+      countBadge.textContent =
+        unreadNotifs.length > 99
+          ? "99+"
+          : unreadNotifs.length > 0
+          ? unreadNotifs.length
+          : "";
       countBadge.style.display = unreadNotifs.length > 0 ? "flex" : "none";
     }
-    
+
     if (unreadCountEl) {
       unreadCountEl.textContent = unreadNotifs.length;
     }
 
     if (notifications.length === 0) {
-      list.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Tidak ada notifikasi.</p>';
+      list.innerHTML =
+        '<p style="text-align: center; color: #999; padding: 20px;">Tidak ada notifikasi.</p>';
       return;
     }
 
@@ -535,7 +289,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.handleNotifClick = function (event) {
     event.preventDefault();
-    
+
     const item = event.currentTarget;
     const suratId = item.dataset.suratId;
     const type = item.dataset.type;
@@ -576,24 +330,30 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    document.getElementById("markAllRead")?.addEventListener("click", markAllAsRead);
+    document
+      .getElementById("markAllRead")
+      ?.addEventListener("click", markAllAsRead);
 
     // Close dropdowns on outside click
     document.addEventListener("click", (e) => {
       const notifDropdown = document.getElementById("notificationDropdown");
       const notifBtn = document.getElementById("notificationBtn");
 
-      if (notifDropdown && 
-          !notifDropdown.contains(e.target) && 
-          notifBtn && 
-          !notifBtn.contains(e.target)) {
+      if (
+        notifDropdown &&
+        !notifDropdown.contains(e.target) &&
+        notifBtn &&
+        !notifBtn.contains(e.target)
+      ) {
         notifDropdown.classList.remove("active");
       }
 
-      if (langDropdown && 
-          !langDropdown.contains(e.target) && 
-          langSelector && 
-          !langSelector.contains(e.target)) {
+      if (
+        langDropdown &&
+        !langDropdown.contains(e.target) &&
+        langSelector &&
+        !langSelector.contains(e.target)
+      ) {
         langDropdown.classList.remove("active");
       }
     });
@@ -607,43 +367,43 @@ document.addEventListener("DOMContentLoaded", () => {
   window.highlightActiveMenu = function () {
     console.log("🎯 Highlighting active menu...");
 
-    let currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    
-    if (currentPage === '' || currentPage === '/') {
-      currentPage = 'index.html';
+    let currentPage = window.location.pathname.split("/").pop() || "index.html";
+
+    if (currentPage === "" || currentPage === "/") {
+      currentPage = "index.html";
     }
 
     console.log("📄 Current page:", currentPage);
 
     // Clear all active classes
-    document.querySelectorAll('.menu-item').forEach(item => {
-      item.classList.remove('active');
+    document.querySelectorAll(".menu-item").forEach((item) => {
+      item.classList.remove("active");
     });
-    document.querySelectorAll('.submenu-item').forEach(item => {
-      item.classList.remove('active');
+    document.querySelectorAll(".submenu-item").forEach((item) => {
+      item.classList.remove("active");
     });
-    document.querySelectorAll('.menu-dropdown').forEach(dropdown => {
-      dropdown.classList.remove('active');
+    document.querySelectorAll(".menu-dropdown").forEach((dropdown) => {
+      dropdown.classList.remove("active");
     });
 
     let isSubmenuActive = false;
 
     // Check submenu first
-    const submenuLinks = document.querySelectorAll('.submenu-link');
-    submenuLinks.forEach(link => {
-      const href = link.getAttribute('href');
-      
+    const submenuLinks = document.querySelectorAll(".submenu-link");
+    submenuLinks.forEach((link) => {
+      const href = link.getAttribute("href");
+
       if (href === currentPage) {
         console.log("✅ Found active submenu:", href);
-        
-        const submenuItem = link.closest('.submenu-item');
+
+        const submenuItem = link.closest(".submenu-item");
         if (submenuItem) {
-          submenuItem.classList.add('active');
+          submenuItem.classList.add("active");
         }
-        
-        const parentDropdown = link.closest('.menu-dropdown');
+
+        const parentDropdown = link.closest(".menu-dropdown");
         if (parentDropdown) {
-          parentDropdown.classList.add('active', 'open');
+          parentDropdown.classList.add("active", "open");
           isSubmenuActive = true;
         }
       }
@@ -651,20 +411,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // If not submenu, check main menu
     if (!isSubmenuActive) {
-      const menuLinks = document.querySelectorAll('.menu-item:not(.menu-dropdown) > .menu-link');
-      
-      menuLinks.forEach(link => {
-        const href = link.getAttribute('href');
-        
-        if (href === currentPage || 
-            (currentPage === 'index.html' && href === 'index.html') ||
-            (currentPage === '' && href === 'index.html')) {
-          
+      const menuLinks = document.querySelectorAll(
+        ".menu-item:not(.menu-dropdown) > .menu-link"
+      );
+
+      menuLinks.forEach((link) => {
+        const href = link.getAttribute("href");
+
+        if (
+          href === currentPage ||
+          (currentPage === "index.html" && href === "index.html") ||
+          (currentPage === "" && href === "index.html")
+        ) {
           console.log("✅ Found active menu:", href);
-          
-          const menuItem = link.closest('.menu-item');
+
+          const menuItem = link.closest(".menu-item");
           if (menuItem) {
-            menuItem.classList.add('active');
+            menuItem.classList.add("active");
           }
         }
       });
@@ -677,30 +440,31 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("🔧 Attaching sidebar events...");
 
     // Dropdown toggle
-    const dropdownToggles = document.querySelectorAll('.menu-dropdown-toggle');
-    
-    dropdownToggles.forEach(toggle => {
-      toggle.addEventListener('click', function(e) {
+    const dropdownToggles = document.querySelectorAll(".menu-dropdown-toggle");
+
+    dropdownToggles.forEach((toggle) => {
+      toggle.addEventListener("click", function (e) {
         e.preventDefault();
-        const menuItem = this.closest('.menu-dropdown');
-        
+        const menuItem = this.closest(".menu-dropdown");
+
         // Close other dropdowns
-        document.querySelectorAll('.menu-dropdown').forEach(item => {
-          if (item !== menuItem && !item.classList.contains('active')) {
-            item.classList.remove('open');
+        document.querySelectorAll(".menu-dropdown").forEach((item) => {
+          if (item !== menuItem && !item.classList.contains("active")) {
+            item.classList.remove("open");
           }
         });
-        
+
         // Toggle current dropdown
-        menuItem.classList.toggle('open');
+        menuItem.classList.toggle("open");
       });
     });
 
     // Logout handler
-    let logoutLink = document.getElementById("logoutLink") || 
-                     document.getElementById("logoutBtn") ||
-                     document.querySelector('a[href="#"][id*="logout"]') ||
-                     document.querySelector(".menu-link:has(.bi-box-arrow-right)");
+    let logoutLink =
+      document.getElementById("logoutLink") ||
+      document.getElementById("logoutBtn") ||
+      document.querySelector('a[href="#"][id*="logout"]') ||
+      document.querySelector(".menu-link:has(.bi-box-arrow-right)");
 
     if (logoutLink) {
       console.log("✅ Logout button found");
@@ -776,7 +540,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const sidebarResponse = await fetch("assets/includes/sidebar.html");
       const sidebarHtml = await sidebarResponse.text();
       const sidebarPlaceholder = document.getElementById("sidebar-placeholder");
-      
+
       if (sidebarPlaceholder) {
         sidebarPlaceholder.innerHTML = sidebarHtml;
         console.log("✅ Sidebar loaded");
@@ -790,9 +554,10 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("❌ Error loading sidebar:", err);
     }
 
-    const isDashboard = window.location.pathname.endsWith("index.html") ||
-                        window.location.pathname.endsWith("dashboard") ||
-                        window.location.pathname.endsWith("/");
+    const isDashboard =
+      window.location.pathname.endsWith("index.html") ||
+      window.location.pathname.endsWith("dashboard") ||
+      window.location.pathname.endsWith("/");
 
     if (!isDashboard) {
       // Load header
@@ -800,7 +565,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const headerResponse = await fetch("assets/includes/header.html");
         const headerHtml = await headerResponse.text();
         const headerPlaceholder = document.getElementById("header-placeholder");
-        
+
         if (headerPlaceholder) {
           headerPlaceholder.innerHTML = headerHtml;
           attachHeaderEvents();
@@ -815,7 +580,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const footerResponse = await fetch("assets/includes/footer.html");
         const footerHtml = await footerResponse.text();
         const footerPlaceholder = document.getElementById("footer-placeholder");
-        
+
         if (footerPlaceholder) {
           footerPlaceholder.innerHTML = footerHtml;
           console.log("✅ Footer loaded");
@@ -855,100 +620,102 @@ document.addEventListener("DOMContentLoaded", () => {
   // FILE UPLOAD HANDLER
   // =============================
   // =============================
-// FILE UPLOAD HANDLER - COMPLETE FIX
-// Ganti seluruh fungsi handleFileUpload di main.js
-// =============================
+  // FILE UPLOAD HANDLER - COMPLETE FIX
+  // Ganti seluruh fungsi handleFileUpload di main.js
+  // =============================
 
-window.handleFileUpload = function (event) {
-  console.log("=== FILE UPLOAD STARTED ===");
-  
-  const file = event.target.files[0];
-  console.log("File object:", file);
-  
-  // Cari semua elemen yang dibutuhkan
-  const uploadArea = document.getElementById("uploadArea");
-  const uploadContent = document.getElementById("uploadContent");
-  const fileInfoDisplay = document.getElementById("fileInfoDisplay");
-  
-  console.log("Upload Area found:", uploadArea);
-  console.log("Upload Content found:", uploadContent);
-  console.log("File Info Display found:", fileInfoDisplay);
-  
-  // Jika tidak ada file, reset
-  if (!file) {
-    console.log("No file selected, resetting...");
-    if (uploadArea) uploadArea.classList.remove("has-file");
-    if (uploadContent) uploadContent.style.display = "flex";
-    if (fileInfoDisplay) {
-      fileInfoDisplay.style.display = "none";
-      fileInfoDisplay.innerHTML = "";
+  window.handleFileUpload = function (event) {
+    console.log("=== FILE UPLOAD STARTED ===");
+
+    const file = event.target.files[0];
+    console.log("File object:", file);
+
+    // Cari semua elemen yang dibutuhkan
+    const uploadArea = document.getElementById("uploadArea");
+    const uploadContent = document.getElementById("uploadContent");
+    const fileInfoDisplay = document.getElementById("fileInfoDisplay");
+
+    console.log("Upload Area found:", uploadArea);
+    console.log("Upload Content found:", uploadContent);
+    console.log("File Info Display found:", fileInfoDisplay);
+
+    // Jika tidak ada file, reset
+    if (!file) {
+      console.log("No file selected, resetting...");
+      if (uploadArea) uploadArea.classList.remove("has-file");
+      if (uploadContent) uploadContent.style.display = "flex";
+      if (fileInfoDisplay) {
+        fileInfoDisplay.style.display = "none";
+        fileInfoDisplay.innerHTML = "";
+      }
+      window.uploadedFile = null;
+      return;
     }
-    window.uploadedFile = null;
-    return;
-  }
-  
-  console.log("File name:", file.name);
-  console.log("File type:", file.type);
-  console.log("File size:", file.size);
-  
-  // Validasi tipe file
-  const allowedTypes = [
-    "application/pdf",
-    "application/msword",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "image/jpeg",
-    "image/jpg",
-    "image/png",
-  ];
 
-  if (!allowedTypes.includes(file.type)) {
-    alert("❌ Format file tidak didukung!\n\nGunakan: PDF, DOC, DOCX, JPG, atau PNG");
-    event.target.value = "";
-    return;
-  }
+    console.log("File name:", file.name);
+    console.log("File type:", file.type);
+    console.log("File size:", file.size);
 
-  // Validasi ukuran (50MB)
-  const maxSize = 50 * 1024 * 1024;
-  if (file.size > maxSize) {
-    alert("❌ Ukuran file terlalu besar!\n\nMaksimal: 50MB");
-    event.target.value = "";
-    return;
-  }
-  
-  // Simpan file
-  window.uploadedFile = file;
-  console.log("File saved to window.uploadedFile");
-  
-  // Tentukan icon dan warna
-  let iconClass = "bi-file-earmark-text-fill";
-  let iconColor = "#6b7280";
-  
-  if (file.type === "application/pdf") {
-    iconClass = "bi-file-earmark-pdf-fill";
-    iconColor = "#dc2626";
-  } else if (file.type.includes("word") || file.type.includes("document")) {
-    iconClass = "bi-file-earmark-word-fill";
-    iconColor = "#2563eb";
-  } else if (file.type.includes("image")) {
-    iconClass = "bi-file-earmark-image-fill";
-    iconColor = "#10b981";
-  }
-  
-  // Hitung ukuran
-  const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-  
-  // Escape nama file untuk keamanan
-  const safeName = file.name
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-  
-  console.log("Creating file display card...");
-  
-  // Buat HTML untuk display
-  const fileCardHTML = `
+    // Validasi tipe file
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      alert(
+        "❌ Format file tidak didukung!\n\nGunakan: PDF, DOC, DOCX, JPG, atau PNG"
+      );
+      event.target.value = "";
+      return;
+    }
+
+    // Validasi ukuran (50MB)
+    const maxSize = 50 * 1024 * 1024;
+    if (file.size > maxSize) {
+      alert("❌ Ukuran file terlalu besar!\n\nMaksimal: 50MB");
+      event.target.value = "";
+      return;
+    }
+
+    // Simpan file
+    window.uploadedFile = file;
+    console.log("File saved to window.uploadedFile");
+
+    // Tentukan icon dan warna
+    let iconClass = "bi-file-earmark-text-fill";
+    let iconColor = "#6b7280";
+
+    if (file.type === "application/pdf") {
+      iconClass = "bi-file-earmark-pdf-fill";
+      iconColor = "#dc2626";
+    } else if (file.type.includes("word") || file.type.includes("document")) {
+      iconClass = "bi-file-earmark-word-fill";
+      iconColor = "#2563eb";
+    } else if (file.type.includes("image")) {
+      iconClass = "bi-file-earmark-image-fill";
+      iconColor = "#10b981";
+    }
+
+    // Hitung ukuran
+    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+
+    // Escape nama file untuk keamanan
+    const safeName = file.name
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+    console.log("Creating file display card...");
+
+    // Buat HTML untuk display
+    const fileCardHTML = `
     <div class="file-display-card">
       <div class="file-display-icon" style="background-color: ${iconColor}20;">
         <i class="bi ${iconClass}" style="color: ${iconColor}; font-size: 28px;"></i>
@@ -963,81 +730,81 @@ window.handleFileUpload = function (event) {
       </button>
     </div>
   `;
-  
-  // Update tampilan - LANGKAH DEMI LANGKAH
-  console.log("Step 1: Hide upload content");
-  if (uploadContent) {
-    uploadContent.style.display = "none";
-    console.log("✓ Upload content hidden");
-  }
-  
-  console.log("Step 2: Show file info display");
-  if (fileInfoDisplay) {
-    fileInfoDisplay.innerHTML = fileCardHTML;
-    fileInfoDisplay.style.display = "block";
-    console.log("✓ File info display shown");
-  }
-  
-  console.log("Step 3: Add has-file class");
-  if (uploadArea) {
-    uploadArea.classList.add("has-file");
-    console.log("✓ has-file class added");
-  }
-  
-  console.log("=== FILE UPLOAD COMPLETED ===");
-  console.log("✅ File successfully uploaded:", file.name);
-};
 
-window.removeUploadedFile = function(event) {
-  event.stopPropagation();
-  console.log("=== REMOVING FILE ===");
-  
-  const fileInput = document.getElementById("fileInput");
-  const uploadArea = document.getElementById("uploadArea");
-  const uploadContent = document.getElementById("uploadContent");
-  const fileInfoDisplay = document.getElementById("fileInfoDisplay");
-  
-  // Reset input
-  if (fileInput) {
-    fileInput.value = "";
-    console.log("✓ Input cleared");
-  }
-  
-  // Hide file display
-  if (fileInfoDisplay) {
-    fileInfoDisplay.innerHTML = "";
-    fileInfoDisplay.style.display = "none";
-    console.log("✓ File display hidden");
-  }
-  
-  // Show upload content
-  if (uploadContent) {
-    uploadContent.style.display = "flex";
-    console.log("✓ Upload content shown");
-  }
-  
-  // Remove class
-  if (uploadArea) {
-    uploadArea.classList.remove("has-file");
-    console.log("✓ has-file class removed");
-  }
-  
-  // Clear global variable
-  window.uploadedFile = null;
-  console.log("✓ Global variable cleared");
-  
-  console.log("=== FILE REMOVED ===");
-};
+    // Update tampilan - LANGKAH DEMI LANGKAH
+    console.log("Step 1: Hide upload content");
+    if (uploadContent) {
+      uploadContent.style.display = "none";
+      console.log("✓ Upload content hidden");
+    }
 
-// Auto-attach saat halaman dimuat
-document.addEventListener("DOMContentLoaded", function() {
-  const fileInput = document.getElementById("fileInput");
-  if (fileInput) {
-    console.log("✅ File input found and handler attached");
-  } else {
-    console.warn("⚠️ File input NOT found on page load");
-  }
-});
+    console.log("Step 2: Show file info display");
+    if (fileInfoDisplay) {
+      fileInfoDisplay.innerHTML = fileCardHTML;
+      fileInfoDisplay.style.display = "block";
+      console.log("✓ File info display shown");
+    }
+
+    console.log("Step 3: Add has-file class");
+    if (uploadArea) {
+      uploadArea.classList.add("has-file");
+      console.log("✓ has-file class added");
+    }
+
+    console.log("=== FILE UPLOAD COMPLETED ===");
+    console.log("✅ File successfully uploaded:", file.name);
+  };
+
+  window.removeUploadedFile = function (event) {
+    event.stopPropagation();
+    console.log("=== REMOVING FILE ===");
+
+    const fileInput = document.getElementById("fileInput");
+    const uploadArea = document.getElementById("uploadArea");
+    const uploadContent = document.getElementById("uploadContent");
+    const fileInfoDisplay = document.getElementById("fileInfoDisplay");
+
+    // Reset input
+    if (fileInput) {
+      fileInput.value = "";
+      console.log("✓ Input cleared");
+    }
+
+    // Hide file display
+    if (fileInfoDisplay) {
+      fileInfoDisplay.innerHTML = "";
+      fileInfoDisplay.style.display = "none";
+      console.log("✓ File display hidden");
+    }
+
+    // Show upload content
+    if (uploadContent) {
+      uploadContent.style.display = "flex";
+      console.log("✓ Upload content shown");
+    }
+
+    // Remove class
+    if (uploadArea) {
+      uploadArea.classList.remove("has-file");
+      console.log("✓ has-file class removed");
+    }
+
+    // Clear global variable
+    window.uploadedFile = null;
+    console.log("✓ Global variable cleared");
+
+    console.log("=== FILE REMOVED ===");
+  };
+
+  // Auto-attach saat halaman dimuat
+  document.addEventListener("DOMContentLoaded", function () {
+    const fileInput = document.getElementById("fileInput");
+    if (fileInput) {
+      console.log("✅ File input found and handler attached");
+    } else {
+      console.warn("⚠️ File input NOT found on page load");
+    }
+  });
 
   // =============================
   // START INITIALIZATION
