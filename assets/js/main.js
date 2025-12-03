@@ -459,7 +459,9 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    // Logout handler
+    // =============================
+    // LOGOUT HANDLER - FIXED VERSION
+    // =============================
     let logoutLink =
       document.getElementById("logoutLink") ||
       document.getElementById("logoutBtn") ||
@@ -476,8 +478,54 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         e.stopPropagation();
         console.log("🚪 Logout clicked");
+
         window.loadSwal(() => {
-          window.showLogoutDialog();
+          Swal.fire({
+            title: "Yakin ingin logout?",
+            text: "Anda akan keluar dari sesi saat ini.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Ya, logout",
+            cancelButtonText: "Batal",
+            reverseButtons: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              console.log("✅ User confirmed logout");
+
+              // PAKSA CLEAR DULU
+              sessionStorage.clear();
+              localStorage.clear();
+
+              // SignOut Firebase
+              if (window.auth) {
+                auth
+                  .signOut()
+                  .then(() => {
+                    console.log("✅ Firebase logged out");
+
+                    Swal.fire({
+                      title: "Logout berhasil",
+                      text: "Anda akan diarahkan ke halaman login.",
+                      icon: "success",
+                      showConfirmButton: false,
+                      timer: 1000,
+                    });
+
+                    setTimeout(() => {
+                      window.location.replace("login.html?logout=true");
+                    }, 1200);
+                  })
+                  .catch((err) => {
+                    console.error("Logout error:", err);
+                    window.location.replace("login.html?logout=true");
+                  });
+              } else {
+                window.location.replace("login.html?logout=true");
+              }
+            }
+          });
         });
       });
     } else {
@@ -485,15 +533,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  // =============================
+  // LEGACY LOGOUT DIALOG (BACKUP)
+  // =============================
   window.showLogoutDialog = function () {
-    console.log("🔓 Showing logout dialog...");
+    console.log("🔓 Showing logout dialog (legacy)...");
 
     if (!window.Swal) {
       console.error("❌ SweetAlert2 not loaded!");
       if (confirm("Yakin ingin logout?")) {
-        localStorage.clear();
         sessionStorage.clear();
-        window.location.href = "login.html";
+        localStorage.clear();
+        window.location.replace("login.html?logout=true");
       }
       return;
     }
@@ -511,20 +562,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }).then((result) => {
       if (result.isConfirmed) {
         console.log("✅ User confirmed logout");
-        localStorage.clear();
         sessionStorage.clear();
+        localStorage.clear();
 
-        Swal.fire({
-          title: "Logout berhasil",
-          text: "Anda akan diarahkan ke halaman login.",
-          icon: "success",
-          showConfirmButton: false,
-          timer: 1500,
-        });
+        if (window.auth) {
+          auth
+            .signOut()
+            .then(() => {
+              Swal.fire({
+                title: "Logout berhasil",
+                text: "Anda akan diarahkan ke halaman login.",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1500,
+              });
 
-        setTimeout(() => {
-          window.location.href = "login.html";
-        }, 1600);
+              setTimeout(() => {
+                window.location.replace("login.html?logout=true");
+              }, 1600);
+            })
+            .catch(() => {
+              window.location.replace("login.html?logout=true");
+            });
+        } else {
+          window.location.replace("login.html?logout=true");
+        }
       }
     });
   };
@@ -619,11 +681,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // =============================
   // FILE UPLOAD HANDLER
   // =============================
-  // =============================
-  // FILE UPLOAD HANDLER - COMPLETE FIX
-  // Ganti seluruh fungsi handleFileUpload di main.js
-  // =============================
-
   window.handleFileUpload = function (event) {
     console.log("=== FILE UPLOAD STARTED ===");
 

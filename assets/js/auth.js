@@ -1,8 +1,3 @@
-// ==========================================
-// FIREBASE AUTHENTICATION - FIXED VERSION
-// File: assets/js/auth.js
-// ==========================================
-
 // ============================================
 // FUNGSI REGISTER USER (DENGAN AUTO LOGOUT)
 // ============================================
@@ -105,6 +100,9 @@ function loginUser(email, password) {
           })
         );
 
+        // Set flag bahwa user BARU SAJA LOGIN (bukan dari session lama)
+        sessionStorage.setItem("freshLogin", "true");
+
         // Redirect berdasarkan role
         setTimeout(() => {
           if (userData.role === "admin") {
@@ -156,73 +154,139 @@ function loginUser(email, password) {
 }
 
 // ============================================
-// FUNGSI LOGOUT
+// FUNGSI LOGOUT (DENGAN FORCE CLEAR + PERSISTENCE RESET)
 // ============================================
 function logoutUser() {
   console.log("🚪 Logging out...");
 
+  // STEP 1: Clear storage DULU sebelum signOut
+  sessionStorage.clear();
+  localStorage.clear();
+  console.log("✅ Storage cleared");
+
+  // STEP 2: SignOut dari Firebase DAN hapus persistence
   return auth
     .signOut()
     .then(() => {
-      console.log("✅ User logged out");
+      console.log("✅ Firebase signOut successful");
 
-      // Clear all storage
-      sessionStorage.clear();
-      localStorage.removeItem("isLoggedIn");
-      localStorage.removeItem("userData");
+      // STEP 2.5: Reset Firebase persistence ke NONE (penting!)
+      return auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
+    })
+    .then(() => {
+      console.log("✅ Firebase persistence cleared");
 
-      // Show notification jika SweetAlert tersedia
+      // STEP 3: Show notification (optional)
       if (window.Swal) {
         Swal.fire({
           title: "Logout Berhasil",
           text: "Anda akan diarahkan ke halaman login",
           icon: "success",
-          timer: 1500,
+          timer: 1000,
           showConfirmButton: false,
         });
       }
 
-      // Redirect ke login
-      setTimeout(() => {
-        window.location.href = "login.html";
-      }, 1500);
+      // STEP 4: TUNGGU sedikit, baru redirect
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          console.log("🔄 Redirecting to login...");
+          window.location.replace("login.html?logout=true");
+          resolve();
+        }, 1200);
+      });
     })
     .catch((error) => {
       console.error("❌ Logout error:", error);
-      alert("Terjadi kesalahan saat logout");
+
+      // Kalau error tetap redirect
+      sessionStorage.clear();
+      localStorage.clear();
+      window.location.replace("login.html?logout=true");
     });
 }
 
 // ============================================
-// CEK STATUS LOGIN (AUTO REDIRECT) - FIXED
+// CEK STATUS LOGIN - FULL REWRITE (FIX PERSISTENCE)
 // ============================================
 function checkAuthState() {
-  // PENTING: Jangan redirect jika sedang registrasi
-  const isRegistering = sessionStorage.getItem("isRegistering");
+  const currentPage = window.location.pathname;
+  const isLoginPage = currentPage.includes("login.html");
 
+  console.log("🔍 Checking auth state on:", currentPage);
+
+  // KHUSUS LOGIN PAGE: Cek dulu apakah dari logout atau fresh visit
+  if (isLoginPage) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const isFromLogout = urlParams.get("logout") === "true";
+    const freshLogin = sessionStorage.getItem("freshLogin");
+
+    console.log("📍 Login page checks:", { isFromLogout, freshLogin });
+
+    // Jika dari logout ATAU belum pernah fresh login, PAKSA LOGOUT
+    if (isFromLogout || !freshLogin) {
+      console.log("🔒 Forcing complete logout on login page...");
+
+      // Clear everything
+      sessionStorage.clear();
+      localStorage.clear();
+
+      // Force signOut dan reset persistence
+      auth
+        .signOut()
+        .then(() => {
+          return auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
+        })
+        .then(() => {
+          console.log("✅ Complete logout done");
+          // Clean URL
+          window.history.replaceState({}, document.title, "login.html");
+        })
+        .catch((err) => {
+          console.error("Logout error:", err);
+        });
+
+      // STOP di sini, jangan lanjut ke onAuthStateChanged
+      return;
+    }
+  }
+
+  // Jika sedang registrasi, skip
+  const isRegistering = sessionStorage.getItem("isRegistering");
   if (isRegistering === "true") {
-    console.log("⏸️ Registration in progress, skipping auto-redirect");
+    console.log("⏸️ Registration in progress, skipping auth check");
     return;
   }
 
+  // Normal auth state checking
   auth.onAuthStateChanged((user) => {
-    const currentPage = window.location.pathname;
-    const isLoginPage = currentPage.includes("login.html");
-
     console.log("🔍 Auth state changed:", {
       user: user ? user.email : "Not logged in",
       currentPage: currentPage,
       isLoginPage: isLoginPage,
-      isRegistering: isRegistering,
     });
 
     if (!user && !isLoginPage) {
       // User belum login dan bukan di halaman login
       console.log("⚠️ User not authenticated, redirecting to login...");
       window.location.href = "login.html";
-    } else if (user && isLoginPage && !isRegistering) {
-      // User sudah login tapi masih di halaman login (dan tidak sedang registrasi)
-      console.log("🔄 User already logged in, redirecting to dashboard...");
+    } else if (user && isLoginPage) {
+      // User sudah login tapi masih di halaman login
+      // CEK: apakah ini fresh login?
+      const freshLogin = sessionStorage.getItem("freshLogin");
+
+      if (!freshLogin) {
+        console.log("⏸️ Old session detected on login page, forcing logout...");
+        // Paksa logout jika bukan fresh login
+        sessionStorage.clear();
+        localStorage.clear();
+        auth.signOut().then(() => {
+          return auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
+        });
+        return;
+      }
+
+      console.log("🔄 Fresh login detected, redirecting to dashboard...");
 
       db.collection("users")
         .doc(user.uid)
@@ -277,7 +341,7 @@ function checkUserRole(allowedRoles) {
         console.log("⚠️ No user logged in");
         window.location.href = "login.html";
         reject("No user logged in");
-        unsubscribe(); // Cleanup listener
+        unsubscribe();
         return;
       }
 
@@ -290,7 +354,7 @@ function checkUserRole(allowedRoles) {
             alert("Data user tidak ditemukan!");
             logoutUser();
             reject("User data not found");
-            unsubscribe(); // Cleanup listener
+            unsubscribe();
             return;
           }
 
@@ -308,7 +372,6 @@ function checkUserRole(allowedRoles) {
               `⚠️ Anda tidak memiliki akses ke halaman ini!\n\nRole Anda: ${userRole}`
             );
 
-            // Redirect ke dashboard sesuai role
             if (userRole === "admin") {
               window.location.href = "index.html";
             } else if (userRole === "kapus") {
@@ -318,17 +381,17 @@ function checkUserRole(allowedRoles) {
             }
 
             reject("Access denied");
-            unsubscribe(); // Cleanup listener
+            unsubscribe();
           } else {
             console.log("✅ Access granted for role:", userRole);
             resolve(userData);
-            unsubscribe(); // Cleanup listener
+            unsubscribe();
           }
         })
         .catch((error) => {
           console.error("❌ Error checking role:", error);
           reject(error);
-          unsubscribe(); // Cleanup listener
+          unsubscribe();
         });
     });
   });
@@ -339,7 +402,6 @@ function checkUserRole(allowedRoles) {
 // ============================================
 function getCurrentUserData() {
   return new Promise((resolve, reject) => {
-    // Cek cache di sessionStorage dulu
     const cachedUser = sessionStorage.getItem("currentUser");
     if (cachedUser) {
       try {
@@ -352,12 +414,11 @@ function getCurrentUserData() {
       }
     }
 
-    // Jika tidak ada cache, ambil dari Firebase
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (!user) {
         console.log("⚠️ No user logged in");
         reject("No user logged in");
-        unsubscribe(); // Cleanup listener
+        unsubscribe();
         return;
       }
 
@@ -372,20 +433,19 @@ function getCurrentUserData() {
               ...doc.data(),
             };
 
-            // Cache ke sessionStorage
             sessionStorage.setItem("currentUser", JSON.stringify(userData));
 
             console.log("✅ User data from Firebase:", userData);
             resolve(userData);
-            unsubscribe(); // Cleanup listener
+            unsubscribe();
           } else {
             reject("User data not found");
-            unsubscribe(); // Cleanup listener
+            unsubscribe();
           }
         })
         .catch((error) => {
           reject(error);
-          unsubscribe(); // Cleanup listener
+          unsubscribe();
         });
     });
   });
@@ -411,10 +471,7 @@ function updateUserProfile(updates) {
       })
       .then(() => {
         console.log("✅ User profile updated");
-
-        // Clear cache
         sessionStorage.removeItem("currentUser");
-
         resolve(true);
       })
       .catch((error) => {
@@ -425,7 +482,7 @@ function updateUserProfile(updates) {
 }
 
 // ============================================
-// HELPER: CLEAR SESSION (untuk logout manual)
+// HELPER: CLEAR SESSION
 // ============================================
 function clearUserSession() {
   console.log("🧹 Clearing user session...");

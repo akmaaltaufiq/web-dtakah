@@ -29,6 +29,42 @@
       </div>
     </div>
 
+    <!-- Tambah di bawah logo, sebelum form login -->
+    <div style="text-align: center; margin-bottom: 15px">
+      <button
+        onclick="forceLogout()"
+        style="
+          background: #dc2626;
+          color: white;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+        "
+      >
+        <i class="bi bi-power"></i> Force Logout (Jika Stuck)
+      </button>
+    </div>
+
+    <script>
+      function forceLogout() {
+        if (window.auth) {
+          auth.signOut().then(() => {
+            sessionStorage.clear();
+            localStorage.clear();
+            alert("✅ Logout berhasil! Silakan login.");
+            location.reload();
+          });
+        } else {
+          sessionStorage.clear();
+          localStorage.clear();
+          alert("✅ Session cleared! Silakan login.");
+          location.reload();
+        }
+      }
+    </script>
+
     <!-- Login Page -->
     <div class="login-page">
       <div class="login-container">
@@ -372,9 +408,9 @@
       // CHECK AUTH STATE ON PAGE LOAD
       // ============================================
       document.addEventListener("DOMContentLoaded", function () {
-        console.log("🔄 Checking auth state on page load...");
+        console.log("🔄 Page loaded - checking auth state...");
 
-        // PENTING: Delay sedikit untuk memastikan Firebase sudah ready
+        // Check auth state (akan auto-detect ?logout=true)
         setTimeout(() => {
           checkAuthState();
         }, 300);
@@ -393,6 +429,45 @@
         });
 
       console.log("✅ Login page scripts loaded");
+
+      // ============================================
+      // FORCE LOGOUT SAAT BUKA LOGIN PAGE
+      // ============================================
+      (function () {
+        console.log("🔒 Login page loaded - checking for old sessions...");
+
+        // Jika ada user login lama, paksa logout
+        const urlParams = new URLSearchParams(window.location.search);
+        const isFromLogout = urlParams.get("logout") === "true";
+        const freshLogin = sessionStorage.getItem("freshLogin");
+
+        if (!freshLogin || isFromLogout) {
+          console.log("🧹 Clearing old session...");
+
+          // Clear storage
+          sessionStorage.clear();
+          localStorage.clear();
+
+          // Force Firebase logout
+          if (window.auth) {
+            auth
+              .signOut()
+              .then(() => {
+                return auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
+              })
+              .then(() => {
+                console.log("✅ Old session cleared");
+                // Clean URL
+                if (isFromLogout) {
+                  window.history.replaceState({}, document.title, "login.html");
+                }
+              })
+              .catch((err) => {
+                console.error("Clear session error:", err);
+              });
+          }
+        }
+      })();
     </script>
   </body>
 </html>
