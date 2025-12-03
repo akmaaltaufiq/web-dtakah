@@ -247,27 +247,33 @@
                 ></textarea>
               </div>
               <div class="form-group-half">
-                <label class="form-label">File Naskah</label>
-                <div
-                  class="upload-area"
-                  id="uploadArea"
-                  onclick="document.getElementById('fileInput').click()"
-                >
-                  <input
-                    type="file"
-                    id="fileInput"
-                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                    style="display: none"
-                    onchange="handleFileUpload(event)"
-                  />
-                  <div class="upload-content" id="uploadContent">
-                    <i class="bi bi-upload"></i>
-                    <p>Unggah Surat</p>
-                  </div>
-                  <div class="file-info-display" id="fileInfoDisplay"></div>
-                </div>
-              </div>
+          <label class="form-label">File Naskah</label>
+          
+          <!-- UPLOAD AREA -->
+          <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+            
+            <!-- INPUT FILE (HIDDEN) -->
+            <input
+              type="file"
+              id="fileInput"
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+              style="display: none"
+              onchange="handleFileUpload(event)"
+            />
+            
+            <!-- KONTEN SEBELUM UPLOAD -->
+            <div class="upload-content" id="uploadContent">
+              <i class="bi bi-cloud-arrow-up"></i>
+              <p>Klik untuk unggah file atau seret file ke sini</p>
+              <span>PDF, DOC, DOCX, JPG, PNG (Max 50MB)</span>
             </div>
+            
+            <!-- KONTEN SETELAH UPLOAD (AWALNYA HIDDEN) -->
+            <div class="file-info-display" id="fileInfoDisplay"></div>
+            
+          </div>
+        </div>
+      </div>
 
             <div class="form-actions-bottom">
               <button class="btn-next" onclick="goToStep2()">Tambahkan</button>
@@ -325,91 +331,206 @@
             </div>
           </div>
 
+          <!-- STEP 3 PREVIEW - ENHANCED VERSION -->
           <div class="step-content" id="step3Content">
-            <h3 class="section-title">PREVIEW</h3>
-            <h3 class="section-title">IDENTITAS PENGIRIM NASKAH</h3>
-
-            <div class="preview-row">
-              <div class="preview-label">Nama Pengirim</div>
-              <div class="preview-value" id="previewNamaPengirim">-</div>
+            <div class="preview-header">
+              <h3 class="section-title-main">PREVIEW DATA NOTA DINAS</h3>
+              <p class="preview-subtitle">Pastikan semua data sudah benar sebelum mengirim</p>
             </div>
 
-            <div class="preview-row">
-              <div class="preview-label">Jabatan Pengirim</div>
-              <div class="preview-value" id="previewJabatanPengirim">-</div>
+            <!-- SECTION 1: IDENTITAS PENGIRIM -->
+            <div class="preview-section">
+              <div class="preview-section-header">
+                <i class="bi bi-person-badge"></i>
+                <h3 class="section-title">IDENTITAS PENGIRIM NASKAH</h3>
+                <button type="button" class="btn-edit-section" onclick="goToStep1()" title="Edit Data Pengirim">
+                  <i class="bi bi-pencil-square"></i> Edit
+                </button>
+              </div>
+              
+              <div class="preview-card">
+                <div class="preview-row">
+                  <div class="preview-label">
+                    <i class="bi bi-person-circle"></i>
+                    Nama Pengirim
+                  </div>
+                  <div class="preview-value" id="previewNamaPengirim">-</div>
+                </div>
+
+                <div class="preview-row">
+                  <div class="preview-label">
+                    <i class="bi bi-briefcase"></i>
+                    Jabatan Pengirim
+                  </div>
+                  <div class="preview-value" id="previewJabatanPengirim">-</div>
+                </div>
+              </div>
             </div>
 
-            <h3 class="section-title" style="margin-top: 40px">DETAIL ISI</h3>
+            <!-- SECTION 2: DETAIL ISI -->
+            <div class="preview-section">
+              <div class="preview-section-header">
+                <i class="bi bi-file-earmark-text"></i>
+                <h3 class="section-title">DETAIL ISI NASKAH</h3>
+                <button type="button" class="btn-edit-section" onclick="goToStep1()" title="Edit Detail Isi">
+                  <i class="bi bi-pencil-square"></i> Edit
+                </button>
+              </div>
+              
+              <div class="preview-card">
+                <div class="preview-row">
+                  <div class="preview-label">
+                    <i class="bi bi-tag"></i>
+                    Jenis Naskah
+                  </div>
+                  <div class="preview-value" id="previewJenisNaskah">-</div>
+                </div>
 
-            <div class="preview-row">
-              <div class="preview-label">Jenis Naskah</div>
-              <div class="preview-value" id="previewJenisNaskah">-</div>
+                <div class="preview-row">
+                  <div class="preview-label">
+                    <i class="bi bi-shield-lock"></i>
+                    Sifat Naskah
+                  </div>
+                  <div class="preview-value">
+                    <span class="badge-sifat" id="previewSifatNaskah">-</span>
+                  </div>
+                </div>
+
+                <div class="preview-row">
+                  <div class="preview-label">
+                    <i class="bi bi-hash"></i>
+                    Nomor Naskah
+                  </div>
+                  <div class="preview-value preview-highlight" id="previewNomorNaskah">-</div>
+                </div>
+
+                <div class="preview-row">
+                  <div class="preview-label">
+                    <i class="bi bi-chat-left-text"></i>
+                    Perihal
+                  </div>
+                  <div class="preview-value preview-highlight" id="previewPerihal">-</div>
+                </div>
+
+                <div class="preview-row">
+                  <div class="preview-label">
+                    <i class="bi bi-calendar-event"></i>
+                    Tanggal Naskah
+                  </div>
+                  <div class="preview-value" id="previewTanggalSurat">-</div>
+                </div>
+
+                <div class="preview-row">
+                  <div class="preview-label">
+                    <i class="bi bi-sticky"></i>
+                    Catatan
+                  </div>
+                  <div class="preview-value" id="previewCatatan">-</div>
+                </div>
+
+                <div class="preview-row">
+                  <div class="preview-label">
+                    <i class="bi bi-paperclip"></i>
+                    File Lampiran
+                  </div>
+                  <div class="preview-value">
+                    <div class="preview-file-info" id="previewFileInfo">
+                      <i class="bi bi-file-earmark-pdf"></i>
+                      <span id="previewFileName">Tidak ada file</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div class="preview-row">
-              <div class="preview-label">Sifat Naskah</div>
-              <div class="preview-value" id="previewSifatNaskah">-</div>
+            <!-- SECTION 3: TUJUAN -->
+            <div class="preview-section">
+              <div class="preview-section-header">
+                <i class="bi bi-send"></i>
+                <h3 class="section-title">INFORMASI TUJUAN</h3>
+                <button type="button" class="btn-edit-section" onclick="goToStep2()" title="Edit Tujuan">
+                  <i class="bi bi-pencil-square"></i> Edit
+                </button>
+              </div>
+              
+              <div class="preview-card">
+                <div class="preview-row">
+                  <div class="preview-label">
+                    <i class="bi bi-person-check"></i>
+                    Ditujukan Kepada
+                  </div>
+                  <div class="preview-value preview-highlight" id="previewTujuan">-</div>
+                </div>
+
+                <div class="preview-row">
+                  <div class="preview-label">
+                    <i class="bi bi-list-check"></i>
+                    Instruksi
+                  </div>
+                  <div class="preview-value preview-text-area" id="previewInstruksi">-</div>
+                </div>
+
+                <div class="preview-row">
+                  <div class="preview-label">
+                    <i class="bi bi-alarm"></i>
+                    Tenggat Waktu
+                  </div>
+                  <div class="preview-value">
+                    <span class="badge-deadline" id="previewTenggatWaktu">-</span>
+                  </div>
+                </div>
+
+                <div class="preview-row">
+                  <div class="preview-label">
+                    <i class="bi bi-chat-square-dots"></i>
+                    Catatan Tujuan
+                  </div>
+                  <div class="preview-value preview-text-area" id="previewCatatanTujuan">-</div>
+                </div>
+              </div>
             </div>
 
-            <div class="preview-row">
-              <div class="preview-label">Nomor Naskah</div>
-              <div class="preview-value" id="previewNomorNaskah">-</div>
+            <!-- PREVIEW FILE DOCUMENT -->
+            <div class="preview-section">
+              <div class="preview-section-header">
+                <i class="bi bi-file-earmark-pdf"></i>
+                <h3 class="section-title">DOKUMEN NASKAH</h3>
+              </div>
+              
+              <div class="preview-card preview-file-card">
+                <div class="file-preview-container">
+                  <i class="bi bi-file-earmark-pdf-fill" style="font-size: 64px; color: #dc2626;"></i>
+                  <p class="file-preview-text" id="previewFileNameLarge">Tidak ada dokumen</p>
+                  <button type="button" class="btn-view-pdf" id="viewPdfBtn" style="display: none;">
+                    <i class="bi bi-eye"></i> Lihat Dokumen
+                  </button>
+                </div>
+              </div>
             </div>
 
-            <div class="preview-row">
-              <div class="preview-label">Perihal</div>
-              <div class="preview-value" id="previewPerihal">-</div>
+            <!-- WARNING BOX -->
+            <div class="preview-warning-box">
+              <div class="warning-icon">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+              </div>
+              <div class="warning-content">
+                <h4>Perhatian!</h4>
+                <p>Pastikan semua data sudah benar. Setelah dikirim, nota dinas akan masuk ke sistem dan tidak dapat diubah kecuali dengan persetujuan admin.</p>
+              </div>
             </div>
 
-            <div class="preview-row">
-              <div class="preview-label">Tanggal Naskah</div>
-              <div class="preview-value" id="previewTanggalSurat">-</div>
-            </div>
-
-            <div class="preview-row">
-              <div class="preview-label">Catatan</div>
-              <div class="preview-value" id="previewCatatan">-</div>
-            </div>
-
-            <h3 class="section-title" style="margin-top: 40px">TUJUAN</h3>
-
-            <div class="preview-row">
-              <div class="preview-label">Ditujukan Kepada</div>
-              <div class="preview-value" id="previewTujuan">-</div>
-            </div>
-
-            <div class="preview-row">
-              <div class="preview-label">Instruksi</div>
-              <div class="preview-value" id="previewInstruksi">-</div>
-            </div>
-
-            <div class="preview-row">
-              <div class="preview-label">Tenggat Waktu</div>
-              <div class="preview-value" id="previewTenggatWaktu">-</div>
-            </div>
-
-            <div class="preview-row">
-              <div class="preview-label">Catatan Tujuan</div>
-              <div class="preview-value" id="previewCatatanTujuan">-</div>
-            </div>
-
-            <div class="preview-file">
-              <button class="btn-view-pdf" id="viewPdfBtn">
-                Lihat Surat (PDF)
-              </button>
-            </div>
-
+            <!-- ACTION BUTTONS -->
             <div class="form-actions-bottom">
-              <button class="btn-secondary" onclick="goToStep2()">
+              <button type="button" class="btn-secondary" onclick="goToStep2()">
+                <i class="bi bi-arrow-left"></i>
                 Kembali
               </button>
-              <button class="btn-submit" onclick="submitNotaDinas()">
-                Tambahkan Sekarang
+              <button type="button" class="btn-submit" onclick="confirmSubmitNotaDinas()">
+                <i class="bi bi-check-circle"></i>
+                Konfirmasi & Kirim
               </button>
             </div>
           </div>
-        </div>
-      </div>
 
       <div class="success-popup" id="successPopup">
         <div class="success-content">

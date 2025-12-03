@@ -854,98 +854,190 @@ document.addEventListener("DOMContentLoaded", () => {
   // =============================
   // FILE UPLOAD HANDLER
   // =============================
-  window.handleFileUpload = function (e) {
-    const file = e.target.files[0];
-    const uploadArea = document.querySelector(".form-upload-area");
-    const fileInfoDisplay = document.getElementById("fileInfoDisplay");
+  // =============================
+// FILE UPLOAD HANDLER - COMPLETE FIX
+// Ganti seluruh fungsi handleFileUpload di main.js
+// =============================
 
-    if (!file) {
-      if (uploadArea) uploadArea.classList.remove("has-file");
-      if (fileInfoDisplay) fileInfoDisplay.innerHTML = "";
-      window.uploadedFile = null;
-      return;
-    }
-
-    const allowedTypes = [
-      "application/pdf",
-      "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "image/jpeg",
-      "image/jpg",
-      "image/png",
-    ];
-
-    if (!allowedTypes.includes(file.type)) {
-      Notification.error("Format file tidak didukung. Gunakan PDF, DOC, DOCX, JPEG, JPG, atau PNG");
-      e.target.value = "";
-      if (uploadArea) uploadArea.classList.remove("has-file");
-      if (fileInfoDisplay) fileInfoDisplay.innerHTML = "";
-      window.uploadedFile = null;
-      return;
-    }
-
-    const maxSize = 50 * 1024 * 1024; // 50MB
-    if (file.size > maxSize) {
-      Notification.error("Ukuran file maksimal 50MB");
-      e.target.value = "";
-      if (uploadArea) uploadArea.classList.remove("has-file");
-      if (fileInfoDisplay) fileInfoDisplay.innerHTML = "";
-      window.uploadedFile = null;
-      return;
-    }
-
-    window.uploadedFile = file;
-
-    // Icon based on file type
-    let iconClass = "bi-file-earmark-text-fill";
-    if (file.type === "application/pdf") {
-      iconClass = "bi-file-earmark-pdf-fill";
-    } else if (file.type.includes("word") || file.type.includes("document")) {
-      iconClass = "bi-file-earmark-word-fill";
-    } else if (file.type.includes("image")) {
-      iconClass = "bi-file-earmark-image-fill";
-    }
-
-    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-
-    if (uploadArea) uploadArea.classList.add("has-file");
-    if (fileInfoDisplay) {
-      fileInfoDisplay.innerHTML = `
-        <div class="file-display-card">
-          <div class="file-display-icon">
-            <i class="bi ${iconClass}"></i>
-          </div>
-          <div class="file-display-info">
-            <div class="file-display-label">File Naskah</div>
-            <div class="file-display-name">${Utils.escapeHtml(file.name)}</div>
-            <div class="file-display-size">${fileSizeMB} MB</div>
-          </div>
-          <button type="button" class="file-remove-btn" onclick="removeUploadedFile(event)" title="Hapus file">
-            <i class="bi bi-x"></i>
-          </button>
-        </div>
-      `;
-    }
-    
-    console.log("✅ File uploaded:", file.name);
-  };
-
-  window.removeUploadedFile = function(e) {
-    e.stopPropagation();
-    
-    const fileInput = document.getElementById("fileInput");
-    if (fileInput) fileInput.value = "";
-    
-    const uploadArea = document.querySelector(".form-upload-area");
-    const fileInfoDisplay = document.getElementById("fileInfoDisplay");
-    
+window.handleFileUpload = function (event) {
+  console.log("=== FILE UPLOAD STARTED ===");
+  
+  const file = event.target.files[0];
+  console.log("File object:", file);
+  
+  // Cari semua elemen yang dibutuhkan
+  const uploadArea = document.getElementById("uploadArea");
+  const uploadContent = document.getElementById("uploadContent");
+  const fileInfoDisplay = document.getElementById("fileInfoDisplay");
+  
+  console.log("Upload Area found:", uploadArea);
+  console.log("Upload Content found:", uploadContent);
+  console.log("File Info Display found:", fileInfoDisplay);
+  
+  // Jika tidak ada file, reset
+  if (!file) {
+    console.log("No file selected, resetting...");
     if (uploadArea) uploadArea.classList.remove("has-file");
-    if (fileInfoDisplay) fileInfoDisplay.innerHTML = "";
-    
+    if (uploadContent) uploadContent.style.display = "flex";
+    if (fileInfoDisplay) {
+      fileInfoDisplay.style.display = "none";
+      fileInfoDisplay.innerHTML = "";
+    }
     window.uploadedFile = null;
-    
-    console.log("🗑️ File removed");
-  };
+    return;
+  }
+  
+  console.log("File name:", file.name);
+  console.log("File type:", file.type);
+  console.log("File size:", file.size);
+  
+  // Validasi tipe file
+  const allowedTypes = [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+  ];
+
+  if (!allowedTypes.includes(file.type)) {
+    alert("❌ Format file tidak didukung!\n\nGunakan: PDF, DOC, DOCX, JPG, atau PNG");
+    event.target.value = "";
+    return;
+  }
+
+  // Validasi ukuran (50MB)
+  const maxSize = 50 * 1024 * 1024;
+  if (file.size > maxSize) {
+    alert("❌ Ukuran file terlalu besar!\n\nMaksimal: 50MB");
+    event.target.value = "";
+    return;
+  }
+  
+  // Simpan file
+  window.uploadedFile = file;
+  console.log("File saved to window.uploadedFile");
+  
+  // Tentukan icon dan warna
+  let iconClass = "bi-file-earmark-text-fill";
+  let iconColor = "#6b7280";
+  
+  if (file.type === "application/pdf") {
+    iconClass = "bi-file-earmark-pdf-fill";
+    iconColor = "#dc2626";
+  } else if (file.type.includes("word") || file.type.includes("document")) {
+    iconClass = "bi-file-earmark-word-fill";
+    iconColor = "#2563eb";
+  } else if (file.type.includes("image")) {
+    iconClass = "bi-file-earmark-image-fill";
+    iconColor = "#10b981";
+  }
+  
+  // Hitung ukuran
+  const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+  
+  // Escape nama file untuk keamanan
+  const safeName = file.name
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+  
+  console.log("Creating file display card...");
+  
+  // Buat HTML untuk display
+  const fileCardHTML = `
+    <div class="file-display-card">
+      <div class="file-display-icon" style="background-color: ${iconColor}20;">
+        <i class="bi ${iconClass}" style="color: ${iconColor}; font-size: 28px;"></i>
+      </div>
+      <div class="file-display-info">
+        <div class="file-display-label">FILE NASKAH</div>
+        <div class="file-display-name" title="${safeName}">${safeName}</div>
+        <div class="file-display-size">${fileSizeMB} MB</div>
+      </div>
+      <button type="button" class="file-remove-btn" onclick="window.removeUploadedFile(event)" title="Hapus file">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+  `;
+  
+  // Update tampilan - LANGKAH DEMI LANGKAH
+  console.log("Step 1: Hide upload content");
+  if (uploadContent) {
+    uploadContent.style.display = "none";
+    console.log("✓ Upload content hidden");
+  }
+  
+  console.log("Step 2: Show file info display");
+  if (fileInfoDisplay) {
+    fileInfoDisplay.innerHTML = fileCardHTML;
+    fileInfoDisplay.style.display = "block";
+    console.log("✓ File info display shown");
+  }
+  
+  console.log("Step 3: Add has-file class");
+  if (uploadArea) {
+    uploadArea.classList.add("has-file");
+    console.log("✓ has-file class added");
+  }
+  
+  console.log("=== FILE UPLOAD COMPLETED ===");
+  console.log("✅ File successfully uploaded:", file.name);
+};
+
+window.removeUploadedFile = function(event) {
+  event.stopPropagation();
+  console.log("=== REMOVING FILE ===");
+  
+  const fileInput = document.getElementById("fileInput");
+  const uploadArea = document.getElementById("uploadArea");
+  const uploadContent = document.getElementById("uploadContent");
+  const fileInfoDisplay = document.getElementById("fileInfoDisplay");
+  
+  // Reset input
+  if (fileInput) {
+    fileInput.value = "";
+    console.log("✓ Input cleared");
+  }
+  
+  // Hide file display
+  if (fileInfoDisplay) {
+    fileInfoDisplay.innerHTML = "";
+    fileInfoDisplay.style.display = "none";
+    console.log("✓ File display hidden");
+  }
+  
+  // Show upload content
+  if (uploadContent) {
+    uploadContent.style.display = "flex";
+    console.log("✓ Upload content shown");
+  }
+  
+  // Remove class
+  if (uploadArea) {
+    uploadArea.classList.remove("has-file");
+    console.log("✓ has-file class removed");
+  }
+  
+  // Clear global variable
+  window.uploadedFile = null;
+  console.log("✓ Global variable cleared");
+  
+  console.log("=== FILE REMOVED ===");
+};
+
+// Auto-attach saat halaman dimuat
+document.addEventListener("DOMContentLoaded", function() {
+  const fileInput = document.getElementById("fileInput");
+  if (fileInput) {
+    console.log("✅ File input found and handler attached");
+  } else {
+    console.warn("⚠️ File input NOT found on page load");
+  }
+});
 
   // =============================
   // START INITIALIZATION

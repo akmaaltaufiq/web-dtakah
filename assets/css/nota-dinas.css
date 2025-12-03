@@ -601,8 +601,8 @@ body {
 }
 
 .back-btn-form:hover {
-  background-color: #f8f9fa;
-  border-color: #7f1d1d;
+  background-color: #8b0000;
+  border-color: #e5e7eb;
   color: #7f1d1d;
 }
 
@@ -767,17 +767,24 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* =============================
     UPLOAD AREA
     ============================= */
+/* =============================
+   FILE UPLOAD - COMPLETE CSS
+   Tambahkan atau ganti di nota-dinas.css
+   ============================= */
+
+/* UPLOAD AREA - CONTAINER UTAMA */
 .upload-area {
   border: 2px dashed #d1d5db;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 40px 20px;
   text-align: center;
   background: #f9fafb;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
   position: relative;
-  height: 100%;
+  min-height: 180px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
@@ -787,65 +794,177 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background: #fef2f2;
 }
 
+/* KETIKA ADA FILE */
 .upload-area.has-file {
-  border-style: solid;
-  border-color: #10b981;
-  background: #f0fdf4;
+  border: 2px solid #10b981 !important;
+  background: #f0fdf4 !important;
+  padding: 20px !important;
 }
 
+/* KONTEN UPLOAD DEFAULT (Sebelum upload) */
 .upload-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  pointer-events: none;
 }
 
 .upload-content i {
-  font-size: 32px;
+  font-size: 48px;
   color: #9ca3af;
+  margin-bottom: 8px;
 }
 
 .upload-content p {
-  font-size: 14px;
-  color: #6b7280;
+  font-size: 15px;
+  color: #374151;
+  font-weight: 500;
   margin: 0;
 }
 
+.upload-content span {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* FILE INFO DISPLAY (Setelah upload) */
 .file-info-display {
   display: none;
+  width: 100%;
+  pointer-events: auto;
 }
 
-.upload-area.has-file .upload-content {
-  display: none;
-}
-
-.upload-area.has-file .file-info-display {
-  display: block;
-}
-
-.file-info {
+/* FILE DISPLAY CARD */
+.file-display-card {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
+  padding: 16px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  position: relative;
+}
+
+/* ICON FILE */
+.file-display-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
-.file-info i {
-  font-size: 32px;
+.file-display-icon i {
+  font-size: 28px;
+}
+
+/* INFO FILE */
+.file-display-info {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.file-display-label {
+  font-size: 10px;
+  font-weight: 700;
   color: #10b981;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
 }
 
-.file-name {
+.file-display-name {
   font-size: 14px;
   font-weight: 600;
   color: #1a1a1a;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
-.preview-label {
-  font-size: 12px;
+.file-display-size {
+  font-size: 13px;
   color: #6b7280;
+  font-weight: 500;
 }
 
+/* TOMBOL HAPUS */
+.file-remove-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  background: #fee2e2;
+  color: #dc2626;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
+.file-remove-btn:hover {
+  background: #fecaca;
+  transform: scale(1.1);
+}
+
+.file-remove-btn:active {
+  transform: scale(0.95);
+}
+
+.file-remove-btn i {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .upload-area {
+    padding: 30px 15px;
+    min-height: 160px;
+  }
+
+  .file-display-card {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .file-display-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .file-display-icon i {
+    font-size: 24px;
+  }
+
+  .file-display-name {
+    font-size: 13px;
+  }
+
+  .file-display-size {
+    font-size: 12px;
+  }
+
+  .file-remove-btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .file-remove-btn i {
+    font-size: 12px;
+  }
+}
 /* =============================
     FORM ACTIONS
     ============================= */
@@ -897,12 +1016,93 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* =============================
     PREVIEW STYLES
     ============================= */
+/* Preview Header */
+.preview-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f1f3f5;
+}
+
+.section-title-main {
+  font-size: 24px;
+  font-weight: 700;
+  color: #7f1d1d;
+  margin: 0 0 8px 0;
+}
+
+.preview-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Preview Sections */
+.preview-section {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.preview-section-header {
+  background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.preview-section-header i {
+  font-size: 20px;
+  color: white;
+}
+
+.preview-section-header .section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+  padding: 0;
+  border: none;
+  flex: 1;
+}
+
+.btn-edit-section {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-edit-section:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Preview Card */
+.preview-card {
+  padding: 24px;
+}
+
 .preview-row {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 220px 1fr;
   gap: 20px;
   padding: 16px 0;
   border-bottom: 1px solid #f1f3f5;
+  align-items: start;
 }
 
 .preview-row:last-child {
@@ -911,38 +1111,183 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .preview-label {
   font-weight: 600;
-  color: #495057;
+  color: #374151;
   font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.preview-label i {
+  font-size: 16px;
+  color: #7f1d1d;
 }
 
 .preview-value {
-  color: #1a1a1a;
+  color: #1f2937;
   font-size: 14px;
   word-wrap: break-word;
+  line-height: 1.6;
 }
 
-.preview-file {
-  margin: 30px 0;
-  text-align: left;
+.preview-value.preview-highlight {
+  font-weight: 600;
+  color: #7f1d1d;
+}
+
+.preview-value.preview-text-area {
+  background: #e0efff;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 3px solid #7f1d1d;
+}
+
+/* Badge Styles */
+.badge-sifat {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  background-color: #fff1e4;
+}
+
+.badge-sifat.umum,
+.badge-sifat[data-sifat="umum"] {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+.badge-sifat.penting,
+.badge-sifat[data-sifat="penting"] {
+  background: #f97316;
+  color: #ffffff;
+}
+
+.badge-sifat.rahasia,
+.badge-sifat[data-sifat="rahasia"] {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.badge-deadline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #fed8c7;
+  color: #8c3600;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* File Preview */
+.preview-file-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.preview-file-info i {
+  font-size: 24px;
+  color: #dc2626;
+}
+
+.preview-file-info span {
+  font-size: 14px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.preview-file-card {
+  text-align: center;
+  padding: 40px 24px;
+  background: #f9fafb;
+}
+
+.file-preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.file-preview-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
 }
 
 .btn-view-pdf {
-  background-color: white;
-  color: #7f1d1d;
-  border: 1px solid #dee2e6;
+  background-color: #7f1d1d;
+  color: white;
+  border: none;
   padding: 10px 24px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .btn-view-pdf:hover {
-  background-color: #f8f9fa;
-  border-color: #7f1d1d;
+  background-color: #991b1b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(127, 29, 29, 0.3);
 }
 
+/* Warning Box */
+.preview-warning-box {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 2px solid #f59e0b;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 30px 0;
+  display: flex;
+  gap: 16px;
+  align-items: start;
+}
+
+.warning-icon {
+  width: 40px;
+  height: 40px;
+  background: #f59e0b;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.warning-icon i {
+  font-size: 20px;
+  color: white;
+}
+
+.warning-content h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #92400e;
+  margin: 0 0 8px 0;
+}
+
+.warning-content p {
+  font-size: 14px;
+  color: #78350f;
+  margin: 0;
+  line-height: 1.6;
+}
 /* =============================
     SUCCESS POPUP STYLES
     ============================= */
@@ -1157,9 +1502,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
+  align-items: left;
+  justify-content: left;
+  min-height: 100px;
 }
 
 .preview-title {
