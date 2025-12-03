@@ -1,7 +1,7 @@
 .content-container {
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 60px);
+  
 }
 
 /* Surat Masuk Card */
@@ -248,6 +248,63 @@
   .detail-layout {
     grid-template-columns: 1fr;
   }
+}
+
+/* ==========================================
+   BREADCRUMB WITH BACK BUTTON
+   ========================================== */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 12px 0;
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.btn-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #8b0000;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 18px;
+}
+
+.btn-back:hover {
+  background: #6d0000;
+  transform: translateX(-2px);
+  box-shadow: 0 2px 8px rgba(139, 0, 0, 0.3);
+}
+
+.btn-back:active {
+  transform: translateX(0);
+}
+
+.breadcrumb span {
+  font-weight: 500;
+}
+
+.breadcrumb span:hover:not(.breadcrumb-current):not(.breadcrumb-separator) {
+  color: #8b0000;
+  text-decoration: underline;
+}
+
+.breadcrumb-separator {
+  color: #dee2e6;
+  font-weight: 400;
+}
+
+.breadcrumb-current {
+  color: #202224;
+  font-weight: 600;
 }
 
 /* Preview Card */
@@ -740,7 +797,7 @@
 .form-view-container,
 .detail-preview-view,
 .disposisi-view {
-  flex: 1 0 auto; /* Grow untuk push footer */
+  flex: 1 0 auto;
 }
 
 .list-view-container.hidden {
@@ -756,8 +813,8 @@
 }
 
 #footer-placeholder {
-  margin-top: auto; /* Push ke bawah */
-  flex-shrink: 0; /* Prevent shrinking */
+  margin-bottom: auto;
+  flex-shrink: 0;
 }
 
 /* =============================
@@ -908,6 +965,7 @@ select.form-input {
   background: #f8f9fa;
   cursor: pointer;
   transition: all 0.2s;
+  position: relative;
 }
 
 .form-upload-area:hover {
@@ -918,6 +976,8 @@ select.form-input {
 .form-upload-area.has-file {
   border-color: #10b981;
   background: #ecfdf5;
+  border-style: solid;
+  padding: 0;
 }
 
 .upload-icon {
@@ -932,28 +992,98 @@ select.form-input {
   margin-bottom: 8px;
 }
 
-.file-info {
-  margin-top: 12px;
-  padding: 12px;
-  background: #fff;
-  border-radius: 6px;
+/* File Display - Enhanced */
+#fileInfoDisplay {
+  display: none;
+}
+
+.form-upload-area.has-file #fileInfoDisplay {
+  display: block;
+}
+
+.form-upload-area.has-file .upload-icon,
+.form-upload-area.has-file .upload-text {
+  display: none;
+}
+
+.file-display-card {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border-radius: 8px;
+  padding: 24px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  border: 1px solid #e0e0e0;
+  gap: 20px;
+  position: relative;
 }
 
-.file-info i {
-  font-size: 24px;
-  color: #ef3826;
+.file-display-icon {
+  width: 60px;
+  height: 60px;
+  background: #10b981;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.file-info .file-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: #202224;
+.file-display-icon i {
+  font-size: 32px;
+  color: white;
+}
+
+.file-display-info {
   flex: 1;
   text-align: left;
+}
+
+.file-display-label {
+  font-size: 12px;
+  color: #059669;
+  font-weight: 600;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.file-display-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #064e3b;
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
+.file-display-size {
+  font-size: 13px;
+  color: #059669;
+  font-weight: 500;
+}
+
+.file-remove-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  background: rgba(239, 68, 68, 0.9);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+}
+
+.file-remove-btn:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+.file-remove-btn i {
+  font-size: 14px;
 }
 
 /* =============================
@@ -1117,74 +1247,6 @@ select.form-input {
 }
 
 /* =============================
-   RESPONSIVE
-   ============================= */
-@media (max-width: 768px) {
-  .header-title {
-    font-size: 14px;
-    max-width: 300px;
-  }
-
-  .form-steps {
-    gap: 20px;
-  }
-
-  .step-connector {
-    width: 40px;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .preview-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .card-header-section {
-    flex-direction: column;
-    gap: 12px;
-    align-items: stretch;
-  }
-
-  .search-table {
-    width: 100%;
-  }
-
-  .form-actions {
-    flex-direction: column-reverse;
-  }
-
-  .btn-cancel,
-  .btn-prev,
-  .btn-next,
-  .btn-submit {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .form-steps {
-    gap: 10px;
-  }
-
-  .step-number {
-    width: 40px;
-    height: 40px;
-    font-size: 16px;
-  }
-
-  .step-label {
-    font-size: 14px;
-  }
-
-  .step-connector {
-    width: 20px;
-  }
-}
-
-/* =============================
    DETAIL PREVIEW VIEW
    ============================= */
 .detail-preview-view {
@@ -1195,33 +1257,10 @@ select.form-input {
   display: block;
 }
 
-.breadcrumb {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 24px;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.breadcrumb span {
-  color: #666;
-}
-
-.breadcrumb span:first-child:hover {
-  color: #8b0000;
-}
-
 .detail-preview-layout {
   display: grid;
   grid-template-columns: 1fr 500px;
   gap: 24px;
-}
-
-@media (max-width: 1200px) {
-  .detail-preview-layout {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Document Preview */
@@ -1405,6 +1444,26 @@ select.form-input {
   color: #92400e;
 }
 
+.badge-detail.badge-penting {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.badge-detail.badge-rahasia {
+  background: #ffe4e6;
+  color: #9f1239;
+}
+
+.badge-detail.badge-sangat-rahasia {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.badge-detail.badge-konfidensial {
+  background: #e0f2fe;
+  color: #0c4a6e;
+}
+
 .info-detail-perihal {
   font-size: 14px;
   color: #202224;
@@ -1480,6 +1539,26 @@ select.form-input {
   font-weight: 700;
 }
 
+.status-detail-badge.pending {
+  background: #fff3c7;
+  color: #d97706;
+}
+
+.status-detail-badge.proses {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.status-detail-badge.selesai {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.status-detail-badge.ditolak {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
 .progress-detail-section {
   padding: 20px 24px;
   border-top: 1px solid #f0f0f0;
@@ -1525,29 +1604,25 @@ select.form-input {
   border-top: 1px solid #f0f0f0;
 }
 
-.update-detail-label {
-  font-size: 13px;
-  color: #666;
-  font-weight: 500;
-  margin-bottom: 12px;
-}
-
-.update-detail-select {
+.btn-disposisi-redirect {
   width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #d4d4d4;
+  background: #f4c430;
+  color: #8b0000;
+  border: none;
+  padding: 12px 24px;
   border-radius: 8px;
+  font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  background: #fff;
-  color: #202224;
-  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.3s;
 }
 
-.update-detail-select:focus {
-  outline: none;
-  border-color: #8b0000;
-  box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+.btn-disposisi-redirect:hover {
+  background: #e6b800;
 }
 
 /* =============================
@@ -1854,9 +1929,113 @@ select.form-input {
   font-weight: 600;
 }
 
-/* Responsive */
+/* ==========================================
+   KEPADA CHECKBOX GRID
+   ========================================== */
+.kepada-checkbox-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.kepada-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: white;
+  border: 1px solid #d4d4d4;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.kepada-checkbox-item:hover {
+  border-color: #8b0000;
+  background: #fff5f5;
+}
+
+.kepada-checkbox-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #8b0000;
+  flex-shrink: 0;
+}
+
+.kepada-checkbox-item input[type="checkbox"]:checked + span {
+  color: #8b0000;
+  font-weight: 600;
+}
+
+.kepada-checkbox-item span {
+  font-size: 13px;
+  color: #202224;
+  line-height: 1.4;
+}
+
+/* =============================
+   RESPONSIVE
+   ============================= */
+@media (max-width: 1200px) {
+  .detail-preview-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
+  .header-title {
+    font-size: 14px;
+    max-width: 300px;
+  }
+
+  .form-steps {
+    gap: 20px;
+  }
+
+  .step-connector {
+    width: 40px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .preview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-header-section {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .search-table {
+    width: 100%;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .btn-cancel,
+  .btn-prev,
+  .btn-next,
+  .btn-submit {
+    width: 100%;
+    justify-content: center;
+  }
+
   .disposisi-checkbox-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .kepada-checkbox-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1867,109 +2046,143 @@ select.form-input {
   .detail-preview-layout {
     grid-template-columns: 1fr;
   }
+
+  .file-display-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .file-display-info {
+    text-align: center;
+  }
+
+  .breadcrumb {
+    font-size: 13px;
+    gap: 8px;
+  }
+
+  .btn-back {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
 }
 
+@media (max-width: 480px) {
+  .form-steps {
+    gap: 10px;
+  }
+
+  .step-number {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .step-label {
+    font-size: 14px;
+  }
+
+  .step-connector {
+    width: 20px;
+  }
+}
 /* ==========================================
-   BADGES TAMBAHAN (Dipakai di Monitoring & Detail Surat)
+   DISPOSISI SUCCESS POPUP STYLING
    ========================================== */
 
-/* Badges Sifat Surat */
-.badge-detail.badge-penting {
-  background: #fef3c7; /* Kuning Muda */
-  color: #b45309; /* Cokelat Tua */
-}
-.badge-detail.badge-rahasia {
-  background: #ffe4e6; /* Merah Muda */
-  color: #9f1239; /* Merah Marun Tua */
-}
-.badge-detail.badge-sangat-rahasia {
-  background: #fee2e2; /* Merah Sangat Muda */
-  color: #991b1b; /* Merah Marun Sangat Tua */
-}
-.badge-detail.badge-konfidensial {
-  background: #e0f2fe; /* Biru Muda */
-  color: #0c4a6e; /* Biru Tua */
+.disposisi-success-popup {
+  border-radius: 20px !important;
+  padding: 30px !important;
 }
 
-/* Badges Status Surat */
-.status-detail-badge.pending {
-  background: #fff3c7;
-  color: #d97706;
-}
-.status-detail-badge.proses {
-  background: #dbeafe;
-  color: #2563eb;
-}
-.status-detail-badge.selesai {
-  background: #d1fae5;
-  color: #059669;
-}
-.status-detail-badge.ditolak {
-  background: #fee2e2;
-  color: #dc2626;
+.disposisi-success-popup .swal2-title {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: #202224 !important;
+  margin-bottom: 20px !important;
 }
 
-/* Monitoring Table - Badge Aksi */
-.monitoring-table .status-badge {
-  /* Menggunakan status-badge yang sudah ada, tapi memastikan warna konsisten */
-  padding: 6px 14px;
-  border-radius: 16px;
-  font-weight: 600;
-}
-.monitoring-table .status-badge.diterima {
-  /* Digunakan untuk SURAT BARU/Terkirim */
-  background: #d1fae5;
-  color: #059669;
-}
-.monitoring-table .status-badge.proses {
-  /* Digunakan untuk DISPOSISI BARU */
-  background: #dbeafe;
-  color: #2563eb;
-}
-.monitoring-table .status-badge.ditolak {
-  /* Digunakan untuk DIHAPUS */
-  background: #fee2e2;
-  color: #dc2626;
-}
-.monitoring-table .status-badge.selesai {
-  /* Digunakan untuk DIPULIHKAN */
-  background: #fef9c3;
-  color: #a16207;
+.disposisi-success-popup .swal2-html-container {
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-/* Monitoring Table - Tampilan Detail */
-.monitoring-table td {
-  vertical-align: middle;
-}
-.monitoring-table td:nth-child(4) .dari-cell {
-  /* Kolom Surat Info */
-  transition: color 0.2s;
-}
-.monitoring-table td:nth-child(4) .dari-cell:hover {
-  color: #8b0000;
-  text-decoration: underline;
+.disposisi-success-popup .swal2-actions {
+  margin-top: 30px !important;
+  gap: 12px !important;
 }
 
-/* ==========================================
-   PERBAIKAN MINOR UNTUK FORM/DETAIL
-   ========================================== */
-.btn-disposisi-redirect {
-  width: 100%;
-  background: #f4c430;
-  color: #8b0000;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: background 0.3s;
+/* Button Styling */
+.btn-monitoring-surat,
+.btn-kembali {
+  padding: 14px 32px !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  border: none !important;
+  transition: all 0.3s ease !important;
+  min-width: 150px !important;
 }
 
-.btn-disposisi-redirect:hover {
-  background: #e6b800;
+.btn-monitoring-surat {
+  background: #8b0000 !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3) !important;
+}
+
+.btn-monitoring-surat:hover {
+  background: #6d0000 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(139, 0, 0, 0.4) !important;
+}
+
+.btn-kembali {
+  background: white !important;
+  color: #666 !important;
+  border: 2px solid #d4d4d4 !important;
+}
+
+.btn-kembali:hover {
+  background: #f5f5f5 !important;
+  border-color: #999 !important;
+  color: #333 !important;
+}
+
+/* Success Icon Animation */
+@keyframes checkmark-scale {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.disposisi-success-popup .bi-check-lg {
+  animation: checkmark-scale 0.5s ease-out;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .disposisi-success-popup {
+    width: 90% !important;
+    padding: 20px !important;
+  }
+
+  .btn-monitoring-surat,
+  .btn-kembali {
+    min-width: 120px !important;
+    padding: 12px 24px !important;
+    font-size: 14px !important;
+  }
+
+  .disposisi-success-popup .swal2-title {
+    font-size: 20px !important;
+  }
 }

@@ -17,6 +17,7 @@
     <div class="main-content">
       <div id="header-placeholder"></div>
       <div class="content-container">
+        <!-- LIST VIEW -->
         <div class="list-view-container" id="listViewContainer">
           <h1 class="page-title">Surat Masuk</h1>
 
@@ -74,6 +75,8 @@
             </div>
           </div>
         </div>
+
+        <!-- FORM VIEW -->
         <div class="form-view-container" id="formViewContainer">
           <div class="form-header">
             <h1 class="form-header-title">Form Registrasi Surat Masuk</h1>
@@ -244,17 +247,44 @@
                   <h2 class="form-section-title">TUJUAN NASKAH</h2>
                   <div class="form-grid">
                     <div class="form-group form-full">
-                      <label class="form-label">Ditujukan Kepada *</label>
-                      <input
-                        type="text"
-                        class="form-input"
-                        id="kepada"
-                        placeholder="Ditujukan Kepada"
-                        required
-                      />
+                      <label class="form-label">Ditujukan Kepada * (Pilih minimal 1)</label>
+                      <div class="kepada-checkbox-grid">
+                        <label class="kepada-checkbox-item">
+                          <input type="checkbox" name="kepada" value="Kepala Pusat Data Informasi dan Teknologi Kemhan" />
+                          <span>Kepala Pusat Data Informasi dan Teknologi Kemhan</span>
+                        </label>
+                        <label class="kepada-checkbox-item">
+                          <input type="checkbox" name="kepada" value="Kepala Bidang Banglola Sisfohan" />
+                          <span>Kepala Bidang Banglola Sisfohan</span>
+                        </label>
+                        <label class="kepada-checkbox-item">
+                          <input type="checkbox" name="kepada" value="Kepala Bidang Infra TIK" />
+                          <span>Kepala Bidang Infra TIK</span>
+                        </label>
+                        <label class="kepada-checkbox-item">
+                          <input type="checkbox" name="kepada" value="Kabid MSI" />
+                          <span>Kabid MSI</span>
+                        </label>
+                        <label class="kepada-checkbox-item">
+                          <input type="checkbox" name="kepada" value="Kasubbag TU" />
+                          <span>Kasubbag TU</span>
+                        </label>
+                        <label class="kepada-checkbox-item">
+                          <input type="checkbox" name="kepada" value="Staff Bidang Banglola" />
+                          <span>Staff Bidang Banglola</span>
+                        </label>
+                        <label class="kepada-checkbox-item">
+                          <input type="checkbox" name="kepada" value="Staff Bidang Infra TIK" />
+                          <span>Staff Bidang Infra TIK</span>
+                        </label>
+                        <label class="kepada-checkbox-item">
+                          <input type="checkbox" name="kepada" value="Staff MSI" />
+                          <span>Staff MSI</span>
+                        </label>
+                      </div>
                     </div>
                     <div class="form-group form-full">
-                      <label class="form-label">Catatan Disposisi</label>
+                      <label class="form-label">Catatan</label>
                       <textarea
                         class="form-input"
                         id="catatanDisposisi"
@@ -378,11 +408,17 @@
             </form>
           </div>
         </div>
+
+        <!-- DETAIL PREVIEW VIEW -->
         <div class="detail-preview-view" id="detailPreviewView">
+          <!-- BREADCRUMB WITH BACK BUTTON -->
           <div class="breadcrumb">
-            <span onclick="showListView()" style="cursor: pointer"
-              >Surat Masuk</span
-            >
+            <button class="btn-back" onclick="showListView()" title="Kembali ke Daftar">
+              <i class="bi bi-arrow-left"></i>
+            </button>
+            <span onclick="showListView()" style="cursor: pointer">Surat Masuk</span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Detail Surat</span>
           </div>
 
           <div class="detail-preview-layout">
@@ -509,29 +545,26 @@
                     </div>
                   </div>
                 </div>
-                <div class="update-detail-section">
-                  <button
-                    class="btn-disposisi-redirect"
-                    onclick="disposisiSurat(currentDetailId)"
-                  >
-                    <i class="bi bi-send"></i> Lakukan Disposisi
-                  </button>
-                </div>
               </div>
             </div>
           </div>
-        </div>
+        <div id="footer-placeholder"></div>
+      </div>
+
+        <!-- DISPOSISI VIEW -->
         <div class="disposisi-view" id="disposisiView">
+          <!-- BREADCRUMB WITH BACK BUTTON -->
           <div class="breadcrumb">
-            <span onclick="showListView()" style="cursor: pointer"
-              >Surat Masuk</span
-            >
-            <span>/</span>
-            <span>Disposisi</span>
+            <button class="btn-back" onclick="showListView()" title="Kembali ke Daftar">
+              <i class="bi bi-arrow-left"></i>
+            </button>
+            <span onclick="showListView()" style="cursor: pointer">Surat Masuk</span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Tindak Lanjut</span>
           </div>
 
           <div class="disposisi-form-card">
-            <div class="disposisi-form-header">Tindak lanjut / Disposisi</div>
+            <div class="disposisi-form-header">Tindak lanjut</div>
 
             <div class="disposisi-checkbox-grid">
               <label class="disposisi-checkbox">
@@ -572,15 +605,11 @@
               </label>
               <label class="disposisi-checkbox">
                 <input type="checkbox" value="11" />
-                <span>11. Copy untuk.....</span>
+                <span>11. Arsip</span>
               </label>
               <label class="disposisi-checkbox">
                 <input type="checkbox" value="6" />
                 <span>6. ACC untuk ditindak lanjuti</span>
-              </label>
-              <label class="disposisi-checkbox">
-                <input type="checkbox" value="12" />
-                <span>12. Arsip</span>
               </label>
             </div>
 
@@ -596,17 +625,55 @@
 
             <div class="disposisi-form-group">
               <label class="disposisi-form-label">Kepada</label>
-              <select class="disposisi-form-select" id="disposisiKepada">
-                <option value="">Pilih</option>
-                <option value="Kepala Bidang Banglola Sisfohan">
-                  Kepala Bidang Banglola Sisfohan
-                </option>
-                <option value="Kepala Bidang Infra TIK">
-                  Kepala Bidang Infra TIK
-                </option>
-                <option value="Kabid MSI">Kabid MSI</option>
-                <option value="Kasubbag TU">Kasubbag TU</option>
-              </select>
+              <div class="disposisi-checkbox-grid">
+              <label class="disposisi-checkbox">
+                <input type="checkbox" value="1" />
+                <span>1. Kepala Pusat Data dan Informasi</span>
+              </label>
+              <label class="disposisi-checkbox">
+                <input type="checkbox" value="7" />
+                <span>7. Kepala Subbidang Manajemen Sistem Informasi</span>
+              </label>
+              <label class="disposisi-checkbox">
+                <input type="checkbox" value="2" />
+                <span>2. Kepala Bagian Tata Usaha</span>
+              </label>
+              <label class="disposisi-checkbox">
+                <input type="checkbox" value="8" />
+                <span>8. Kepala Bidang Infrastruktur Teknologi Informasi & Komunikasi</span>
+              </label>
+              <label class="disposisi-checkbox">
+                <input type="checkbox" value="3" />
+                <span>3. Kepala Subbagian Umum</span>
+              </label>
+              <label class="disposisi-checkbox">
+                <input type="checkbox" value="9" />
+                <span>9. Kepala Subbidang Perencanaan & Pengembangan Infrastruktur</span>
+              </label>
+              <label class="disposisi-checkbox">
+                <input type="checkbox" value="4" />
+                <span>4. Kepala Bidang Banglola Sisfohan</span>
+              </label>
+              <label class="disposisi-checkbox">
+                <input type="checkbox" value="10" />
+                <span>10. Kepala Subbidang Operasional & Layanan Infrastruktur</span>
+              </label>
+              <label class="disposisi-checkbox">
+                <input type="checkbox" value="5" />
+                <span>5. Kepala Subbidang Pengembangan & Pengelolaan Aplikasi</span>
+              </label>
+              <label class="disposisi-checkbox">
+                <input type="checkbox" value="11" />
+                <span>11. Kepala Subbidang Pemeliharaan Infrastruktur</span>
+              </label>
+              <label class="disposisi-checkbox">
+                <input type="checkbox" value="6" />
+                <span>6. Kepala Subbidang Pengumpulan & Pengelolaan Data</span>
+              </label>
+              <label class="disposisi-checkbox">
+                <input type="checkbox" value="12" />
+                <span>12. Kepala Bidang Pengamanan Sistem Informasi & Persandian</span>
+              </label>
             </div>
 
             <div class="disposisi-form-actions">
@@ -619,7 +686,7 @@
           <div class="riwayat-disposisi-card">
             <div class="riwayat-header">
               <i class="bi bi-chat-left-text"></i>
-              <div class="riwayat-title">Riwayat Disposisi</div>
+              <div class="riwayat-title">Riwayat Tindak Lanjut</div>
             </div>
             <div class="riwayat-stats">
               <div class="riwayat-stat-item">
@@ -643,11 +710,11 @@
             <div class="riwayat-list" id="riwayatDisposisiList"></div>
           </div>
         </div>
+        
         <div id="footer-placeholder"></div>
       </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/database.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/surat-masuk.js"></script>

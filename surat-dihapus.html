@@ -25,42 +25,42 @@
               style="flex-direction: column; align-items: flex-start; gap: 20px"
             >
               <div class="filters-container-deleted">
-                <div class="filter-icon" style="color: #666">
+                <div class="filter-icon">
                   <i class="bi bi-funnel"></i>
                   <span>Filter By</span>
                 </div>
 
-                <div class="filter-group-select">
-                  <select class="filter-select-deleted" id="dateFilterDeleted">
-                    <option value="">Tanggal</option>
-                  </select>
-                </div>
-
-                <div class="filter-group-select">
-                  <select class="filter-select-deleted" id="sifatFilterDeleted">
-                    <option value="">Sifat: Umum</option>
-                    <option value="Umum">Umum</option>
-                    <option value="Penting">Penting</option>
-                    <option value="Rahasia">Rahasia</option>
-                    <option value="Sangat Rahasia">Sangat Rahasia</option>
-                    <option value="Konfidensial">Konfidensial</option>
-                  </select>
-                </div>
-
-                <div class="search-filter-deleted" style="flex: 1">
-                  <input
-                    type="text"
-                    placeholder="Ketik Perihal Surat"
-                    id="tableSearchDeleted"
-                  />
-                  <i class="bi bi-search"></i>
-                </div>
-
-                <button class="reset-filter" id="resetBtnDeleted">
-                  <i class="bi bi-arrow-clockwise"></i>
-                  Reset Filter
-                </button>
+              <div class="filter-group-select">
+                <select class="filter-select-deleted" id="dateFilterDeleted">
+                  <option value="">Tanggal Hapus: Semua</option>
+                </select>
               </div>
+
+              <div class="filter-group-select">
+                <select class="filter-select-deleted" id="sifatFilterDeleted">
+                  <option value="">Sifat: Semua</option>
+                  <option value="Umum">Umum</option>
+                  <option value="Penting">Penting</option>
+                  <option value="Rahasia">Rahasia</option>
+                  <option value="Sangat Rahasia">Sangat Rahasia</option>
+                  <option value="Konfidensial">Konfidensial</option>
+                </select>
+              </div>
+
+              <div class="search-filter-deleted">
+                <input
+                  type="text"
+                  placeholder="Ketik Perihal Surat atau Nomor Surat"
+                  id="tableSearchDeleted"
+                />
+                <i class="bi bi-search"></i>
+              </div>
+
+              <button class="reset-filter" id="resetBtnDeleted">
+                <i class="bi bi-arrow-clockwise"></i>
+                Reset Filter
+              </button>
+            </div>
             </div>
 
             <div class="deleted-card-grid" id="deletedCardGrid"></div>

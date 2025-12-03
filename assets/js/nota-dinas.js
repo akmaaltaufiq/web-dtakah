@@ -1,5 +1,5 @@
 // =============================
-// NOTA DINAS - PAGE SPECIFIC (MODIFIED)
+// NOTA DINAS - PAGE SPECIFIC (FIXED)
 // =============================
 (function () {
   "use strict";
@@ -38,8 +38,6 @@
     setupDisposisiView();
     setupPagination();
     setupFormNavigation();
-
-    // REVISI: Pastikan setupBackToTableView dipanggil di sini
     setupBackToTableView();
     setupPopupOutsideClick();
 
@@ -156,7 +154,7 @@
   }
 
   // =============================
-  // PAGINATION (Dipotong untuk fokus)
+  // PAGINATION
   // =============================
   function setupPagination() {
     const prevBtn = document.getElementById("prevPageBtn");
@@ -206,6 +204,96 @@
     if (prevBtn) prevBtn.disabled = currentPageNotaDinas === 1;
     if (nextBtn)
       nextBtn.disabled = currentPageNotaDinas >= maxPage || totalItems === 0;
+  }
+
+  // =============================
+  // BACK TO TABLE VIEW - FIXED
+  // =============================
+  window.backToTableView = function () {
+    console.log("🔙 Executing backToTableView...");
+
+    const tableView = document.getElementById("tableView");
+    const formView = document.getElementById("formView");
+    const disposisiView = document.getElementById("disposisiView");
+    const successPopup = document.getElementById("successPopup");
+
+    // Sembunyikan semua view lainnya
+    if (formView) {
+      formView.classList.remove("active");
+      console.log("✅ Form view hidden");
+    }
+    if (disposisiView) {
+      disposisiView.classList.remove("active");
+      console.log("✅ Disposisi view hidden");
+    }
+    if (successPopup) {
+      successPopup.classList.remove("active");
+      console.log("✅ Success popup hidden");
+    }
+
+    // Tampilkan table view
+    if (tableView) {
+      tableView.classList.remove("hidden");
+      console.log("✅ Table view shown");
+    }
+
+    // Reset form dan disposisi
+    resetNotaDinasForm();
+    resetDisposisiForm();
+
+    // Reload data terbaru
+    loadNotaDinasData();
+
+    // Scroll ke atas
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    console.log("✅ Back to table view completed");
+  };
+
+  function setupBackToTableView() {
+    console.log("🔧 Setting up back to table view buttons...");
+
+    // Tombol Back di Form Tambah Baru
+    const backBtnForm = document.getElementById("backToTableViewForm");
+    if (backBtnForm) {
+      console.log("✅ Found backToTableViewForm button");
+      
+      // Clone node untuk menghapus semua event listener lama
+      const newBackBtnForm = backBtnForm.cloneNode(true);
+      backBtnForm.parentNode.replaceChild(newBackBtnForm, backBtnForm);
+      
+      // Tambah event listener baru
+      newBackBtnForm.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("🔙 Back button form clicked");
+        window.backToTableView();
+      });
+    } else {
+      console.warn("⚠️ Tombol backToTableViewForm tidak ditemukan");
+    }
+
+    // Setup tombol back di disposisi view
+    const backToTable = document.getElementById("backToTable");
+    if (backToTable) {
+      console.log("✅ Found backToTable button");
+      
+      // Clone node untuk menghapus semua event listener lama
+      const newBackToTable = backToTable.cloneNode(true);
+      backToTable.parentNode.replaceChild(newBackToTable, backToTable);
+      
+      // Tambah event listener baru
+      newBackToTable.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("🔙 Back button disposisi clicked");
+        window.backToTableView();
+      });
+    } else {
+      console.warn("⚠️ Tombol backToTable tidak ditemukan");
+    }
+
+    console.log("✅ Back to table view buttons setup completed");
   }
 
   // =============================
@@ -298,6 +386,9 @@
     );
     setTextContent("detailPreviewTitle", notaDinas.perihal || "Nota Dinas");
 
+    // Reset form disposisi
+    resetDisposisiForm();
+
     const tableView = document.getElementById("tableView");
     const disposisiView = document.getElementById("disposisiView");
 
@@ -308,52 +399,7 @@
   };
 
   // =============================
-  // BACK TO TABLE & FORM NAVIGATION
-  // =============================
-
-  function setupBackToTableView() {
-    // Tombol Back di Form Tambah Baru
-    const backBtnForm = document.getElementById("backToTableViewForm");
-    if (backBtnForm) {
-      console.log("✅ Setup tombol back di form view");
-      // KUNCI PERBAIKAN: Remove event listener lama jika ada, lalu tambah yang baru
-      backBtnForm.onclick = null; // Hapus onclick inline jika ada
-      backBtnForm.addEventListener(
-        "click",
-        function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log("🔙 Back button form clicked");
-          window.backToTableView();
-        },
-        { once: false }
-      ); // Pastikan bisa diklik berkali-kali
-    } else {
-      console.warn("⚠️ Tombol backToTableViewForm tidak ditemukan");
-    }
-
-    // Setup tombol back di disposisi view
-    const backToTable = document.getElementById("backToTable");
-    if (backToTable) {
-      console.log("✅ Setup tombol back di disposisi view");
-      backToTable.onclick = null;
-      backToTable.addEventListener(
-        "click",
-        function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log("🔙 Back button disposisi clicked");
-          window.backToTableView();
-        },
-        { once: false }
-      );
-    } else {
-      console.warn("⚠️ Tombol backToTable tidak ditemukan");
-    }
-  }
-
-  // =============================
-  // KIRIM DISPOSISI
+  // KIRIM DISPOSISI - FIXED
   // =============================
   function kirimDisposisi() {
     console.log("📤 Kirim disposisi for Nota Dinas ID:", currentNotaDinasId);
@@ -435,11 +481,11 @@
           confirmButtonColor: "#7f1d1d",
           timer: 2000,
         }).then(() => {
-          backToTableView();
+          window.backToTableView();
         });
       } else {
         alert("Disposisi berhasil dikirim!");
-        backToTableView();
+        window.backToTableView();
       }
     } else {
       if (window.Swal) {
@@ -452,6 +498,27 @@
       } else {
         alert("Gagal mengirim disposisi!");
       }
+    }
+  }
+
+  // Expose kirimDisposisi ke global scope
+  window.kirimDisposisi = kirimDisposisi;
+
+  // =============================
+  // SETUP DISPOSISI VIEW - FIXED
+  // =============================
+  function setupDisposisiView() {
+    const kirimBtn = document.getElementById("kirimDisposisiBtn");
+    if (kirimBtn) {
+      // Clone untuk hapus event listener lama
+      const newKirimBtn = kirimBtn.cloneNode(true);
+      kirimBtn.parentNode.replaceChild(newKirimBtn, kirimBtn);
+      
+      newKirimBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        window.kirimDisposisi();
+      });
+      console.log("✅ Kirim Disposisi button setup");
     }
   }
 
@@ -768,8 +835,8 @@
     if (tableView) tableView.classList.add("hidden");
     if (formView) formView.classList.add("active");
 
-    resetNotaDinasForm(); // Pastikan form direset
-    goToStep(1); // Mulai dari Step 1
+    resetNotaDinasForm();
+    goToStep(1);
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -899,7 +966,6 @@
   }
 
   function updatePreview() {
-    // Helper untuk format tanggal
     const formatDate = (dateString) => {
       if (!dateString) return "-";
       const date = new Date(dateString);
@@ -910,7 +976,6 @@
       });
     };
 
-    // Update data Preview Step 3
     document.getElementById("previewNamaPengirim").textContent =
       notaDinasFormState.namaPengirim || "-";
     document.getElementById("previewJabatanPengirim").textContent =
@@ -936,7 +1001,6 @@
     document.getElementById("previewCatatanTujuan").textContent =
       notaDinasFormState.catatanTujuan || "-";
 
-    // Update note di success popup
     const popupNote = document.querySelector(".popup-note");
     if (popupNote)
       popupNote.textContent =
@@ -978,7 +1042,7 @@
     const notaDinasDataForDB = {
       noSurat: notaDinasFormState.nomorNaskah,
       tanggalSurat: notaDinasFormState.tanggalSurat,
-      tanggalTerima: new Date().toISOString().substring(0, 10), // Tanggal hari ini
+      tanggalTerima: new Date().toISOString().substring(0, 10),
       perihal: notaDinasFormState.perihal,
       dari: notaDinasFormState.namaPengirim,
       kepada: notaDinasFormState.ditujukanKepada,
@@ -986,17 +1050,15 @@
       jenisNaskah: notaDinasFormState.jenisNaskah,
       lampiran: notaDinasFormState.file,
       catatan: notaDinasFormState.catatan,
-      diEntryOleh: "Staff TU Puslapbinkunhan", // Asumsi user saat ini
+      diEntryOleh: "Staff TU Puslapbinkunhan",
       namaPengirim: notaDinasFormState.namaPengirim,
       jabatanPengirim: notaDinasFormState.jabatanPengirim,
       tujuan: notaDinasFormState.ditujukanKepada,
-      // Data Tambahan Tujuan (Disposisi Awal)
       instruksi: notaDinasFormState.instruksi,
       tenggatWaktu: notaDinasFormState.tenggatWaktu,
       catatanTujuan: notaDinasFormState.catatanTujuan,
     };
 
-    // Tambahkan ke database (simulasi)
     const newNotaDinas = KemhanDatabase.addNotaDinas(notaDinasDataForDB);
 
     if (newNotaDinas) {
@@ -1009,13 +1071,10 @@
   // =============================
   // SUCCESS POPUP CONTROLS
   // =============================
-
-  // KUNCI: Fungsi untuk menangani klik di luar pop-up (overlay)
   function setupPopupOutsideClick() {
     const successPopup = document.getElementById("successPopup");
     if (successPopup) {
       successPopup.addEventListener("click", function (e) {
-        // Hanya tutup jika yang diklik adalah overlay itu sendiri
         if (e.target === successPopup) {
           window.closeSuccessPopupAndBack();
         }
@@ -1028,14 +1087,12 @@
     document.getElementById("successPopup").classList.add("active");
   }
 
-  // Fungsi untuk menutup pop-up dan kembali ke tampilan tabel
   window.closeSuccessPopupAndBack = function () {
     const successPopup = document.getElementById("successPopup");
     if (successPopup) successPopup.classList.remove("active");
-
-    // Panggil fungsi utama untuk kembali ke tabel
     window.backToTableView();
   };
+
   // =============================
   // AUTO INIT ON PAGE LOAD
   // =============================

@@ -34,7 +34,7 @@ body {
   z-index: 100;
   height: var(--header-height);
   box-sizing: border-box;
-  flex-shrink: 0; /* PERBAIKAN: Prevent header dari shrinking */
+  flex-shrink: 0;
 }
 
 .header-left {
@@ -199,8 +199,8 @@ body {
   align-items: center;
   border-radius: 10px;
   box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
-  margin-top: auto; /* PERBAIKAN: Otomatis push ke bawah */
-  flex-shrink: 0; /* PERBAIKAN: Prevent footer dari shrinking */
+  margin-top: auto;
+  flex-shrink: 0;
 }
 
 .content-footer p {
@@ -419,11 +419,30 @@ body {
   text-align: center;
 }
 
-.menu-item.active .menu-link {
-  background: #f4c430;
-  color: #8b0000;
-  font-weight: 600;
+/* ================================== */
+/* ACTIVE MENU STATES - KUNING */
+/* ================================== */
+
+/* Menu utama yang active - Background kuning */
+.menu-item.active > .menu-link {
+  background: #f4c430 !important;
+  color: #8b0000 !important;
+  font-weight: 600 !important;
 }
+
+/* Menu utama active - ikon juga merah */
+.menu-item.active > .menu-link i {
+  color: #8b0000 !important;
+}
+
+/* Tapi jangan override active state saat hover */
+.menu-item.active > .menu-link:hover {
+  background: #f4c430 !important;
+  color: #8b0000 !important;
+}
+
+/* ================================== */
+
 .menu-divider {
   margin: 20px 0 10px;
   padding: 0 30px;
@@ -483,8 +502,6 @@ body {
   background: #f5f5f5;
   overflow-x: hidden;
   transition: margin-left 0.3s ease, width 0.3s ease;
-
-  /* PERBAIKAN: Flexbox untuk sticky footer */
   display: flex;
   flex-direction: column;
 }
@@ -499,8 +516,6 @@ body {
 .content-container {
   padding: 16px 18px;
   max-width: 100%;
-
-  /* PERBAIKAN: Flex-grow untuk push footer ke bawah */
   flex: 1 0 auto;
 }
 
@@ -723,9 +738,141 @@ body {
     flex-direction: column;
     gap: 12px;
     text-align: center;
+    margin-bottom: flex;
   }
 
   .footer-links {
     justify-content: center;
   }
+}
+
+/* ================================== */
+/* DROPDOWN MENU SIDEBAR STYLES */
+/* ================================== */
+
+.menu-dropdown {
+  position: relative;
+}
+
+.menu-dropdown-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 20px;
+}
+
+.dropdown-arrow {
+  font-size: 11px;
+  transition: transform 0.25s ease;
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.menu-dropdown.open .dropdown-arrow {
+  transform: rotate(180deg);
+  color: #fff;
+}
+
+/* Submenu Container */
+.submenu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 0;
+  overflow: hidden;
+  background: #fffcd1; 
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 0 0 8px 8px;
+}
+
+.menu-dropdown.open .submenu {
+  max-height: 500px;
+  padding: 8px 0;
+}
+
+/* Submenu Items */
+.submenu-item {
+  margin: 0;
+  padding: 0;
+}
+
+.submenu-link {
+  display: flex;
+  align-items: center;
+  padding: 10px 24px 10px 52px;
+  color: #333;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  font-weight: 400;
+  position: relative;
+  background: transparent;
+}
+
+.submenu-link:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
+/* ================================== */
+/* ACTIVE SUBMENU STATES */
+/* ================================== */
+
+/* Submenu item yang active - Text merah bold */
+.submenu-item.active .submenu-link {
+  color: #8b0000 !important;
+  font-weight: 600 !important;
+  background: rgba(139, 0, 0, 0.05) !important;
+}
+
+.submenu-item.active .submenu-link:hover {
+  background: rgba(139, 0, 0, 0.08) !important;
+  color: #8b0000 !important;
+}
+
+/* Dropdown parent yang active */
+.menu-dropdown.active > .menu-dropdown-toggle {
+  background: #f4c430 !important;
+  color: #8b0000 !important;
+  font-weight: 600 !important;
+}
+
+.menu-dropdown.active .dropdown-arrow {
+  color: #8b0000 !important;
+}
+
+/* ================================== */
+
+/* Hover effect untuk menu dropdown utama */
+.menu-dropdown:hover > .menu-dropdown-toggle {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Animasi smooth untuk dropdown */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menu-dropdown.open .submenu-item {
+  animation: slideDown 0.2s ease-out forwards;
+}
+
+.menu-dropdown.open .submenu-item:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.menu-dropdown.open .submenu-item:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.menu-dropdown.open .submenu-item:nth-child(3) {
+  animation-delay: 0.15s;
 }

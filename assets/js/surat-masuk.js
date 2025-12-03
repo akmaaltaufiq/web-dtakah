@@ -101,10 +101,9 @@
   }
 
   function validateStep2() {
-    const kepada = document.getElementById("kepada");
-    if (!kepada || !kepada.value.trim()) {
-      Notification.error("Mohon isi ");
-      if (kepada) kepada.focus();
+    const checkboxes = document.querySelectorAll('input[name="kepada"]:checked');
+    if (checkboxes.length === 0) {
+      Notification.error("Mohon pilih minimal 1 tujuan penerima");
       return false;
     }
     return true;
@@ -144,7 +143,6 @@
       previewSifat: "sifatSurat",
       previewNoSurat: "noSurat",
       previewPerihal: "perihal",
-      previewKepada: "kepada",
     };
 
     for (let previewId in fields) {
@@ -155,6 +153,14 @@
       if (inputEl && previewEl) {
         previewEl.textContent = inputEl.value || "-";
       }
+    }
+
+    // Handle Kepada (multiple checkboxes)
+    const kepadaCheckboxes = document.querySelectorAll('input[name="kepada"]:checked');
+    const kepadaValues = Array.from(kepadaCheckboxes).map(cb => cb.value);
+    const previewKepada = document.getElementById("previewKepada");
+    if (previewKepada) {
+      previewKepada.textContent = kepadaValues.length > 0 ? kepadaValues.join(", ") : "-";
     }
 
     const tanggalSurat = document.getElementById("tanggalSurat");
@@ -181,13 +187,17 @@
   function handleSubmit(e) {
     e.preventDefault();
 
+    // Get selected "Kepada" values
+    const kepadaCheckboxes = document.querySelectorAll('input[name="kepada"]:checked');
+    const kepadaValues = Array.from(kepadaCheckboxes).map(cb => cb.value);
+
     const newSurat = {
       tanggalDiterima: document.getElementById("tanggalDiterima").value,
       tanggalSurat: document.getElementById("tanggalSurat").value,
       noSurat: document.getElementById("noSurat").value,
       perihal: document.getElementById("perihal").value,
       dari: document.getElementById("namaPengirim").value,
-      kepada: document.getElementById("kepada").value,
+      kepada: kepadaValues.join(", "), // Join multiple recipients
       jenisSurat: document.getElementById("jenisSurat").value,
       sifatSurat: document.getElementById("sifatSurat").value,
       file: window.uploadedFile ? window.uploadedFile.name : "dokumen.pdf",
@@ -244,6 +254,14 @@
     const fileInfoDisplay = document.getElementById("fileInfoDisplay");
     if (fileInfoDisplay) fileInfoDisplay.innerHTML = "";
 
+    const fileInput = document.getElementById("fileInput");
+    if (fileInput) fileInput.value = "";
+
+    // Uncheck all kepada checkboxes
+    document.querySelectorAll('input[name="kepada"]').forEach(cb => {
+      cb.checked = false;
+    });
+
     updateStepDisplay();
   };
 
@@ -253,6 +271,26 @@
 
     if (formView) formView.classList.remove("active");
     if (listView) listView.classList.remove("hidden");
+
+    // Reset form dan file upload
+    const form = document.getElementById("suratForm");
+    if (form) form.reset();
+
+    const uploadArea = document.getElementById("uploadArea");
+    if (uploadArea) uploadArea.classList.remove("has-file");
+
+    const fileInfoDisplay = document.getElementById("fileInfoDisplay");
+    if (fileInfoDisplay) fileInfoDisplay.innerHTML = "";
+
+    const fileInput = document.getElementById("fileInput");
+    if (fileInput) fileInput.value = "";
+
+    window.uploadedFile = null;
+
+    // Uncheck all kepada checkboxes
+    document.querySelectorAll('input[name="kepada"]').forEach(cb => {
+      cb.checked = false;
+    });
 
     renderTable();
   };
@@ -481,7 +519,13 @@
         cb.checked = false;
       });
     document.getElementById("disposisiKeterangan").value = "";
-    document.getElementById("disposisiKepada").value = "";
+
+    // Reset semua checkbox kepada
+    document
+      .querySelectorAll('.disposisi-form-group .disposisi-checkbox input[type="checkbox"]')
+      .forEach((cb) => {
+        cb.checked = false;
+      });
 
     loadRiwayatDisposisi(surat.disposisi || []);
 
@@ -563,23 +607,33 @@
     });
   }
 
+  // =============================
+  // SUBMIT DISPOSISI - UPDATED WITH SUCCESS POPUP
+  // =============================
   window.submitDisposisi = function () {
-    const checkboxes = document.querySelectorAll(
-      '.disposisi-checkbox input[type="checkbox"]:checked'
+    const tindakLanjutCheckboxes = document.querySelectorAll(
+      '.disposisi-checkbox-grid input[type="checkbox"]:checked'
     );
-    const selected = Array.from(checkboxes).map(
+    const selected = Array.from(tindakLanjutCheckboxes).map(
       (cb) => cb.nextElementSibling.textContent.trim().split(". ")[1]
     );
     const keterangan = document.getElementById("disposisiKeterangan").value;
-    const kepada = document.getElementById("disposisiKepada").value;
+    
+    // Get kepada checkboxes from the second grid
+    const kepadaCheckboxes = document.querySelectorAll(
+      '.disposisi-form-group .disposisi-checkbox-grid input[type="checkbox"]:checked'
+    );
+    const kepadaValues = Array.from(kepadaCheckboxes).map(
+      (cb) => cb.nextElementSibling.textContent.trim().split(". ")[1]
+    );
 
     if (selected.length === 0) {
       Notification.error("Mohon pilih minimal 1 tindak lanjut");
       return;
     }
 
-    if (!kepada) {
-      Notification.error("Mohon pilih tujuan disposisi");
+    if (kepadaValues.length === 0) {
+      Notification.error("Mohon pilih minimal 1 tujuan disposisi");
       return;
     }
 
@@ -589,7 +643,7 @@
       const newDisposisi = {
         judul: selected.join(", "),
         status: "Proses",
-        kepada: kepada,
+        kepada: kepadaValues.join(", "),
         oleh: "Admin TU",
         dibuat: new Date().toISOString(),
         deadline: Utils.formatDateShort(
@@ -600,31 +654,65 @@
         catatan: keterangan || "Tidak ada catatan",
       };
 
+      // Tambahkan disposisi ke database
       KemhanDatabase.addDisposisi(currentDetailId, newDisposisi);
 
-      Notification.success(
-        "Disposisi berhasil dikirim dan dicatat di Monitoring!"
-      );
+      // Tampilkan popup sukses dengan navigasi
+      showDisposisiSuccessPopup(surat);
 
-      const updatedSurat = KemhanDatabase.getSuratMasukById(currentDetailId);
-      loadRiwayatDisposisi(updatedSurat.disposisi);
-
+      // Reset form
       document
         .querySelectorAll('.disposisi-checkbox input[type="checkbox"]')
         .forEach((cb) => {
           cb.checked = false;
         });
       document.getElementById("disposisiKeterangan").value = "";
-      document.getElementById("disposisiKepada").value = "";
-
-      showListView();
-      renderTable();
-
-      // Reload monitoring & notifications jika fungsi tersedia
-      if (window.loadMonitoringData) window.loadMonitoringData();
-      if (window.loadNotifications) window.loadNotifications();
     }
   };
+
+  // =============================
+  // SUCCESS POPUP FUNCTION
+  // =============================
+  function showDisposisiSuccessPopup(surat) {
+    // Load SweetAlert2 jika belum dimuat
+    window.loadSwal(() => {
+      Swal.fire({
+        title: "Surat Masuk Berhasil di Disposisi",
+        html: `
+          <div style="text-align: center; padding: 20px 0;">
+            <div style="width: 120px; height: 120px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px;">
+              <i class="bi bi-check-lg" style="font-size: 64px; color: white;"></i>
+            </div>
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Monitoring Surat',
+        cancelButtonText: 'Kembali',
+        confirmButtonColor: '#8b0000',
+        cancelButtonColor: '#6c757d',
+        customClass: {
+          popup: 'disposisi-success-popup',
+          confirmButton: 'btn-monitoring-surat',
+          cancelButton: 'btn-kembali'
+        },
+        allowOutsideClick: false,
+        width: '500px'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Redirect ke monitoring
+          window.location.href = 'monitoring.html';
+        } else {
+          // Kembali ke list view
+          showListView();
+          renderTable();
+          
+          // Reload monitoring & notifications jika fungsi tersedia
+          if (window.loadMonitoringData) window.loadMonitoringData();
+          if (window.loadNotifications) window.loadNotifications();
+        }
+      });
+    });
+  }
 
   // =============================
   // BUTTON ACTIONS
