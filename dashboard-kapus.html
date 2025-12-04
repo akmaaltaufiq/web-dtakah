@@ -19,52 +19,58 @@
   </head>
   <body>
     <div class="dashboard-overview">
-      <!-- Sidebar -->
       <div class="navigation-sidebar">
-  <div class="logo-section">
-    <div class="logo-emblem"></div>
-    <div class="logo-text">D-TAKAH</div>
-  </div>
+        <div class="logo-section">
+          <div class="logo-emblem">
+            <img
+              src="assets/img/logo_kemhan_ri.png"
+              alt="Logo"
+              style="width: 40px; height: 40px"
+            />
+          </div>
+          <div class="logo-text">D-TAKAH</div>
+        </div>
 
-  <ul class="sidebar-menu">
-    <li class="menu-item">
-      <a href="dashboard-kapus.html" class="menu-link">
-        <i class="bi bi-house-door"></i>
-        <span>Dashboard</span>
-      </a>
-    </li>
-    <li class="menu-item">
-      <a href="surat-masuk.html" class="menu-link">
-        <i class="bi bi-envelope"></i>
-        <span>Surat Masuk</span>
-      </a>
-    </li>
-    <li class="menu-item">
-      <a href="surat-keluar.html" class="menu-link">
-        <i class="bi bi-send"></i>
-        <span>Surat Keluar</span>
-      </a>
-    </li>
-    <li class="menu-item">
-      <a href="nota-dinas.html" class="menu-link">
-        <i class="bi bi-file-earmark-text"></i>
-        <span>Nota Dinas</span>
-      </a>
-    </li>
-    <li class="menu-item">
-      <a href="#" id="logoutLink" class="menu-link">
-        <i class="bi bi-box-arrow-right"></i>
-        <span>Logout</span>
-      </a>
-    </li>
-  </ul>
-  <div class="user-profile">
-    <div class="user-avatar">
-      <i class="bi bi-person-fill"></i>
-    </div>
-    <div class="user-name">Kapusdatin</div>
-  </div>
-</div>
+        <ul class="sidebar-menu">
+          <li class="menu-item">
+            <a href="dashboard-kapus.html" class="menu-link">
+              <i class="bi bi-house-door"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="surat-masuk-kapus.html" class="menu-link">
+              <i class="bi bi-envelope"></i>
+              <span>Surat Masuk</span>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="surat-keluar-kapus.html" class="menu-link">
+              <i class="bi bi-send"></i>
+              <span>Surat Keluar</span>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="nota-dinas-kapus.html" class="menu-link">
+              <i class="bi bi-file-earmark-text"></i>
+              <span>Nota Dinas</span>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="#" id="logoutLink" class="menu-link">
+              <i class="bi bi-box-arrow-right"></i>
+              <span>Logout</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="user-profile">
+          <div class="user-avatar">
+            <i class="bi bi-person-fill"></i>
+          </div>
+          <div class="user-name" id="sidebarUserName">Kapus</div>
+        </div>
+      </div>
 
       <!-- Main Content -->
       <div class="main-content">
@@ -703,6 +709,24 @@
             loadKapusDashboard();
           }
         });
+        // Logout handler
+        document
+          .getElementById("logoutLink")
+          .addEventListener("click", function (e) {
+            e.preventDefault();
+            Swal.fire({
+              title: "Yakin ingin logout?",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonText: "Ya, logout",
+              cancelButtonText: "Batal",
+              confirmButtonColor: "#d33",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.logoutUser();
+              }
+            });
+          });
       };
 
       console.log("✅ Dashboard Kapus scripts loaded");

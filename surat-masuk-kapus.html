@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Surat Masuk - Kapus</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/dashboard-kapus.css" />
+    <style>
+      .surat-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .surat-table th {
+        background: #f3f4f6;
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+        color: #374151;
+        border-bottom: 2px solid #e5e7eb;
+      }
+      .surat-table td {
+        padding: 12px;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 14px;
+      }
+      .surat-table tbody tr:hover {
+        background: #f9fafb;
+      }
+      .badge-status {
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+      .badge-tinggi {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      .badge-menunggu {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .btn-disposisi-cepat {
+        background: #10b981;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .btn-disposisi-cepat:hover {
+        background: #059669;
+      }
+      .btn-preview {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-right: 8px;
+      }
+      .btn-preview:hover {
+        background: #2563eb;
+      }
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+
+      /* Preview Modal Styles */
+      .preview-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        overflow-y: auto;
+      }
+      .preview-modal.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .preview-content {
+        background: white;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 800px;
+        padding: 24px;
+        position: relative;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      .preview-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #e5e7eb;
+      }
+      .preview-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #1f2937;
+      }
+      .preview-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #6b7280;
+      }
+      .preview-close:hover {
+        color: #dc2626;
+      }
+      .preview-section {
+        margin-bottom: 20px;
+      }
+      .preview-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #6b7280;
+        margin-bottom: 4px;
+      }
+      .preview-value {
+        font-size: 14px;
+        color: #1f2937;
+        margin-bottom: 12px;
+      }
+      .preview-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 2px solid #e5e7eb;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard-overview">
+      <!-- Sidebar -->
+      <div class="navigation-sidebar">
+        <div class="logo-section">
+          <div class="logo-emblem">
+            <img
+              src="assets/img/logo_kemhan_ri.png"
+              alt="Logo"
+              style="width: 40px; height: 40px"
+            />
+          </div>
+          <div class="logo-text">D-TAKAH</div>
+        </div>
+
+        <ul class="sidebar-menu">
+          <li class="menu-item">
+            <a href="dashboard-kapus.html" class="menu-link">
+              <i class="bi bi-house-door"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="menu-item active">
+            <a href="surat-masuk-kapus.html" class="menu-link">
+              <i class="bi bi-envelope"></i>
+              <span>Surat Masuk</span>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="surat-keluar-kapus.html" class="menu-link">
+              <i class="bi bi-send"></i>
+              <span>Surat Keluar</span>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="nota-dinas-kapus.html" class="menu-link">
+              <i class="bi bi-file-earmark-text"></i>
+              <span>Nota Dinas</span>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="#" id="logoutLink" class="menu-link">
+              <i class="bi bi-box-arrow-right"></i>
+              <span>Logout</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="user-profile">
+          <div class="user-avatar">
+            <i class="bi bi-person-fill"></i>
+          </div>
+          <div class="user-name" id="sidebarUserName">Kapus</div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="content-container" style="padding: 24px">
+          <div class="page-header">
+            <h1 style="font-size: 24px; font-weight: 700; margin: 0">
+              Surat Masuk - Perlu Tindakan
+            </h1>
+            <div style="color: #6b7280">
+              <i class="bi bi-calendar3"></i>
+              <span id="currentDate"></span>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div
+            style="
+              background: white;
+              border-radius: 8px;
+              padding: 20px;
+              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            "
+          >
+            <table class="surat-table">
+              <thead>
+                <tr>
+                  <th style="width: 50px">No</th>
+                  <th>Nomor Surat</th>
+                  <th>Perihal</th>
+                  <th>Pengirim</th>
+                  <th style="width: 120px">Prioritas</th>
+                  <th style="width: 150px">Status</th>
+                  <th style="width: 200px; text-align: center">
+                    Aksi Diperlukan
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="suratMasukTableBody">
+                <tr>
+                  <td
+                    colspan="7"
+                    style="text-align: center; padding: 40px; color: #9ca3af"
+                  >
+                    Loading data...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="preview-modal" id="previewModal">
+      <div class="preview-content">
+        <div class="preview-header">
+          <div class="preview-title">Detail Surat Masuk</div>
+          <button class="preview-close" onclick="closePreview()">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+
+        <div class="preview-section">
+          <div class="preview-label">Nomor Surat</div>
+          <div class="preview-value" id="previewNoSurat">-</div>
+        </div>
+
+        <div class="preview-section">
+          <div class="preview-label">Perihal</div>
+          <div class="preview-value" id="previewPerihal">-</div>
+        </div>
+
+        <div class="preview-section">
+          <div class="preview-label">Pengirim</div>
+          <div class="preview-value" id="previewPengirim">-</div>
+        </div>
+
+        <div class="preview-section">
+          <div class="preview-label">Tanggal Surat</div>
+          <div class="preview-value" id="previewTanggalSurat">-</div>
+        </div>
+
+        <div class="preview-section">
+          <div class="preview-label">Tanggal Diterima</div>
+          <div class="preview-value" id="previewTanggalDiterima">-</div>
+        </div>
+
+        <div class="preview-section">
+          <div class="preview-label">Catatan</div>
+          <div class="preview-value" id="previewCatatan">-</div>
+        </div>
+
+        <div class="preview-actions">
+          <button class="btn-disposisi-cepat" onclick="disposisiFromPreview()">
+            <i class="bi bi-send"></i> Disposisi Cepat
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Disposisi Cepat -->
+    <div class="modal fade" id="disposisiModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Disposisi Cepat</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label"><strong>Perihal Surat:</strong></label>
+              <p id="disposisiPerihal" style="color: #374151">-</p>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Tujuan Disposisi *</label>
+              <select class="form-select" id="disposisiKepada" required>
+                <option value="">-- Pilih Tujuan --</option>
+                <option value="Kabid Banglola Sisfohan">
+                  Kabid Banglola Sisfohan
+                </option>
+                <option value="Kasubbid Infosan">Kasubbid Infosan</option>
+                <option value="Kasubbag TU">Kasubbag TU</option>
+                <option value="Kasubbag MSI">Kasubbag MSI</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Instruksi *</label>
+              <textarea
+                class="form-control"
+                id="disposisiInstruksi"
+                rows="4"
+                placeholder="Masukkan instruksi disposisi"
+                required
+              ></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Prioritas</label>
+              <select class="form-select" id="disposisiPrioritas">
+                <option value="Normal">Normal</option>
+                <option value="Penting">Penting</option>
+                <option value="Sangat Penting">Sangat Penting</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Batal
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="submitDisposisiCepat()"
+            >
+              <i class="bi bi-send-fill"></i> Kirim Disposisi
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="assets/js/firebase-config.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/database.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <script>
+      let currentUserData = null;
+      let currentSuratId = null;
+
+      // Protect page - only kapus
+      checkUserRole(["kapus"])
+        .then((userData) => {
+          currentUserData = userData;
+          document.getElementById("sidebarUserName").textContent =
+            userData.nama || "Kapus";
+          loadSuratMasuk();
+        })
+        .catch((error) => {
+          console.error("Access denied:", error);
+        });
+
+      // Set current date
+      document.getElementById("currentDate").textContent =
+        new Date().toLocaleDateString("id-ID", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        });
+
+      // Load Surat Masuk untuk Kapus
+      function loadSuratMasuk() {
+        const tbody = document.getElementById("suratMasukTableBody");
+
+        // Get surat yang perlu tindakan Kapus
+        const allSurat = KemhanDatabase.getSuratMasuk();
+        const suratKapus = allSurat.filter(
+          (s) =>
+            s.status === "Terkirim ke Kapus" ||
+            s.status === "Menunggu Persetujuan Kapus" ||
+            s.status === "Pending"
+        );
+
+        if (suratKapus.length === 0) {
+          tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 40px; color: #9ca3af;">
+              Tidak ada surat yang perlu ditindaklanjuti
+            </td>
+          </tr>
+        `;
+          return;
+        }
+
+        tbody.innerHTML = suratKapus
+          .map(
+            (surat, index) => `
+        <tr>
+          <td style="text-align: center;">${index + 1}</td>
+          <td>${surat.noSurat || "-"}</td>
+          <td>${surat.perihal || "-"}</td>
+          <td>${surat.dari || surat.namaPengirim || "-"}</td>
+          <td>
+            <span class="badge-status badge-tinggi">Tinggi</span>
+          </td>
+          <td>
+            <span class="badge-status badge-menunggu">Menunggu</span>
+          </td>
+          <td style="text-align: center;">
+            <button class="btn-preview" onclick="previewSurat(${surat.id})">
+              <i class="bi bi-eye"></i> Preview
+            </button>
+            <button class="btn-disposisi-cepat" onclick="buatDisposisiCepat(${
+              surat.id
+            })">
+              <i class="bi bi-send"></i> Disposisi
+            </button>
+          </td>
+        </tr>
+      `
+          )
+          .join("");
+      }
+
+      // Preview Surat
+      window.previewSurat = function (id) {
+        const surat = KemhanDatabase.getSuratMasukById(id);
+        if (!surat) return;
+
+        currentSuratId = id;
+
+        document.getElementById("previewNoSurat").textContent =
+          surat.noSurat || "-";
+        document.getElementById("previewPerihal").textContent =
+          surat.perihal || "-";
+        document.getElementById("previewPengirim").textContent =
+          surat.dari || surat.namaPengirim || "-";
+        document.getElementById("previewTanggalSurat").textContent =
+          surat.tanggalSurat ? Utils.formatDate(surat.tanggalSurat) : "-";
+        document.getElementById("previewTanggalDiterima").textContent =
+          surat.tanggalDiterima ? Utils.formatDate(surat.tanggalDiterima) : "-";
+        document.getElementById("previewCatatan").textContent =
+          surat.catatan || "-";
+
+        document.getElementById("previewModal").classList.add("active");
+      };
+
+      window.closePreview = function () {
+        document.getElementById("previewModal").classList.remove("active");
+      };
+
+      window.disposisiFromPreview = function () {
+        closePreview();
+        if (currentSuratId) {
+          buatDisposisiCepat(currentSuratId);
+        }
+      };
+
+      // Buat Disposisi Cepat
+      window.buatDisposisiCepat = function (suratId) {
+        currentSuratId = suratId;
+        const surat = KemhanDatabase.getSuratMasukById(suratId);
+
+        if (surat) {
+          document.getElementById("disposisiPerihal").textContent =
+            surat.perihal || "-";
+          const modal = new bootstrap.Modal(
+            document.getElementById("disposisiModal")
+          );
+          modal.show();
+        }
+      };
+
+      // Submit Disposisi Cepat
+      window.submitDisposisiCepat = function () {
+        const kepada = document.getElementById("disposisiKepada").value;
+        const instruksi = document.getElementById("disposisiInstruksi").value;
+        const prioritas = document.getElementById("disposisiPrioritas").value;
+
+        if (!kepada || !instruksi) {
+          Swal.fire("Error", "Tujuan dan Instruksi wajib diisi!", "error");
+          return;
+        }
+
+        const disposisi = {
+          kepada: kepada,
+          judul: "Disposisi dari Kapus",
+          instruksi: instruksi,
+          prioritas: prioritas,
+          dari: currentUserData.nama,
+          jabatanDari: "Kepala Pusat",
+          tanggal: new Date().toISOString(),
+          status: "Proses",
+        };
+
+        KemhanDatabase.addDisposisi(currentSuratId, disposisi);
+
+        // Update status surat
+        KemhanDatabase.updateSuratMasuk(currentSuratId, {
+          status: "Selesai",
+          processedBy: currentUserData.nama,
+          processedAt: new Date().toISOString(),
+        });
+
+        Swal.fire({
+          icon: "success",
+          title: "Disposisi Berhasil Dikirim!",
+          text: `Disposisi telah dikirim ke ${kepada}`,
+          timer: 2000,
+        });
+
+        bootstrap.Modal.getInstance(
+          document.getElementById("disposisiModal")
+        ).hide();
+        document.getElementById("disposisiKepada").value = "";
+        document.getElementById("disposisiInstruksi").value = "";
+
+        loadSuratMasuk();
+      };
+
+      // Logout handler
+      document
+        .getElementById("logoutLink")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          Swal.fire({
+            title: "Yakin ingin logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Ya, logout",
+            cancelButtonText: "Batal",
+            confirmButtonColor: "#d33",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.logoutUser();
+            }
+          });
+        });
+    </script>
+  </body>
+</html>

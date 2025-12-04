@@ -269,12 +269,8 @@
         });
       }
 
-      // ============================================
-      // LOGIN FORM HANDLER
-      // ============================================
+      // LOGIN FORM HANDLER - FIXED
       const loginForm = document.getElementById("loginForm");
-      const loginBtn = document.getElementById("loginBtn");
-
       if (loginForm) {
         loginForm.addEventListener("submit", function (e) {
           e.preventDefault();
@@ -287,22 +283,20 @@
             return;
           }
 
-          // Disable button
-          if (loginBtn) {
-            loginBtn.disabled = true;
-            loginBtn.innerHTML =
-              '<i class="bi bi-hourglass-split"></i> Memproses...';
-          }
-
           console.log("🔐 Login attempt:", email);
 
-          loginUser(email, password).catch((error) => {
-            // Re-enable button jika error
-            if (loginBtn) {
-              loginBtn.disabled = false;
-              loginBtn.innerHTML = "Masuk";
-            }
-          });
+          // PENTING: loginUser() return URL, bukan langsung redirect
+          loginUser(email, password)
+            .then((redirectUrl) => {
+              console.log("✅ Login successful, redirecting to:", redirectUrl);
+
+              // MANUAL redirect SETELAH promise resolve
+              window.location.replace(redirectUrl);
+            })
+            .catch((error) => {
+              console.error("❌ Login failed:", error);
+              // Error handling sudah ada di loginUser()
+            });
         });
       }
 
@@ -367,18 +361,6 @@
             });
         });
       }
-
-      // ============================================
-      // CHECK AUTH STATE ON PAGE LOAD
-      // ============================================
-      document.addEventListener("DOMContentLoaded", function () {
-        console.log("🔄 Page loaded - checking auth state...");
-
-        // Check auth state (akan auto-detect ?logout=true)
-        setTimeout(() => {
-          checkAuthState();
-        }, 300);
-      });
 
       // ============================================
       // KEYBOARD SHORTCUTS
