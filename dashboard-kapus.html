@@ -709,25 +709,26 @@
             loadKapusDashboard();
           }
         });
-        // Logout handler
-        document
-          .getElementById("logoutLink")
-          .addEventListener("click", function (e) {
-            e.preventDefault();
-            Swal.fire({
-              title: "Yakin ingin logout?",
-              icon: "warning",
-              showCancelButton: true,
-              confirmButtonText: "Ya, logout",
-              cancelButtonText: "Batal",
-              confirmButtonColor: "#d33",
-            }).then((result) => {
-              if (result.isConfirmed) {
-                window.logoutUser();
-              }
-            });
+      }; // TUTUP FUNGSI rejectSurat DI SINI
+
+      // Logout handler - PINDAHKAN KE LUAR FUNGSI rejectSurat
+      document
+        .getElementById("logoutLink")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          Swal.fire({
+            title: "Yakin ingin logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Ya, logout",
+            cancelButtonText: "Batal",
+            confirmButtonColor: "#d33",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.logoutUser();
+            }
           });
-      };
+        });
 
       console.log("✅ Dashboard Kapus scripts loaded");
     </script>
