@@ -53,6 +53,10 @@
         background: #fef3c7;
         color: #92400e;
       }
+      .badge-selesai {
+        background: #d1fae5;
+        color: #065f46;
+      }
       .btn-disposisi-cepat {
         background: #10b981;
         color: white;
@@ -396,12 +400,12 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="assets/js/firebase-config.js"></script>
     <script src="assets/js/auth.js"></script>
-    <script src="assets/js/database.js"></script>
     <script src="assets/js/main.js"></script>
 
     <script>
       let currentUserData = null;
       let currentSuratId = null;
+      let unsubscribeSuratMasuk = null;
 
       // Protect page - only kapus
       checkUserRole(["kapus"])
@@ -409,7 +413,9 @@
           currentUserData = userData;
           document.getElementById("sidebarUserName").textContent =
             userData.nama || "Kapus";
-          loadSuratMasuk();
+
+          // Setup real-time listener
+          setupRealtimeListener();
         })
         .catch((error) => {
           console.error("Access denied:", error);
@@ -423,18 +429,41 @@
           year: "numeric",
         });
 
+      // Setup Real-time Listener
+      function setupRealtimeListener() {
+        console.log("🔄 Setting up real-time listener for Kapus...");
+
+        if (unsubscribeSuratMasuk) {
+          unsubscribeSuratMasuk();
+        }
+
+        unsubscribeSuratMasuk = db
+          .collection("surat_masuk")
+          .where("isDeleted", "==", false)
+          .where("status", "==", "Terkirim ke Kapus")
+          .orderBy("createdAt", "desc")
+          .onSnapshot(
+            (snapshot) => {
+              console.log("📨 Surat Masuk updated for Kapus:", snapshot.size);
+              loadSuratMasuk(snapshot);
+            },
+            (error) => {
+              console.error("❌ Error listening:", error);
+            }
+          );
+      }
+
       // Load Surat Masuk untuk Kapus
-      function loadSuratMasuk() {
+      function loadSuratMasuk(snapshot) {
         const tbody = document.getElementById("suratMasukTableBody");
 
-        // Get surat yang perlu tindakan Kapus
-        const allSurat = KemhanDatabase.getSuratMasuk();
-        const suratKapus = allSurat.filter(
-          (s) =>
-            s.status === "Terkirim ke Kapus" ||
-            s.status === "Menunggu Persetujuan Kapus" ||
-            s.status === "Pending"
-        );
+        const suratKapus = [];
+        snapshot.forEach((doc) => {
+          suratKapus.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
 
         if (suratKapus.length === 0) {
           tbody.innerHTML = `
@@ -462,12 +491,12 @@
             <span class="badge-status badge-menunggu">Menunggu</span>
           </td>
           <td style="text-align: center;">
-            <button class="btn-preview" onclick="previewSurat(${surat.id})">
+            <button class="btn-preview" onclick="previewSurat('${surat.id}')">
               <i class="bi bi-eye"></i> Preview
             </button>
-            <button class="btn-disposisi-cepat" onclick="buatDisposisiCepat(${
+            <button class="btn-disposisi-cepat" onclick="buatDisposisiCepat('${
               surat.id
-            })">
+            }')">
               <i class="bi bi-send"></i> Disposisi
             </button>
           </td>
@@ -479,25 +508,33 @@
 
       // Preview Surat
       window.previewSurat = function (id) {
-        const surat = KemhanDatabase.getSuratMasukById(id);
-        if (!surat) return;
+        db.collection("surat_masuk")
+          .doc(id)
+          .get()
+          .then((doc) => {
+            if (!doc.exists) {
+              Swal.fire("Error", "Surat tidak ditemukan", "error");
+              return;
+            }
 
-        currentSuratId = id;
+            const surat = doc.data();
+            currentSuratId = id;
 
-        document.getElementById("previewNoSurat").textContent =
-          surat.noSurat || "-";
-        document.getElementById("previewPerihal").textContent =
-          surat.perihal || "-";
-        document.getElementById("previewPengirim").textContent =
-          surat.dari || surat.namaPengirim || "-";
-        document.getElementById("previewTanggalSurat").textContent =
-          surat.tanggalSurat ? Utils.formatDate(surat.tanggalSurat) : "-";
-        document.getElementById("previewTanggalDiterima").textContent =
-          surat.tanggalDiterima ? Utils.formatDate(surat.tanggalDiterima) : "-";
-        document.getElementById("previewCatatan").textContent =
-          surat.catatan || "-";
+            document.getElementById("previewNoSurat").textContent =
+              surat.noSurat || "-";
+            document.getElementById("previewPerihal").textContent =
+              surat.perihal || "-";
+            document.getElementById("previewPengirim").textContent =
+              surat.dari || surat.namaPengirim || "-";
+            document.getElementById("previewTanggalSurat").textContent =
+              surat.tanggalSurat || "-";
+            document.getElementById("previewTanggalDiterima").textContent =
+              surat.tanggalDiterima || "-";
+            document.getElementById("previewCatatan").textContent =
+              surat.catatan || "-";
 
-        document.getElementById("previewModal").classList.add("active");
+            document.getElementById("previewModal").classList.add("active");
+          });
       };
 
       window.closePreview = function () {
@@ -514,16 +551,21 @@
       // Buat Disposisi Cepat
       window.buatDisposisiCepat = function (suratId) {
         currentSuratId = suratId;
-        const surat = KemhanDatabase.getSuratMasukById(suratId);
 
-        if (surat) {
-          document.getElementById("disposisiPerihal").textContent =
-            surat.perihal || "-";
-          const modal = new bootstrap.Modal(
-            document.getElementById("disposisiModal")
-          );
-          modal.show();
-        }
+        db.collection("surat_masuk")
+          .doc(suratId)
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              const surat = doc.data();
+              document.getElementById("disposisiPerihal").textContent =
+                surat.perihal || "-";
+              const modal = new bootstrap.Modal(
+                document.getElementById("disposisiModal")
+              );
+              modal.show();
+            }
+          });
       };
 
       // Submit Disposisi Cepat
@@ -544,33 +586,37 @@
           prioritas: prioritas,
           dari: currentUserData.nama,
           jabatanDari: "Kepala Pusat",
-          tanggal: new Date().toISOString(),
+          tanggal: firebase.firestore.FieldValue.serverTimestamp(),
           status: "Proses",
         };
 
-        KemhanDatabase.addDisposisi(currentSuratId, disposisi);
+        // Update di Firestore
+        db.collection("surat_masuk")
+          .doc(currentSuratId)
+          .update({
+            status: "Selesai - Sudah Didisposisi",
+            processedBy: currentUserData.nama,
+            processedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            disposisi: firebase.firestore.FieldValue.arrayUnion(disposisi),
+          })
+          .then(() => {
+            Swal.fire({
+              icon: "success",
+              title: "Disposisi Berhasil Dikirim!",
+              text: `Disposisi telah dikirim ke ${kepada}`,
+              timer: 2000,
+            });
 
-        // Update status surat
-        KemhanDatabase.updateSuratMasuk(currentSuratId, {
-          status: "Selesai",
-          processedBy: currentUserData.nama,
-          processedAt: new Date().toISOString(),
-        });
-
-        Swal.fire({
-          icon: "success",
-          title: "Disposisi Berhasil Dikirim!",
-          text: `Disposisi telah dikirim ke ${kepada}`,
-          timer: 2000,
-        });
-
-        bootstrap.Modal.getInstance(
-          document.getElementById("disposisiModal")
-        ).hide();
-        document.getElementById("disposisiKepada").value = "";
-        document.getElementById("disposisiInstruksi").value = "";
-
-        loadSuratMasuk();
+            bootstrap.Modal.getInstance(
+              document.getElementById("disposisiModal")
+            ).hide();
+            document.getElementById("disposisiKepada").value = "";
+            document.getElementById("disposisiInstruksi").value = "";
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            Swal.fire("Error", "Gagal mengirim disposisi", "error");
+          });
       };
 
       // Logout handler
@@ -591,6 +637,13 @@
             }
           });
         });
+
+      // Cleanup
+      window.addEventListener("beforeunload", () => {
+        if (unsubscribeSuratMasuk) {
+          unsubscribeSuratMasuk();
+        }
+      });
     </script>
   </body>
 </html>
