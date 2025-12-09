@@ -58,7 +58,7 @@
                   id="email"
                   class="form-input"
                   placeholder="masukkan email"
-                  autocomplete="off"
+                  autocomplete="email"
                   required
                 />
               </div>
@@ -76,13 +76,14 @@
                   id="password"
                   class="form-input"
                   placeholder="masukkan password anda"
-                  autocomplete="off"
+                  autocomplete="current-password"
                   required
                 />
                 <button
                   type="button"
                   class="toggle-password"
                   id="togglePassword"
+                  aria-label="Toggle password visibility"
                 >
                   <i class="bi bi-eye-slash"></i>
                 </button>
@@ -95,118 +96,24 @@
                 <input type="checkbox" id="remember" />
                 <label for="remember">Ingat saya</label>
               </div>
-              <a href="#" class="forgot-password">Lupa Password?</a>
+              <a href="#" class="forgot-password" id="forgotPasswordLink"
+                >Lupa Password?</a
+              >
             </div>
 
             <!-- Login Button -->
             <button type="submit" class="login-button" id="loginBtn">
+              <i class="bi bi-box-arrow-in-right"></i>
               Masuk
             </button>
           </form>
 
-          <!-- DIVIDER -->
-          <div
-            style="
-              margin: 30px 0;
-              padding-top: 30px;
-              border-top: 2px solid #e5e7eb;
-              text-align: center;
-            "
-          >
-            <p
-              style="
-                color: #9ca3af;
-                font-size: 14px;
-                font-weight: 500;
-                margin-bottom: 20px;
-              "
-            >
-              🧪 Testing Only - Registrasi User Baru
+          <!-- Info Text -->
+          <div style="margin-top: 20px; text-align: center">
+            <p style="color: #6b7280; font-size: 13px">
+              Hubungi administrator untuk pembuatan akun baru
             </p>
           </div>
-
-          <!-- REGISTER FORM (UNTUK TESTING) -->
-          <form
-            id="registerForm"
-            style="background: #f9fafb; padding: 20px; border-radius: 8px"
-          >
-            <h3
-              style="
-                margin: 0 0 15px 0;
-                font-size: 16px;
-                color: #374151;
-                font-weight: 600;
-              "
-            >
-              Form Registrasi
-            </h3>
-
-            <div class="form-group">
-              <label class="form-label">Nama Lengkap *</label>
-              <input
-                type="text"
-                id="nama"
-                class="form-input"
-                placeholder="Nama lengkap"
-                autocomplete="off"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Email *</label>
-              <input
-                type="email"
-                id="regEmail"
-                class="form-input"
-                placeholder="Email"
-                autocomplete="off"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Password *</label>
-              <input
-                type="password"
-                id="regPassword"
-                class="form-input"
-                placeholder="Password (min 6 karakter)"
-                autocomplete="off"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Role *</label>
-              <select id="role" class="form-input" required>
-                <option value="">-- Pilih Role --</option>
-                <option value="admin">Admin</option>
-                <option value="kapus">Kapus</option>
-              </select>
-            </div>
-
-            <button
-              type="submit"
-              class="login-button"
-              id="registerBtn"
-              style="background: #10b981; margin-top: 10px"
-            >
-              <i class="bi bi-person-plus"></i> Register
-            </button>
-
-            <p
-              style="
-                margin-top: 15px;
-                font-size: 12px;
-                color: #6b7280;
-                text-align: center;
-              "
-            >
-              Setelah registrasi berhasil, silakan login dengan akun yang
-              dibuat.
-            </p>
-          </form>
         </div>
 
         <!-- Footer -->
@@ -225,6 +132,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
+    <!-- SweetAlert2 for better UI -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- Firebase Config -->
     <script src="assets/js/firebase-config.js"></script>
 
@@ -233,7 +143,44 @@
 
     <!-- Login Page Script -->
     <script>
-      console.log("📄 Login page loaded");
+      console.log("📄 Login page loaded v2.0 - Final");
+
+      // ============================================
+      // FORCE CLEAR OLD SESSIONS ON PAGE LOAD
+      // ============================================
+      (function initLoginPage() {
+        console.log("🧹 Initializing login page - clearing old sessions...");
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const isFromLogout = urlParams.get("logout") === "true";
+
+        // ALWAYS clear storage on login page for clean state
+        sessionStorage.clear();
+        localStorage.clear();
+
+        // Force Firebase logout if auth is available
+        if (window.auth) {
+          auth
+            .signOut()
+            .then(() => {
+              console.log("✅ Firebase auth cleared");
+            })
+            .catch((err) => {
+              console.warn(
+                "⚠️ Firebase signOut error (might be already logged out):",
+                err
+              );
+            });
+        }
+
+        // Clean URL if coming from logout
+        if (isFromLogout) {
+          window.history.replaceState({}, document.title, "login.html");
+          console.log("🔄 URL cleaned");
+        }
+
+        console.log("✅ Login page ready - clean state initialized");
+      })();
 
       // ============================================
       // LOADING SCREEN FUNCTIONS
@@ -253,7 +200,7 @@
       };
 
       // ============================================
-      // PASSWORD TOGGLE
+      // PASSWORD TOGGLE VISIBILITY
       // ============================================
       const togglePassword = document.getElementById("togglePassword");
       const passwordInput = document.getElementById("password");
@@ -269,55 +216,162 @@
         });
       }
 
-      // LOGIN FORM HANDLER - FIXED
-      const loginForm = document.getElementById("loginForm");
-      if (loginForm) {
-        loginForm.addEventListener("submit", function (e) {
+      // ============================================
+      // REMEMBER ME FUNCTIONALITY
+      // ============================================
+      function loadRememberedCredentials() {
+        const rememberedEmail = localStorage.getItem("rememberedEmail");
+        const rememberMe = localStorage.getItem("rememberMe") === "true";
+
+        if (rememberMe && rememberedEmail) {
+          document.getElementById("email").value = rememberedEmail;
+          document.getElementById("remember").checked = true;
+          console.log("✅ Loaded remembered email:", rememberedEmail);
+        }
+      }
+
+      function saveRememberMe(email, remember) {
+        if (remember) {
+          localStorage.setItem("rememberedEmail", email);
+          localStorage.setItem("rememberMe", "true");
+          console.log("✅ Email saved for remember me:", email);
+        } else {
+          localStorage.removeItem("rememberedEmail");
+          localStorage.removeItem("rememberMe");
+          console.log("🗑️ Remember me data cleared");
+        }
+      }
+
+      // Load remembered credentials on page load
+      loadRememberedCredentials();
+
+      // ============================================
+      // FORGOT PASSWORD FUNCTIONALITY - WITH SWEETALERT2
+      // ============================================
+      const forgotPasswordLink = document.getElementById("forgotPasswordLink");
+
+      if (forgotPasswordLink) {
+        forgotPasswordLink.addEventListener("click", function (e) {
           e.preventDefault();
 
-          const email = document.getElementById("email").value.trim();
-          const password = document.getElementById("password").value;
+          console.log("🔑 Forgot password clicked");
 
-          if (!email || !password) {
-            alert("⚠️ Silakan isi email dan password!");
-            return;
-          }
+          // Get email from input field if available
+          const currentEmail = document.getElementById("email").value.trim();
 
-          console.log("🔐 Login attempt:", email);
+          // Show SweetAlert2 input dialog
+          Swal.fire({
+            title: "Lupa Password?",
+            html: `
+              <p style="margin-bottom: 15px; color: #6b7280;">
+                Masukkan email akun Anda.<br>
+                Link reset password akan dikirim ke email tersebut.
+              </p>
+            `,
+            input: "email",
+            inputValue: currentEmail,
+            inputPlaceholder: "masukkan email anda",
+            inputAttributes: {
+              autocomplete: "email",
+            },
+            showCancelButton: true,
+            confirmButtonText: "Kirim Email Reset",
+            cancelButtonText: "Batal",
+            confirmButtonColor: "#8b0000",
+            cancelButtonColor: "#6b7280",
+            showLoaderOnConfirm: true,
+            inputValidator: (value) => {
+              if (!value) {
+                return "Email wajib diisi!";
+              }
+              // Validasi format email
+              const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+              if (!emailRegex.test(value)) {
+                return "Format email tidak valid!";
+              }
+            },
+            preConfirm: (email) => {
+              console.log("📧 Sending password reset to:", email);
 
-          // PENTING: loginUser() return URL, bukan langsung redirect
-          loginUser(email, password)
-            .then((redirectUrl) => {
-              console.log("✅ Login successful, redirecting to:", redirectUrl);
+              // Send password reset email via Firebase
+              return auth
+                .sendPasswordResetEmail(email)
+                .then(() => {
+                  return { success: true, email: email };
+                })
+                .catch((error) => {
+                  console.error("❌ Password reset error:", error);
 
-              // MANUAL redirect SETELAH promise resolve
-              window.location.replace(redirectUrl);
-            })
-            .catch((error) => {
-              console.error("❌ Login failed:", error);
-              // Error handling sudah ada di loginUser()
-            });
+                  let errorMessage = "Gagal mengirim email reset password.";
+
+                  if (error.code === "auth/user-not-found") {
+                    errorMessage =
+                      "Email tidak terdaftar! Silakan hubungi administrator.";
+                  } else if (error.code === "auth/invalid-email") {
+                    errorMessage = "Format email tidak valid!";
+                  } else if (error.code === "auth/too-many-requests") {
+                    errorMessage =
+                      "Terlalu banyak percobaan! Silakan coba lagi nanti.";
+                  } else {
+                    errorMessage = error.message;
+                  }
+
+                  Swal.showValidationMessage(errorMessage);
+                });
+            },
+            allowOutsideClick: () => !Swal.isLoading(),
+          }).then((result) => {
+            if (result.isConfirmed && result.value.success) {
+              // Success message
+              Swal.fire({
+                icon: "success",
+                title: "Email Terkirim!",
+                html: `
+                  <p style="margin-bottom: 10px;">
+                    Link reset password telah dikirim ke:
+                  </p>
+                  <p style="font-weight: 600; color: #8b0000; margin-bottom: 15px;">
+                    ${result.value.email}
+                  </p>
+                  <div style="text-align: left; background: #f3f4f6; padding: 15px; border-radius: 8px; font-size: 14px;">
+                    <p style="margin: 0 0 8px 0; font-weight: 600;">Jika tidak menerima email:</p>
+                    <ul style="margin: 0; padding-left: 20px;">
+                      <li>Periksa folder <strong>Spam/Junk</strong></li>
+                      <li>Tunggu beberapa menit</li>
+                      <li>Pastikan email sudah terdaftar</li>
+                    </ul>
+                  </div>
+                `,
+                confirmButtonText: "OK, Mengerti",
+                confirmButtonColor: "#10b981",
+              });
+
+              console.log("✅ Password reset email sent");
+            }
+          });
         });
+
+        console.log("✅ Forgot password handler attached");
       }
 
       // ============================================
-      // REGISTER FORM HANDLER
+      // LOGIN FORM HANDLER - FIXED & SIMPLIFIED
       // ============================================
-      const registerForm = document.getElementById("registerForm");
-      const registerBtn = document.getElementById("registerBtn");
+      const loginForm = document.getElementById("loginForm");
+      const loginBtn = document.getElementById("loginBtn");
 
-      if (registerForm) {
-        registerForm.addEventListener("submit", function (e) {
+      if (loginForm) {
+        loginForm.addEventListener("submit", function (e) {
           e.preventDefault();
+          e.stopPropagation();
 
-          const nama = document.getElementById("nama").value.trim();
-          const email = document.getElementById("regEmail").value.trim();
-          const password = document.getElementById("regPassword").value;
-          const role = document.getElementById("role").value;
+          const email = document.getElementById("email").value.trim();
+          const password = document.getElementById("password").value;
+          const rememberMe = document.getElementById("remember").checked;
 
-          // Validasi
-          if (!nama || !email || !password || !role) {
-            alert("⚠️ Semua field bertanda * harus diisi!");
+          // Validation
+          if (!email || !password) {
+            alert("⚠️ Silakan isi email dan password!");
             return;
           }
 
@@ -326,94 +380,98 @@
             return;
           }
 
-          // Disable button
-          if (registerBtn) {
-            registerBtn.disabled = true;
-            registerBtn.innerHTML =
+          console.log("🔐 Starting login process for:", email);
+          console.log("📌 Remember me:", rememberMe);
+
+          // Save remember me preference
+          saveRememberMe(email, rememberMe);
+
+          // Disable button to prevent double submission
+          if (loginBtn) {
+            loginBtn.disabled = true;
+            loginBtn.innerHTML =
               '<i class="bi bi-hourglass-split"></i> Memproses...';
           }
 
-          console.log("📝 Register attempt:", { email, role, nama });
+          // Call loginUser function from auth.js
+          loginUser(email, password)
+            .then((redirectUrl) => {
+              console.log("✅ Login successful!");
+              console.log("🎯 Redirect URL:", redirectUrl);
 
-          registerUser(email, password, role, nama)
-            .then(() => {
-              // Clear form
-              registerForm.reset();
-
-              // Re-enable button
-              if (registerBtn) {
-                registerBtn.disabled = false;
-                registerBtn.innerHTML =
-                  '<i class="bi bi-person-plus"></i> Register';
-              }
-
-              console.log("✅ Registration completed successfully");
+              // Add delay to ensure session is saved
+              setTimeout(() => {
+                console.log("🔄 Redirecting now...");
+                window.location.replace(redirectUrl);
+              }, 800);
             })
             .catch((error) => {
-              console.error("❌ Registration failed:", error);
+              console.error("❌ Login failed:", error);
 
-              // Re-enable button
-              if (registerBtn) {
-                registerBtn.disabled = false;
-                registerBtn.innerHTML =
-                  '<i class="bi bi-person-plus"></i> Register';
+              // Re-enable button on error
+              if (loginBtn) {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML =
+                  '<i class="bi bi-box-arrow-in-right"></i> Masuk';
               }
+
+              // Focus back to email for retry
+              document.getElementById("email").focus();
             });
         });
+      } else {
+        console.error("❌ Login form not found!");
       }
 
       // ============================================
       // KEYBOARD SHORTCUTS
       // ============================================
-      document
-        .getElementById("email")
-        ?.addEventListener("keypress", function (e) {
+      const emailInput = document.getElementById("email");
+
+      if (emailInput) {
+        emailInput.addEventListener("keypress", function (e) {
           if (e.key === "Enter") {
             e.preventDefault();
-            document.getElementById("password")?.focus();
+            const passwordField = document.getElementById("password");
+            if (passwordField) {
+              passwordField.focus();
+            }
           }
         });
+      }
 
-      console.log("✅ Login page scripts loaded");
+      if (passwordInput) {
+        passwordInput.addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            loginForm.dispatchEvent(new Event("submit"));
+          }
+        });
+      }
 
       // ============================================
-      // FORCE LOGOUT SAAT BUKA LOGIN PAGE
+      // PREVENT BACK BUTTON AFTER LOGOUT
       // ============================================
-      (function () {
-        console.log("🔒 Login page loaded - checking for old sessions...");
-
-        // Jika ada user login lama, paksa logout
-        const urlParams = new URLSearchParams(window.location.search);
-        const isFromLogout = urlParams.get("logout") === "true";
-        const freshLogin = sessionStorage.getItem("freshLogin");
-
-        if (!freshLogin || isFromLogout) {
-          console.log("🧹 Clearing old session...");
-
-          // Clear storage
+      window.addEventListener("pageshow", function (event) {
+        if (event.persisted) {
+          console.log("🔄 Page restored from cache - clearing session");
           sessionStorage.clear();
           localStorage.clear();
-
-          // Force Firebase logout
-          if (window.auth) {
-            auth
-              .signOut()
-              .then(() => {
-                return auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
-              })
-              .then(() => {
-                console.log("✅ Old session cleared");
-                // Clean URL
-                if (isFromLogout) {
-                  window.history.replaceState({}, document.title, "login.html");
-                }
-              })
-              .catch((err) => {
-                console.error("Clear session error:", err);
-              });
-          }
+          window.location.reload();
         }
-      })();
+      });
+
+      // ============================================
+      // AUTO-FOCUS ON EMAIL FIELD
+      // ============================================
+      window.addEventListener("load", function () {
+        const emailField = document.getElementById("email");
+        if (emailField) {
+          emailField.focus();
+        }
+      });
+
+      console.log("✅ Login page scripts loaded v2.0 - Final");
     </script>
   </body>
 </html>

@@ -19,6 +19,7 @@
     <div class="dashboard-overview">
       <!-- Sidebar placeholder -->
       <div id="sidebar-placeholder"></div>
+
       <!-- Main Content -->
       <div class="main-content">
         <!-- Header -->
@@ -137,7 +138,7 @@
             </div>
           </div>
 
-          <!-- Monitoring Surat Table (DARI FIREBASE) -->
+          <!-- Monitoring Surat Table -->
           <div class="monitoring-section">
             <div class="monitoring-header">
               <h3 class="monitoring-title">Monitoring Surat</h3>
@@ -206,102 +207,215 @@
     <!-- Database Functions -->
     <script src="assets/js/database.js"></script>
 
-    <!-- Page Protection & Initialization -->
+    <!-- Page Initialization -->
     <script>
-      console.log("📄 Dashboard page loaded");
+      console.log("📄 Dashboard Admin page loaded v2.0");
 
-      // PROTECT PAGE - HANYA ADMIN
-      checkUserRole(["admin"])
-        .then((userData) => {
-          console.log("✅ Access granted:", userData);
+      let unsubscribeMasuk = null;
+      let unsubscribeKeluar = null;
+      let unsubscribeNotaDinas = null;
 
-          // Tampilkan nama user di header
-          const userNameDisplay = document.getElementById("userNameDisplay");
-          if (userNameDisplay) {
-            userNameDisplay.textContent = userData.nama || userData.email;
-          }
+      // ========================================
+      // INITIALIZE DASHBOARD
+      // ========================================
+      function initDashboard() {
+        console.log("🚀 Initializing dashboard...");
 
-          window.loadIncludes();
-          // Load dashboard data
-          loadDashboardStats();
-        })
-        .catch((error) => {
-          console.error("❌ Access denied:", error);
-        });
+        // Check authentication and role
+        checkUserRole(["admin"])
+          .then((userData) => {
+            console.log("✅ Admin access granted:", userData);
 
-      // Load Dashboard Statistics dari Firebase
-      function loadDashboardStats() {
-        console.log("📊 Loading dashboard statistics...");
+            // Display user info
+            const userNameDisplay = document.getElementById("userNameDisplay");
+            if (userNameDisplay) {
+              userNameDisplay.textContent = userData.nama || userData.email;
+            }
 
-        // Ini akan diganti dengan Firebase query nanti
-        // Sementara pakai fungsi yang sudah ada dari database.js
-        if (typeof KemhanDatabase !== "undefined") {
-          const stats = KemhanDatabase.getStatistics();
+            // Load includes (sidebar, footer)
+            if (window.loadIncludes) {
+              window.loadIncludes();
+            }
 
-          document.getElementById("statSuratMasuk").textContent =
-            stats.totalMasuk;
-          document.getElementById("statSuratKeluar").textContent =
-            stats.totalKeluar;
-          document.getElementById("statNotaDinas").textContent =
-            stats.totalNotaDinas;
-          document.getElementById("statArsip").textContent = stats.totalDeleted;
-
-          // Load monitoring table (5 terbaru)
-          loadMonitoringTable();
-        }
+            // Load dashboard data with real-time listeners
+            loadDashboardStatsRealtime();
+          })
+          .catch((error) => {
+            console.error("❌ Access denied:", error);
+            // User will be redirected by checkUserRole
+          });
       }
 
-      // Load Monitoring Table
+      // ========================================
+      // LOAD DASHBOARD STATISTICS - REAL-TIME
+      // ========================================
+      function loadDashboardStatsRealtime() {
+        console.log("📊 Setting up real-time listeners...");
+
+        // Surat Masuk Listener
+        if (unsubscribeMasuk) unsubscribeMasuk();
+        unsubscribeMasuk = db
+          .collection("surat_masuk")
+          .where("isDeleted", "==", false)
+          .onSnapshot((snapshot) => {
+            const count = snapshot.size;
+            document.getElementById("statSuratMasuk").textContent = count;
+            console.log("📨 Surat Masuk:", count);
+            loadMonitoringTable();
+          });
+
+        // Surat Keluar Listener
+        if (unsubscribeKeluar) unsubscribeKeluar();
+        unsubscribeKeluar = db
+          .collection("surat_keluar")
+          .where("isDeleted", "==", false)
+          .onSnapshot((snapshot) => {
+            const count = snapshot.size;
+            document.getElementById("statSuratKeluar").textContent = count;
+            console.log("📤 Surat Keluar:", count);
+            loadMonitoringTable();
+          });
+
+        // Nota Dinas Listener
+        if (unsubscribeNotaDinas) unsubscribeNotaDinas();
+        unsubscribeNotaDinas = db
+          .collection("nota_dinas")
+          .where("isDeleted", "==", false)
+          .onSnapshot((snapshot) => {
+            const count = snapshot.size;
+            document.getElementById("statNotaDinas").textContent = count;
+            console.log("📝 Nota Dinas:", count);
+            loadMonitoringTable();
+          });
+
+        // Load Arsip (deleted documents)
+        loadArsipCount();
+      }
+
+      // ========================================
+      // LOAD ARSIP COUNT
+      // ========================================
+      function loadArsipCount() {
+        Promise.all([
+          db.collection("surat_masuk").where("isDeleted", "==", true).get(),
+          db.collection("surat_keluar").where("isDeleted", "==", true).get(),
+          db.collection("nota_dinas").where("isDeleted", "==", true).get(),
+        ])
+          .then((results) => {
+            const totalArsip =
+              results[0].size + results[1].size + results[2].size;
+            document.getElementById("statArsip").textContent = totalArsip;
+            console.log("🗄️ Arsip:", totalArsip);
+          })
+          .catch((error) => {
+            console.error("❌ Error loading arsip:", error);
+          });
+      }
+
+      // ========================================
+      // LOAD MONITORING TABLE
+      // ========================================
       function loadMonitoringTable() {
         const tbody = document.getElementById("monitoringTableBody");
-
         if (!tbody) return;
 
-        // Get latest 5 surat (combine masuk, keluar, nota dinas)
-        const allSurat = [];
+        tbody.innerHTML =
+          '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">Loading...</td></tr>';
 
-        if (typeof KemhanDatabase !== "undefined") {
-          const masuk = KemhanDatabase.getSuratMasuk().slice(0, 3);
-          const keluar = KemhanDatabase.getSuratKeluar().slice(0, 1);
-          const notaDinas = KemhanDatabase.getNotaDinas().slice(0, 1);
+        Promise.all([
+          db.collection("surat_masuk").where("isDeleted", "==", false).get(),
+          db.collection("surat_keluar").where("isDeleted", "==", false).get(),
+          db.collection("nota_dinas").where("isDeleted", "==", false).get(),
+        ])
+          .then((results) => {
+            const allSurat = [];
 
-          allSurat.push(...masuk, ...keluar, ...notaDinas);
-        }
+            results[0].forEach((doc) => {
+              const data = doc.data();
+              allSurat.push({
+                ...data,
+                id: doc.id,
+                type: "masuk",
+                _createdAt: data.createdAt
+                  ? data.createdAt.toDate()
+                  : new Date(0),
+              });
+            });
 
-        if (allSurat.length === 0) {
-          tbody.innerHTML = `
-          <tr>
-            <td colspan="6" style="text-align: center; padding: 20px; color: #6b7280;">
-              Belum ada data surat
-            </td>
-          </tr>
-        `;
-          return;
-        }
+            results[1].forEach((doc) => {
+              const data = doc.data();
+              allSurat.push({
+                ...data,
+                id: doc.id,
+                type: "keluar",
+                _createdAt: data.createdAt
+                  ? data.createdAt.toDate()
+                  : new Date(0),
+              });
+            });
 
-        tbody.innerHTML = allSurat
-          .map(
-            (surat) => `
-        <tr>
-          <td>
-            <span class="organization-icon">
-              <i class="bi bi-person-circle"></i>
-            </span>
-            ${surat.dari || surat.pengirim || "N/A"}
-          </td>
-          <td>${surat.noAgenda || "-"}</td>
-          <td>${surat.noSurat || surat.noNaskah || "N/A"}</td>
-          <td>${surat.kepada || surat.tujuan || "N/A"}</td>
-          <td>${surat.perihal || "N/A"}</td>
-          <td>
-            <span class="status-badge ${getStatusClass(surat.status)}">
-              ${surat.status || "Pending"}
-            </span>
-          </td>
-        </tr>
-      `
-          )
-          .join("");
+            results[2].forEach((doc) => {
+              const data = doc.data();
+              allSurat.push({
+                ...data,
+                id: doc.id,
+                type: "nota-dinas",
+                _createdAt: data.createdAt
+                  ? data.createdAt.toDate()
+                  : new Date(0),
+              });
+            });
+
+            // Sort by date (newest first)
+            allSurat.sort((a, b) => b._createdAt - a._createdAt);
+
+            // Take only 5 latest
+            const latest5 = allSurat.slice(0, 5);
+
+            if (latest5.length === 0) {
+              tbody.innerHTML =
+                '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #6b7280;">Belum ada data surat</td></tr>';
+              return;
+            }
+
+            tbody.innerHTML = latest5
+              .map((surat) => {
+                const dari = surat.dari || surat.namaPengirim || "N/A";
+                const noSurat = surat.noSurat || surat.noNaskah || "N/A";
+                const kepada = surat.kepada || surat.tujuan || "N/A";
+                const perihal = surat.perihal || "N/A";
+                const status = surat.status || "Pending";
+                const statusClass = getStatusClass(status);
+
+                return `
+                <tr>
+                  <td>
+                    <span class="organization-icon">
+                      <i class="bi bi-person-circle"></i>
+                    </span>
+                    ${dari}
+                  </td>
+                  <td>${surat.noAgenda || "-"}</td>
+                  <td>${noSurat}</td>
+                  <td>${kepada}</td>
+                  <td>${perihal}</td>
+                  <td>
+                    <span class="status-badge ${statusClass}">
+                      ${status}
+                    </span>
+                  </td>
+                </tr>
+              `;
+              })
+              .join("");
+
+            console.log("✅ Monitoring table updated");
+          })
+          .catch((error) => {
+            console.error("❌ Error loading monitoring:", error);
+            tbody.innerHTML =
+              '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #dc2626;">Error loading data</td></tr>';
+          });
       }
 
       function getStatusClass(status) {
@@ -311,12 +425,30 @@
           Pending: "pending",
           Ditolak: "ditolak",
           Disetujui: "disetujui",
-          "Siap Kirim": "siap-kirim",
         };
         return statusMap[status] || "pending";
       }
 
-      console.log("✅ Dashboard page scripts loaded");
+      // ========================================
+      // CLEANUP LISTENERS
+      // ========================================
+      window.addEventListener("beforeunload", () => {
+        if (unsubscribeMasuk) unsubscribeMasuk();
+        if (unsubscribeKeluar) unsubscribeKeluar();
+        if (unsubscribeNotaDinas) unsubscribeNotaDinas();
+      });
+
+      // ========================================
+      // START INITIALIZATION
+      // ========================================
+      // Wait for auth.js to load
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initDashboard);
+      } else {
+        initDashboard();
+      }
+
+      console.log("✅ Dashboard initialization script loaded v2.0");
     </script>
   </body>
 </html>

@@ -682,14 +682,33 @@
     <!-- Firebase Config -->
     <script src="assets/js/firebase-config.js"></script>
 
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Database -->
     <script src="assets/js/database.js"></script>
+
+    <!-- Main -->
     <script src="assets/js/main.js"></script>
+
+    <!-- Surat Keluar -->
     <script src="assets/js/surat-keluar.js"></script>
+
+    <!-- Initialize -->
     <script>
       document.addEventListener("DOMContentLoaded", () => {
+        console.log("📄 DOM Content Loaded");
+
+        // Check if we're on surat-keluar page
         if (window.location.pathname.includes("surat-keluar.html")) {
-          window.initializeSuratKeluarPage();
+          console.log("✅ On surat-keluar.html, initializing...");
+
+          // Initialize page - auth check is inside initializeSuratKeluarPage
+          if (typeof window.initializeSuratKeluarPage === "function") {
+            window.initializeSuratKeluarPage();
+          } else {
+            console.error("❌ initializeSuratKeluarPage not found!");
+          }
         }
       });
     </script>

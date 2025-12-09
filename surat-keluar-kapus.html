@@ -453,8 +453,14 @@
     <script src="assets/js/main.js"></script>
 
     <script>
+      // ========================================
+      // SURAT KELUAR KAPUS - FIREBASE REAL-TIME
+      // (Replace script di surat-keluar-kapus.html)
+      // ========================================
+
       let currentUserData = null;
       let currentSuratId = null;
+      let unsubscribeSuratKeluar = null;
 
       // Protect page - only kapus
       checkUserRole(["kapus"])
@@ -462,7 +468,9 @@
           currentUserData = userData;
           document.getElementById("sidebarUserName").textContent =
             userData.nama || "Kapus";
-          loadSuratKeluar();
+
+          // Setup real-time listener
+          loadSuratKeluarRealtime();
         })
         .catch((error) => {
           console.error("Access denied:", error);
@@ -476,75 +484,128 @@
           year: "numeric",
         });
 
-      // Load Surat Keluar untuk Kapus
-      function loadSuratKeluar() {
+      // ========================================
+      // LOAD SURAT KELUAR - REAL-TIME
+      // ========================================
+      function loadSuratKeluarRealtime() {
         const tbody = document.getElementById("suratKeluarTableBody");
 
-        // Get surat yang perlu TTD Kapus
-        const allSurat = KemhanDatabase.getSuratKeluar();
-        const suratKapus = allSurat.filter(
-          (s) =>
-            s.status === "Menunggu Persetujuan Kapus" || s.status === "Pending"
-        );
+        // Cleanup previous listener
+        if (unsubscribeSuratKeluar) {
+          unsubscribeSuratKeluar();
+        }
 
-        if (suratKapus.length === 0) {
-          tbody.innerHTML = `
+        tbody.innerHTML = `
+    <tr>
+      <td colspan="7" style="text-align: center; padding: 40px; color: #9ca3af;">
+        Loading data...
+      </td>
+    </tr>
+  `;
+
+        // Setup real-time listener
+        unsubscribeSuratKeluar = db
+          .collection("surat_keluar")
+          .where("isDeleted", "==", false)
+          .where("status", "==", "Menunggu Persetujuan Kapus")
+          .onSnapshot(
+            (snapshot) => {
+              const suratKapus = [];
+              snapshot.forEach((doc) => {
+                suratKapus.push({
+                  id: doc.id,
+                  ...doc.data(),
+                });
+              });
+
+              console.log("📤 Surat Keluar for Kapus:", suratKapus.length);
+
+              if (suratKapus.length === 0) {
+                tbody.innerHTML = `
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 40px; color: #9ca3af;">
+                Tidak ada surat yang perlu ditandatangani
+              </td>
+            </tr>
+          `;
+                return;
+              }
+
+              tbody.innerHTML = suratKapus
+                .map(
+                  (surat, index) => `
           <tr>
-            <td colspan="7" style="text-align: center; padding: 40px; color: #9ca3af;">
-              Tidak ada surat yang perlu ditandatangani
+            <td style="text-align: center;">${index + 1}</td>
+            <td>${surat.noSurat || surat.noNaskah || "-"}</td>
+            <td>${surat.perihal || "-"}</td>
+            <td>${surat.kepada || surat.tujuan || "-"}</td>
+            <td>
+              <span class="badge-status badge-tinggi">Tinggi</span>
+            </td>
+            <td>
+              <span class="badge-status badge-menunggu">Menunggu TTD</span>
+            </td>
+            <td style="text-align: center;">
+              <button class="btn-preview" onclick="previewSurat('${surat.id}')">
+                <i class="bi bi-eye"></i> Preview
+              </button>
+              <button class="btn-ttd" onclick="buatTTD('${surat.id}')">
+                <i class="bi bi-pen"></i> TTD
+              </button>
+            </td>
+          </tr>
+        `
+                )
+                .join("");
+            },
+            (error) => {
+              console.error("❌ Error loading surat keluar:", error);
+              tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 40px; color: #dc2626;">
+              Error loading data: ${error.message}
             </td>
           </tr>
         `;
-          return;
-        }
-
-        tbody.innerHTML = suratKapus
-          .map(
-            (surat, index) => `
-        <tr>
-          <td style="text-align: center;">${index + 1}</td>
-          <td>${surat.noSurat || surat.noNaskah || "-"}</td>
-          <td>${surat.perihal || "-"}</td>
-          <td>${surat.kepada || surat.tujuan || "-"}</td>
-          <td>
-            <span class="badge-status badge-tinggi">Tinggi</span>
-          </td>
-          <td>
-            <span class="badge-status badge-menunggu">Menunggu TTD</span>
-          </td>
-          <td style="text-align: center;">
-            <button class="btn-preview" onclick="previewSurat(${surat.id})">
-              <i class="bi bi-eye"></i> Preview
-            </button>
-            <button class="btn-ttd" onclick="buatTTD(${surat.id})">
-              <i class="bi bi-pen"></i> TTD
-            </button>
-          </td>
-        </tr>
-      `
-          )
-          .join("");
+            }
+          );
       }
 
-      // Preview Surat
+      // ========================================
+      // PREVIEW SURAT
+      // ========================================
       window.previewSurat = function (id) {
-        const surat = KemhanDatabase.getSuratKeluarById(id);
-        if (!surat) return;
-
+        console.log("👁️ Previewing surat:", id);
         currentSuratId = id;
 
-        document.getElementById("previewNoSurat").textContent =
-          surat.noSurat || surat.noNaskah || "-";
-        document.getElementById("previewPerihal").textContent =
-          surat.perihal || "-";
-        document.getElementById("previewTujuan").textContent =
-          surat.kepada || surat.tujuan || "-";
-        document.getElementById("previewTanggalSurat").textContent =
-          surat.tanggalSurat ? Utils.formatDate(surat.tanggalSurat) : "-";
-        document.getElementById("previewCatatan").textContent =
-          surat.catatan || surat.deskripsi || "-";
+        db.collection("surat_keluar")
+          .doc(id)
+          .get()
+          .then((doc) => {
+            if (!doc.exists) {
+              Swal.fire("Error", "Surat tidak ditemukan", "error");
+              return;
+            }
 
-        document.getElementById("previewModal").classList.add("active");
+            const surat = doc.data();
+
+            document.getElementById("previewNoSurat").textContent =
+              surat.noSurat || surat.noNaskah || "-";
+            document.getElementById("previewPerihal").textContent =
+              surat.perihal || "-";
+            document.getElementById("previewTujuan").textContent =
+              surat.kepada || surat.tujuan || "-";
+            document.getElementById("previewTanggalSurat").textContent =
+              surat.tanggalSurat ? Utils.formatDate(surat.tanggalSurat) : "-";
+            document.getElementById("previewCatatan").textContent =
+              surat.catatan || surat.deskripsi || "-";
+
+            document.getElementById("previewModal").classList.add("active");
+          })
+          .catch((error) => {
+            console.error("❌ Error fetching surat:", error);
+            Swal.fire("Error", "Gagal mengambil data surat", "error");
+          });
       };
 
       window.closePreview = function () {
@@ -565,59 +626,108 @@
         }
       };
 
-      // Buat TTD
+      // ========================================
+      // BUAT TTD
+      // ========================================
       window.buatTTD = function (suratId) {
         currentSuratId = suratId;
-        const surat = KemhanDatabase.getSuratKeluarById(suratId);
 
-        if (surat) {
-          document.getElementById("ttdPerihal").textContent =
-            surat.perihal || "-";
-          const modal = new bootstrap.Modal(
-            document.getElementById("ttdModal")
-          );
-          modal.show();
-        }
+        db.collection("surat_keluar")
+          .doc(suratId)
+          .get()
+          .then((doc) => {
+            if (!doc.exists) {
+              Swal.fire("Error", "Surat tidak ditemukan", "error");
+              return;
+            }
+
+            const surat = doc.data();
+            document.getElementById("ttdPerihal").textContent =
+              surat.perihal || "-";
+
+            const modal = new bootstrap.Modal(
+              document.getElementById("ttdModal")
+            );
+            modal.show();
+          })
+          .catch((error) => {
+            console.error("❌ Error fetching surat:", error);
+            Swal.fire("Error", "Gagal mengambil data surat", "error");
+          });
       };
 
-      // Submit TTD
+      // ========================================
+      // SUBMIT TTD
+      // ========================================
       window.submitTTD = function () {
-        // Update surat dengan TTD digital
-        KemhanDatabase.updateSuratKeluar(currentSuratId, {
-          status: "Selesai",
-          ttdDigital: `TTD_${currentUserData.nama}_${Date.now()}`,
-          approvedBy: currentUserData.nama,
-          approvedAt: new Date().toISOString(),
-        });
+        if (!currentSuratId) {
+          Swal.fire("Error", "Surat ID tidak ditemukan", "error");
+          return;
+        }
 
-        Swal.fire({
-          icon: "success",
-          title: "Surat Berhasil Ditandatangani!",
-          text: "TTD Digital telah diterapkan",
-          timer: 2000,
-        });
+        db.collection("surat_keluar")
+          .doc(currentSuratId)
+          .update({
+            status: "Disetujui Kapus",
+            ttdDigital: `TTD_${currentUserData.nama}_${Date.now()}`,
+            approvedBy: currentUserData.nama,
+            approvedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          })
+          .then(() => {
+            Swal.fire({
+              icon: "success",
+              title: "Surat Berhasil Ditandatangani!",
+              text: "TTD Digital telah diterapkan",
+              timer: 2000,
+            });
 
-        bootstrap.Modal.getInstance(document.getElementById("ttdModal")).hide();
-
-        loadSuratKeluar();
+            bootstrap.Modal.getInstance(
+              document.getElementById("ttdModal")
+            ).hide();
+          })
+          .catch((error) => {
+            console.error("❌ Error submitting TTD:", error);
+            Swal.fire(
+              "Error",
+              "Gagal menandatangani surat: " + error.message,
+              "error"
+            );
+          });
       };
 
-      // Buat Disposisi
+      // ========================================
+      // BUAT DISPOSISI
+      // ========================================
       window.buatDisposisi = function (suratId) {
         currentSuratId = suratId;
-        const surat = KemhanDatabase.getSuratKeluarById(suratId);
 
-        if (surat) {
-          document.getElementById("disposisiPerihal").textContent =
-            surat.perihal || "-";
-          const modal = new bootstrap.Modal(
-            document.getElementById("disposisiModal")
-          );
-          modal.show();
-        }
+        db.collection("surat_keluar")
+          .doc(suratId)
+          .get()
+          .then((doc) => {
+            if (!doc.exists) {
+              Swal.fire("Error", "Surat tidak ditemukan", "error");
+              return;
+            }
+
+            const surat = doc.data();
+            document.getElementById("disposisiPerihal").textContent =
+              surat.perihal || "-";
+
+            const modal = new bootstrap.Modal(
+              document.getElementById("disposisiModal")
+            );
+            modal.show();
+          })
+          .catch((error) => {
+            console.error("❌ Error fetching surat:", error);
+            Swal.fire("Error", "Gagal mengambil data surat", "error");
+          });
       };
 
-      // Submit Disposisi
+      // ========================================
+      // SUBMIT DISPOSISI
+      // ========================================
       window.submitDisposisi = function () {
         const kepada = document.getElementById("disposisiKepada").value;
         const instruksi = document.getElementById("disposisiInstruksi").value;
@@ -628,6 +738,11 @@
           return;
         }
 
+        if (!currentSuratId) {
+          Swal.fire("Error", "Surat ID tidak ditemukan", "error");
+          return;
+        }
+
         const disposisi = {
           kepada: kepada,
           judul: "Disposisi dari Kapus",
@@ -635,29 +750,46 @@
           prioritas: prioritas,
           dari: currentUserData.nama,
           jabatanDari: "Kepala Pusat",
-          tanggal: new Date().toISOString(),
+          tanggal: firebase.firestore.FieldValue.serverTimestamp(),
           status: "Proses",
         };
 
-        KemhanDatabase.addDisposisi(currentSuratId, disposisi);
+        db.collection("surat_keluar")
+          .doc(currentSuratId)
+          .update({
+            disposisi: firebase.firestore.FieldValue.arrayUnion(disposisi),
+            status: "Proses",
+          })
+          .then(() => {
+            Swal.fire({
+              icon: "success",
+              title: "Disposisi Berhasil Dikirim!",
+              text: `Disposisi telah dikirim ke ${kepada}`,
+              timer: 2000,
+            });
 
-        Swal.fire({
-          icon: "success",
-          title: "Disposisi Berhasil Dikirim!",
-          text: `Disposisi telah dikirim ke ${kepada}`,
-          timer: 2000,
-        });
+            bootstrap.Modal.getInstance(
+              document.getElementById("disposisiModal")
+            ).hide();
 
-        bootstrap.Modal.getInstance(
-          document.getElementById("disposisiModal")
-        ).hide();
-        document.getElementById("disposisiKepada").value = "";
-        document.getElementById("disposisiInstruksi").value = "";
-
-        loadSuratKeluar();
+            // Reset form
+            document.getElementById("disposisiKepada").value = "";
+            document.getElementById("disposisiInstruksi").value = "";
+            document.getElementById("disposisiPrioritas").value = "Normal";
+          })
+          .catch((error) => {
+            console.error("❌ Error submitting disposisi:", error);
+            Swal.fire(
+              "Error",
+              "Gagal mengirim disposisi: " + error.message,
+              "error"
+            );
+          });
       };
 
-      // Logout handler
+      // ========================================
+      // LOGOUT HANDLER
+      // ========================================
       document
         .getElementById("logoutLink")
         .addEventListener("click", function (e) {
@@ -675,6 +807,17 @@
             }
           });
         });
+
+      // ========================================
+      // CLEANUP ON PAGE UNLOAD
+      // ========================================
+      window.addEventListener("beforeunload", () => {
+        if (unsubscribeSuratKeluar) {
+          unsubscribeSuratKeluar();
+        }
+      });
+
+      console.log("✅ Surat Keluar Kapus - Firebase Integrated");
     </script>
   </body>
 </html>
