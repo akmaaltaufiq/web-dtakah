@@ -1,5 +1,6 @@
 // =============================
-// NOTA DINAS - PAGE SPECIFIC (FIXED)
+// NOTA DINAS - COMPLETE FIXED VERSION
+// Full Real-Time Integration with Kapus Dashboard
 // =============================
 (function () {
   "use strict";
@@ -16,9 +17,14 @@
   let currentYear = new Date().getFullYear();
   let currentNotaDinasId = null;
   let currentStep = 1;
+  let isEditMode = false;
+  let currentUserData = null;
 
   // Global Nota Dinas Form Data State
-  let notaDinasFormState = {};
+  let notaDinasFormState = {
+    uploadedFile: null,
+    fileName: null,
+  };
 
   // =============================
   // INITIALIZATION
@@ -32,36 +38,127 @@
       return;
     }
 
+    // Get current user data
+    getCurrentUserData();
+
     loadNotaDinasData();
     setupNotaDinasFilters();
     setupCalendar();
-    setupDisposisiView();
     setupPagination();
     setupFormNavigation();
-    setupBackToTableView();
+    setupBackButtons();
     setupPopupOutsideClick();
+    setupRealtimeListeners();
 
     resetNotaDinasForm();
+    
+    showTableView();
   };
+
+  // =============================
+  // GET CURRENT USER DATA
+  // =============================
+  function getCurrentUserData() {
+    try {
+      if (firebase.auth().currentUser) {
+        currentUserData = {
+          nama: firebase.auth().currentUser.displayName || firebase.auth().currentUser.email,
+          email: firebase.auth().currentUser.email,
+          uid: firebase.auth().currentUser.uid,
+          role: "admin"
+        };
+        console.log("👤 Current User:", currentUserData);
+      } else {
+        currentUserData = {
+          nama: "Admin",
+          role: "admin",
+          jabatan: "Administrator"
+        };
+      }
+    } catch (error) {
+      console.error("Error getting user data:", error);
+      currentUserData = {
+        nama: "Admin",
+        role: "admin",
+        jabatan: "Administrator"
+      };
+    }
+  }
+
+  // =============================
+  // REAL-TIME LISTENERS
+  // =============================
+  function setupRealtimeListeners() {
+    console.log("🔌 Setting up real-time listeners...");
+
+    // Listen for new nota dinas
+    KemhanDatabase.on('nota_dinas:created', function(notaDinas) {
+      console.log("📨 New Nota Dinas detected:", notaDinas);
+      loadNotaDinasData();
+      
+      // Show toast notification
+      if (window.Swal) {
+        Swal.fire({
+          icon: "success",
+          title: "Nota Dinas Baru Ditambahkan!",
+          text: `${notaDinas.perihal}`,
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
+      }
+    });
+
+    // Listen for nota dinas updates
+    KemhanDatabase.on('nota_dinas:modified', function(notaDinas) {
+      console.log("📝 Nota Dinas updated:", notaDinas);
+      loadNotaDinasData();
+    });
+
+    // Listen for nota dinas deletions
+    KemhanDatabase.on('nota_dinas:deleted', function(notaDinas) {
+      console.log("🗑️ Nota Dinas deleted:", notaDinas);
+      loadNotaDinasData();
+    });
+
+    // Listen for nota dinas approval
+    KemhanDatabase.on('nota_dinas:approved', function(notaDinas) {
+      console.log("✅ Nota Dinas approved:", notaDinas);
+      loadNotaDinasData();
+      
+      if (window.Swal) {
+        Swal.fire({
+          icon: "success",
+          title: "Nota Dinas Disetujui!",
+          text: `${notaDinas.perihal}`,
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
+      }
+    });
+
+    console.log("✅ Real-time listeners setup completed");
+  }
 
   // =============================
   // LOAD DATA FROM DATABASE
   // =============================
-  function loadNotaDinasData() {
+  async function loadNotaDinasData() {
     console.log("🔄 Loading Nota Dinas Data...");
 
     try {
-      notaDinasData = KemhanDatabase.getNotaDinas
-        ? KemhanDatabase.getNotaDinas()
-        : [];
+      notaDinasData = await KemhanDatabase.getNotaDinas();
 
       console.log("📄 Total Nota Dinas:", notaDinasData.length);
+      console.log("📊 Sample data:", notaDinasData.slice(0, 2));
 
       if (notaDinasData.length === 0) {
-        console.log("⚠️ Data kosong, mencoba inisialisasi data...");
-        KemhanDatabase.initializeDummyData();
-        notaDinasData = KemhanDatabase.getNotaDinas();
-        console.log("📄 Setelah inisialisasi:", notaDinasData.length);
+        console.log("⚠️ Data kosong");
       }
 
       filteredData = [...notaDinasData];
@@ -102,8 +199,7 @@
       const row = document.createElement("tr");
       const rowNumber = startIndex + index + 1;
 
-      const tanggalTerima =
-        item.tanggalTerima || item.tanggalDiterima || item.createdAt;
+      const tanggalTerima = item.tanggalTerima || item.tanggalDiterima || item.createdAt;
 
       let formattedDate = "-";
       if (tanggalTerima) {
@@ -125,8 +221,8 @@
 
       const noSurat = item.noSurat || item.noNaskah || "-";
       const perihal = item.perihal || "-";
-      const dari = item.dari || item.pengirim || "-";
-      const kepada = item.kepada || item.tujuan || "-";
+      const dari = item.dari || item.pengirim || item.namaPengirim || "-";
+      const kepada = item.kepada || item.tujuan || item.ditujukanKepada || "-";
 
       row.innerHTML = `
            <td style="text-align: center;">${rowNumber}</td>
@@ -137,10 +233,13 @@
            <td>${kepada}</td>
            <td>
              <div class="action-buttons">
-               <button class="btn-disposisi" onclick="showDisposisiNotaDinas(${item.id})">
-                 <i class="bi bi-send-fill"></i> Disposisi
+               <button class="btn-action btn-preview" onclick="showPreviewNotaDinas('${item.id}')" title="Preview">
+                 <i class="bi bi-eye-fill"></i>
                </button>
-               <button class="btn-delete" onclick="hapusNotaDinas(${item.id})">
+               <button class="btn-action btn-edit" onclick="editNotaDinas('${item.id}')" title="Edit">
+                 <i class="bi bi-pencil-fill"></i>
+               </button>
+               <button class="btn-action btn-delete" onclick="hapusNotaDinas('${item.id}')" title="Hapus">
                  <i class="bi bi-trash-fill"></i>
                </button>
              </div>
@@ -151,6 +250,360 @@
     });
 
     updatePaginationInfo(data.length);
+  }
+
+  // =============================
+  // SHOW PREVIEW
+  // =============================
+  window.showPreviewNotaDinas = async function (id) {
+    console.log("👁️ Show Preview for Nota Dinas ID:", id);
+
+    currentNotaDinasId = id;
+
+    const notaDinas = await KemhanDatabase.getNotaDinasById(id);
+
+    if (!notaDinas) {
+      if (window.Swal) {
+        Swal.fire({
+          icon: "error",
+          title: "Error!",
+          text: "Data nota dinas tidak ditemukan!",
+          confirmButtonColor: "#7f1d1d",
+        });
+      } else {
+        alert("Data nota dinas tidak ditemukan!");
+      }
+      return;
+    }
+
+    const formatDate = (dateStr) => {
+      if (!dateStr) return "-";
+      try {
+        const date = new Date(dateStr);
+        if (!isNaN(date.getTime())) {
+          return date.toLocaleDateString("id-ID", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          });
+        }
+      } catch (e) {
+        console.warn("Error formatting date:", e);
+      }
+      return dateStr;
+    };
+
+    const setTextContent = (id, value) => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.textContent = value || "-";
+      }
+    };
+
+    setTextContent("previewTitleMain", notaDinas.perihal || "Nota Dinas");
+    setTextContent("previewTanggalTerima", formatDate(notaDinas.tanggalTerima || notaDinas.createdAt));
+    setTextContent("previewNoSurat", notaDinas.noSurat || notaDinas.noNaskah || "-");
+    setTextContent("previewTanggalSurat", formatDate(notaDinas.tanggalSurat));
+    setTextContent("previewDari", notaDinas.dari || notaDinas.pengirim || notaDinas.namaPengirim || "-");
+    setTextContent("previewKepada", notaDinas.kepada || notaDinas.tujuan || notaDinas.ditujukanKepada || "-");
+    setTextContent("previewPerihalDetail", notaDinas.perihal || "-");
+    setTextContent("previewLampiran", notaDinas.lampiran || notaDinas.file || notaDinas.fileName || "-");
+    setTextContent("previewSifat", notaDinas.sifat || notaDinas.sifatNaskah || "Umum");
+    setTextContent("previewJenisNaskah", notaDinas.jenisNaskah || "Nota Dinas");
+    setTextContent("previewCatatanDetail", notaDinas.catatan || "-");
+    setTextContent("previewDientry", notaDinas.diEntryOleh || notaDinas.namaPengirim || currentUserData.nama);
+
+    // Set file name in preview
+    const fileNameEl = document.getElementById("previewFileName");
+    if (fileNameEl) {
+      fileNameEl.textContent = notaDinas.fileName || notaDinas.file || "Tidak ada file";
+    }
+
+    const statusBadge = document.getElementById("previewStatusBadge");
+    if (statusBadge) {
+      const status = notaDinas.status || "Proses";
+      let badgeClass = "badge-proses";
+      if (status === "Selesai") badgeClass = "badge-selesai";
+      else if (status === "Pending" || status === "Menunggu Persetujuan Kapus") badgeClass = "badge-pending";
+      else if (status === "Revisi" || status === "Perlu Revisi") badgeClass = "badge-revisi";
+      
+      statusBadge.innerHTML = `<span class="${badgeClass}">${status}</span>`;
+    }
+
+    const progressFill = document.querySelector("#previewProgressBar .progress-fill");
+    const progressText = document.getElementById("previewProgressText");
+    let progress = 50;
+    
+    if (notaDinas.status === "Selesai") progress = 100;
+    else if (notaDinas.status === "Menunggu Persetujuan Kapus") progress = 75;
+    else if (notaDinas.status === "Proses") progress = 50;
+    
+    if (progressFill) progressFill.style.width = progress + "%";
+    if (progressText) progressText.textContent = progress + "%";
+
+    showPreviewView();
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // =============================
+  // EDIT NOTA DINAS
+  // =============================
+  window.editNotaDinas = async function (id) {
+    console.log("✏️ Edit Nota Dinas ID:", id);
+
+    const notaDinas = await KemhanDatabase.getNotaDinasById(id);
+
+    if (!notaDinas) {
+      if (window.Swal) {
+        Swal.fire({
+          icon: "error",
+          title: "Error!",
+          text: "Data nota dinas tidak ditemukan!",
+          confirmButtonColor: "#7f1d1d",
+        });
+      } else {
+        alert("Data nota dinas tidak ditemukan!");
+      }
+      return;
+    }
+
+    isEditMode = true;
+    currentNotaDinasId = id;
+
+    const formTitle = document.getElementById("formMainTitle");
+    if (formTitle) {
+      formTitle.textContent = "Edit Nota Dinas";
+    }
+
+    document.getElementById("namaPengirim").value = notaDinas.namaPengirim || notaDinas.dari || "";
+    document.getElementById("jabatanPengirim").value = notaDinas.jabatanPengirim || "";
+    document.getElementById("jenisNaskah").value = notaDinas.jenisNaskah || "Nota Dinas";
+    document.getElementById("sifatNaskah").value = notaDinas.sifatNaskah || notaDinas.sifat || "";
+    document.getElementById("nomorNaskah").value = notaDinas.noNaskah || notaDinas.noSurat || "";
+    document.getElementById("perihal").value = notaDinas.perihal || "";
+    document.getElementById("tanggalSurat").value = notaDinas.tanggalSurat || notaDinas.tanggalNaskah || "";
+    document.getElementById("catatan").value = notaDinas.catatan || "";
+    document.getElementById("ditujukanKepada").value = notaDinas.tujuan || notaDinas.kepada || notaDinas.ditujukanKepada || "";
+    document.getElementById("tenggatWaktu").value = notaDinas.tenggatWaktu || "";
+    document.getElementById("catatanTujuan").value = notaDinas.catatanTujuan || "";
+
+    // Handle existing file
+    if (notaDinas.fileName || notaDinas.file) {
+      notaDinasFormState.fileName = notaDinas.fileName || notaDinas.file;
+      notaDinasFormState.uploadedFile = notaDinas.uploadedFile || null;
+      
+      const fileInfoDisplay = document.getElementById("fileInfoDisplay");
+      const uploadContent = document.getElementById("uploadContent");
+      
+      if (fileInfoDisplay && uploadContent) {
+        uploadContent.style.display = "none";
+        fileInfoDisplay.innerHTML = `
+          <div class="file-item">
+            <i class="bi bi-file-earmark-pdf"></i>
+            <span class="file-name">${notaDinasFormState.fileName}</span>
+            <button class="file-remove" onclick="removeFile()" type="button">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+        `;
+        fileInfoDisplay.style.display = "block";
+      }
+    }
+
+    showFormView();
+
+    goToStep(1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // =============================
+  // HAPUS NOTA DINAS
+  // =============================
+  window.hapusNotaDinas = async function (id) {
+    const confirmDelete = async () => {
+      try {
+        const deleted = await KemhanDatabase.deleteNotaDinas(id);
+
+        if (deleted) {
+          if (window.Swal) {
+            Swal.fire({
+              icon: "success",
+              title: "Berhasil!",
+              text: "Nota dinas berhasil dihapus!",
+              confirmButtonColor: "#7f1d1d",
+              timer: 2000,
+            }).then(() => {
+              loadNotaDinasData();
+            });
+          } else {
+            alert("Nota dinas berhasil dihapus!");
+            loadNotaDinasData();
+          }
+        } else {
+          if (window.Swal) {
+            Swal.fire({
+              icon: "error",
+              title: "Gagal!",
+              text: "Gagal menghapus nota dinas!",
+              confirmButtonColor: "#7f1d1d",
+            });
+          } else {
+            alert("Gagal menghapus nota dinas!");
+          }
+        }
+      } catch (error) {
+        console.error("Error deleting:", error);
+        if (window.Swal) {
+          Swal.fire({
+            icon: "error",
+            title: "Error!",
+            text: "Terjadi kesalahan saat menghapus!",
+            confirmButtonColor: "#7f1d1d",
+          });
+        }
+      }
+    };
+
+    if (window.Swal) {
+      Swal.fire({
+        title: "Hapus Nota Dinas?",
+        text: "Nota dinas akan dipindahkan ke daftar dihapus.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#dc2626",
+        cancelButtonColor: "#6b7280",
+        confirmButtonText: "Ya, Hapus!",
+        cancelButtonText: "Batal",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          confirmDelete();
+        }
+      });
+    } else {
+      if (confirm("Hapus nota dinas ini?")) {
+        confirmDelete();
+      }
+    }
+  };
+
+  window.hapusSuratFromPreview = function () {
+    if (currentNotaDinasId) {
+      hapusNotaDinas(currentNotaDinasId);
+      
+      setTimeout(() => {
+        window.backToTableView();
+      }, 2000);
+    }
+  };
+
+  // =============================
+  // BACK TO TABLE VIEW
+  // =============================
+  window.backToTableView = function () {
+    console.log("🔙 Executing backToTableView...");
+
+    showTableView();
+
+    resetNotaDinasForm();
+    loadNotaDinasData();
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    console.log("✅ Back to table view completed");
+  };
+
+  // =============================
+  // VIEW MANAGEMENT
+  // =============================
+  function hideAllViews() {
+    console.log("🔒 Hiding all views...");
+    
+    const tableView = document.getElementById("tableView");
+    const formView = document.getElementById("formView");
+    const previewView = document.getElementById("previewView");
+    const successPopup = document.getElementById("successPopup");
+
+    if (tableView) {
+      tableView.classList.remove("active");
+      tableView.style.display = "none";
+    }
+    if (formView) {
+      formView.classList.remove("active");
+      formView.style.display = "none";
+    }
+    if (previewView) {
+      previewView.classList.remove("active");
+      previewView.style.display = "none";
+    }
+    if (successPopup) {
+      successPopup.classList.remove("active");
+      successPopup.style.display = "none";
+    }
+  }
+
+  function showTableView() {
+    console.log("📋 Showing table view...");
+    hideAllViews();
+    
+    const tableView = document.getElementById("tableView");
+    if (tableView) {
+      tableView.style.display = "block";
+      tableView.classList.add("active");
+    }
+  }
+
+  function showFormView() {
+    console.log("📝 Showing form view...");
+    hideAllViews();
+    
+    const formView = document.getElementById("formView");
+    if (formView) {
+      formView.style.display = "block";
+      formView.classList.add("active");
+    }
+  }
+
+  function showPreviewView() {
+    console.log("👁️ Showing preview view...");
+    hideAllViews();
+    
+    const previewView = document.getElementById("previewView");
+    if (previewView) {
+      previewView.style.display = "block";
+      previewView.classList.add("active");
+    }
+  }
+
+  // =============================
+  // SETUP BACK BUTTONS
+  // =============================
+  function setupBackButtons() {
+    console.log("🔧 Setting up back buttons...");
+
+    const backBtnForm = document.getElementById("backToTableViewForm");
+    if (backBtnForm) {
+      const newBackBtnForm = backBtnForm.cloneNode(true);
+      backBtnForm.parentNode.replaceChild(newBackBtnForm, backBtnForm);
+      
+      newBackBtnForm.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.backToTableView();
+      });
+    }
+
+    const backToTableFromPreview = document.getElementById("backToTableFromPreview");
+    if (backToTableFromPreview) {
+      const newBackBtn = backToTableFromPreview.cloneNode(true);
+      backToTableFromPreview.parentNode.replaceChild(newBackBtn, backToTableFromPreview);
+      
+      newBackBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.backToTableView();
+      });
+    }
   }
 
   // =============================
@@ -204,428 +657,6 @@
     if (prevBtn) prevBtn.disabled = currentPageNotaDinas === 1;
     if (nextBtn)
       nextBtn.disabled = currentPageNotaDinas >= maxPage || totalItems === 0;
-  }
-
-  // =============================
-  // BACK TO TABLE VIEW - FIXED
-  // =============================
-  window.backToTableView = function () {
-    console.log("🔙 Executing backToTableView...");
-
-    const tableView = document.getElementById("tableView");
-    const formView = document.getElementById("formView");
-    const disposisiView = document.getElementById("disposisiView");
-    const successPopup = document.getElementById("successPopup");
-
-    // Sembunyikan semua view lainnya
-    if (formView) {
-      formView.classList.remove("active");
-      console.log("✅ Form view hidden");
-    }
-    if (disposisiView) {
-      disposisiView.classList.remove("active");
-      console.log("✅ Disposisi view hidden");
-    }
-    if (successPopup) {
-      successPopup.classList.remove("active");
-      console.log("✅ Success popup hidden");
-    }
-
-    // Tampilkan table view
-    if (tableView) {
-      tableView.classList.remove("hidden");
-      console.log("✅ Table view shown");
-    }
-
-    // Reset form dan disposisi
-    resetNotaDinasForm();
-    resetDisposisiForm();
-
-    // Reload data terbaru
-    loadNotaDinasData();
-
-    // Scroll ke atas
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-    console.log("✅ Back to table view completed");
-  };
-
-  function setupBackToTableView() {
-    console.log("🔧 Setting up back to table view buttons...");
-
-    // Tombol Back di Form Tambah Baru
-    const backBtnForm = document.getElementById("backToTableViewForm");
-    if (backBtnForm) {
-      console.log("✅ Found backToTableViewForm button");
-      
-      // Clone node untuk menghapus semua event listener lama
-      const newBackBtnForm = backBtnForm.cloneNode(true);
-      backBtnForm.parentNode.replaceChild(newBackBtnForm, backBtnForm);
-      
-      // Tambah event listener baru
-      newBackBtnForm.addEventListener("click", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        console.log("🔙 Back button form clicked");
-        window.backToTableView();
-      });
-    } else {
-      console.warn("⚠️ Tombol backToTableViewForm tidak ditemukan");
-    }
-
-    // Setup tombol back di disposisi view
-    const backToTable = document.getElementById("backToTable");
-    if (backToTable) {
-      console.log("✅ Found backToTable button");
-      
-      // Clone node untuk menghapus semua event listener lama
-      const newBackToTable = backToTable.cloneNode(true);
-      backToTable.parentNode.replaceChild(newBackToTable, backToTable);
-      
-      // Tambah event listener baru
-      newBackToTable.addEventListener("click", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        console.log("🔙 Back button disposisi clicked");
-        window.backToTableView();
-      });
-    } else {
-      console.warn("⚠️ Tombol backToTable tidak ditemukan");
-    }
-
-    console.log("✅ Back to table view buttons setup completed");
-  }
-
-  // =============================
-  // SHOW DISPOSISI VIEW
-  // =============================
-  window.showDisposisiNotaDinas = function (id) {
-    console.log("📋 Show Disposisi for Nota Dinas ID:", id);
-
-    currentNotaDinasId = id;
-
-    const notaDinas = KemhanDatabase.getNotaDinasById
-      ? KemhanDatabase.getNotaDinasById(id)
-      : null;
-
-    if (!notaDinas) {
-      if (window.Swal) {
-        Swal.fire({
-          icon: "error",
-          title: "Error!",
-          text: "Data nota dinas tidak ditemukan!",
-          confirmButtonColor: "#7f1d1d",
-        });
-      } else {
-        alert("Data nota dinas tidak ditemukan!");
-      }
-      return;
-    }
-
-    const formatDate = (dateStr) => {
-      if (!dateStr) return "-";
-      try {
-        const date = new Date(dateStr);
-        if (!isNaN(date.getTime())) {
-          return date.toLocaleDateString("id-ID", {
-            day: "2-digit",
-            month: "long",
-            year: "numeric",
-          });
-        }
-      } catch (e) {
-        console.warn("Error formatting date:", e);
-      }
-      return dateStr;
-    };
-
-    const tanggalTerima =
-      notaDinas.tanggalTerima ||
-      notaDinas.tanggalDiterima ||
-      notaDinas.createdAt;
-    const formattedTanggalTerima = formatDate(tanggalTerima);
-
-    const tanggalSurat =
-      notaDinas.tanggalSurat || notaDinas.tanggalNaskah || notaDinas.createdAt;
-    const formattedTanggalSurat = formatDate(tanggalSurat);
-
-    const setTextContent = (id, value) => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.textContent = value || "-";
-      } else {
-        console.warn(`Element ${id} not found`);
-      }
-    };
-
-    setTextContent("detailTanggalTerima", formattedTanggalTerima);
-    setTextContent(
-      "detailNoSurat",
-      notaDinas.noSurat || notaDinas.noNaskah || "-"
-    );
-    setTextContent("detailTanggalSurat", formattedTanggalSurat);
-    setTextContent("detailDari", notaDinas.dari || notaDinas.pengirim || "-");
-    setTextContent("detailKepada", notaDinas.kepada || notaDinas.tujuan || "-");
-    setTextContent("detailPerihal", notaDinas.perihal || "-");
-    setTextContent(
-      "detailLampiran",
-      notaDinas.lampiran || notaDinas.namaFile || notaDinas.file || "-"
-    );
-    setTextContent(
-      "detailSifat",
-      notaDinas.sifat || notaDinas.sifatNaskah || "Umum"
-    );
-    setTextContent(
-      "detailJenisNaskah",
-      notaDinas.jenisNaskah || notaDinas.jenisSurat || "Nota Dinas"
-    );
-    setTextContent("detailCatatan", notaDinas.catatan || "-");
-    setTextContent(
-      "detailDientry",
-      notaDinas.diEntryOleh || notaDinas.namaPengirim || "Admin"
-    );
-    setTextContent("detailPreviewTitle", notaDinas.perihal || "Nota Dinas");
-
-    // Reset form disposisi
-    resetDisposisiForm();
-
-    const tableView = document.getElementById("tableView");
-    const disposisiView = document.getElementById("disposisiView");
-
-    if (tableView) tableView.classList.add("hidden");
-    if (disposisiView) disposisiView.classList.add("active");
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  // =============================
-  // KIRIM DISPOSISI - FIXED
-  // =============================
-  function kirimDisposisi() {
-    console.log("📤 Kirim disposisi for Nota Dinas ID:", currentNotaDinasId);
-
-    if (!currentNotaDinasId) {
-      if (window.Swal) {
-        Swal.fire({
-          icon: "error",
-          title: "Error!",
-          text: "Nota dinas tidak ditemukan!",
-          confirmButtonColor: "#7f1d1d",
-        });
-      } else {
-        alert("Nota dinas tidak ditemukan!");
-      }
-      return;
-    }
-
-    const selectedOptions = [];
-    document
-      .querySelectorAll(".disposisi-checkbox input:checked")
-      .forEach((cb) => {
-        selectedOptions.push(cb.nextElementSibling.textContent.trim());
-      });
-
-    const keterangan =
-      document.getElementById("keteranganDisposisi")?.value || "";
-    const kepada = document.getElementById("kepadaDisposisi")?.value || "";
-
-    if (selectedOptions.length === 0) {
-      if (window.Swal) {
-        Swal.fire({
-          icon: "warning",
-          title: "Perhatian!",
-          text: "Pilih minimal satu tindak lanjut!",
-          confirmButtonColor: "#7f1d1d",
-        });
-      } else {
-        alert("Pilih minimal satu tindak lanjut!");
-      }
-      return;
-    }
-
-    if (!kepada) {
-      if (window.Swal) {
-        Swal.fire({
-          icon: "warning",
-          title: "Perhatian!",
-          text: "Pilih penerima disposisi!",
-          confirmButtonColor: "#7f1d1d",
-        });
-      } else {
-        alert("Pilih penerima disposisi!");
-      }
-      return;
-    }
-
-    const disposisiData = {
-      tindakLanjut: selectedOptions,
-      keterangan: keterangan,
-      kepada: kepada,
-      tanggalDisposisi: new Date().toISOString(),
-      dari: "Admin",
-    };
-
-    const success = KemhanDatabase.addDisposisiToNotaDinas
-      ? KemhanDatabase.addDisposisiToNotaDinas(
-          currentNotaDinasId,
-          disposisiData
-        )
-      : false;
-
-    if (success) {
-      if (window.Swal) {
-        Swal.fire({
-          icon: "success",
-          title: "Berhasil!",
-          text: "Disposisi berhasil dikirim!",
-          confirmButtonColor: "#7f1d1d",
-          timer: 2000,
-        }).then(() => {
-          window.backToTableView();
-        });
-      } else {
-        alert("Disposisi berhasil dikirim!");
-        window.backToTableView();
-      }
-    } else {
-      if (window.Swal) {
-        Swal.fire({
-          icon: "error",
-          title: "Gagal!",
-          text: "Gagal mengirim disposisi!",
-          confirmButtonColor: "#7f1d1d",
-        });
-      } else {
-        alert("Gagal mengirim disposisi!");
-      }
-    }
-  }
-
-  // Expose kirimDisposisi ke global scope
-  window.kirimDisposisi = kirimDisposisi;
-
-  // =============================
-  // SETUP DISPOSISI VIEW - FIXED
-  // =============================
-  function setupDisposisiView() {
-    const kirimBtn = document.getElementById("kirimDisposisiBtn");
-    if (kirimBtn) {
-      // Clone untuk hapus event listener lama
-      const newKirimBtn = kirimBtn.cloneNode(true);
-      kirimBtn.parentNode.replaceChild(newKirimBtn, kirimBtn);
-      
-      newKirimBtn.addEventListener("click", function (e) {
-        e.preventDefault();
-        window.kirimDisposisi();
-      });
-      console.log("✅ Kirim Disposisi button setup");
-    }
-  }
-
-  // =============================
-  // DELETE NOTA DINAS & UTILS
-  // =============================
-  window.hapusNotaDinas = function (id) {
-    const confirmDelete = () => {
-      const deleted = KemhanDatabase.deleteSurat
-        ? KemhanDatabase.deleteSurat(id, "nota-dinas")
-        : false;
-
-      if (deleted) {
-        if (window.Swal) {
-          Swal.fire({
-            icon: "success",
-            title: "Berhasil!",
-            text: "Nota dinas berhasil dihapus!",
-            confirmButtonColor: "#7f1d1d",
-            timer: 2000,
-          }).then(() => {
-            loadNotaDinasData();
-            if (window.loadNotifications) window.loadNotifications();
-          });
-        } else {
-          alert("Nota dinas berhasil dihapus!");
-          loadNotaDinasData();
-          if (window.loadNotifications) window.loadNotifications();
-        }
-      } else {
-        if (window.Swal) {
-          Swal.fire({
-            icon: "error",
-            title: "Gagal!",
-            text: "Gagal menghapus nota dinas!",
-            confirmButtonColor: "#7f1d1d",
-          });
-        } else {
-          alert("Gagal menghapus nota dinas!");
-        }
-      }
-    };
-
-    if (window.Swal) {
-      Swal.fire({
-        title: "Hapus Nota Dinas?",
-        text: "Nota dinas akan dipindahkan ke Surat Dihapus.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#dc2626",
-        cancelButtonColor: "#6b7280",
-        confirmButtonText: "Ya, Hapus!",
-        cancelButtonText: "Batal",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          confirmDelete();
-        }
-      });
-    } else {
-      if (confirm("Hapus nota dinas ini?")) {
-        confirmDelete();
-      }
-    }
-  };
-
-  window.hapusSuratFromDetail = function () {
-    if (currentNotaDinasId) {
-      hapusNotaDinas(currentNotaDinasId);
-    }
-  };
-
-  window.downloadPDF = function () {
-    if (window.Swal) {
-      Swal.fire({
-        icon: "info",
-        title: "Download PDF",
-        text: "Fitur download akan segera tersedia",
-        confirmButtonColor: "#7f1d1d",
-      });
-    } else {
-      alert("Fitur download akan segera tersedia");
-    }
-  };
-
-  window.printSurat = function () {
-    if (window.Swal) {
-      Swal.fire({
-        icon: "info",
-        title: "Print Surat",
-        text: "Fitur print akan segera tersedia",
-        confirmButtonColor: "#7f1d1d",
-      });
-    } else {
-      alert("Fitur print akan segera tersedia");
-    }
-  };
-
-  function resetDisposisiForm() {
-    document.querySelectorAll(".disposisi-checkbox input").forEach((cb) => {
-      cb.checked = false;
-    });
-
-    const keteranganInput = document.getElementById("keteranganDisposisi");
-    const kepadaSelect = document.getElementById("kepadaDisposisi");
-
-    if (keteranganInput) keteranganInput.value = "";
-    if (kepadaSelect) kepadaSelect.selectedIndex = 0;
   }
 
   // =============================
@@ -700,7 +731,7 @@
   }
 
   // =============================
-  // CALENDAR FUNCTIONS
+  // CALENDAR
   // =============================
   function setupCalendar() {
     const datePickerBtn = document.getElementById("datePickerBtn");
@@ -763,18 +794,8 @@
     if (!calendarDays || !calendarMonth) return;
 
     const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December",
     ];
 
     calendarMonth.textContent = `${monthNames[currentMonth]} ${currentYear}`;
@@ -826,14 +847,18 @@
   }
 
   // =============================
-  // TAMBAH BARU (Form Activation)
+  // TAMBAH BARU
   // =============================
   window.tambahSurat = function () {
-    const tableView = document.getElementById("tableView");
-    const formView = document.getElementById("formView");
+    isEditMode = false;
+    currentNotaDinasId = null;
 
-    if (tableView) tableView.classList.add("hidden");
-    if (formView) formView.classList.add("active");
+    const formTitle = document.getElementById("formMainTitle");
+    if (formTitle) {
+      formTitle.textContent = "Susun Nota Dinas";
+    }
+
+    showFormView();
 
     resetNotaDinasForm();
     goToStep(1);
@@ -842,10 +867,10 @@
   };
 
   // =============================
-  // FORM STEP NAVIGATION
+  // FORM NAVIGATION
   // =============================
   function setupFormNavigation() {
-    // Fungsi dipanggil saat initializePage
+    // Called during initializePage
   }
 
   function goToStep(step) {
@@ -897,20 +922,37 @@
     for (const field of fields) {
       const input = document.getElementById(field);
       if (input && !input.value.trim()) {
-        alert(
-          `Mohon lengkapi kolom ${
-            document.querySelector(`label[for="${field}"]`)?.textContent ||
-            field
-          }!`
-        );
+        if (window.Swal) {
+          Swal.fire({
+            icon: "error",
+            title: "Form Belum Lengkap!",
+            text: `Mohon lengkapi kolom ${
+              document.querySelector(`label[for="${field}"]`)?.textContent || field
+            }!`,
+            confirmButtonColor: "#7f1d1d",
+          });
+        } else {
+          alert(`Mohon lengkapi kolom ${
+            document.querySelector(`label[for="${field}"]`)?.textContent || field
+          }!`);
+        }
         input.focus();
         return false;
       }
     }
 
     const fileInput = document.getElementById("fileInput");
-    if (!fileInput.files[0]) {
-      alert("Mohon unggah File Naskah (PDF/Gambar).");
+    if (!isEditMode && !fileInput.files[0] && !notaDinasFormState.fileName) {
+      if (window.Swal) {
+        Swal.fire({
+          icon: "error",
+          title: "File Belum Dipilih!",
+          text: "Mohon upload file naskah!",
+          confirmButtonColor: "#7f1d1d",
+        });
+      } else {
+        alert("Mohon upload file naskah!");
+      }
       return false;
     }
 
@@ -918,183 +960,416 @@
   }
 
   function validateStep2() {
-    const fields = [
-      "ditujukanKepada",
-      "instruksi",
-      "tenggatWaktu",
-      "catatanTujuan",
-    ];
-    for (const field of fields) {
-      const input = document.getElementById(field);
-      if (input && !input.value.trim()) {
-        alert(
-          `Mohon lengkapi kolom ${
-            document.querySelector(`label[for="${field}"]`)?.textContent ||
-            field
-          }!`
-        );
-        input.focus();
-        return false;
+    const ditujukanKepada = document.getElementById("ditujukanKepada").value;
+
+    if (!ditujukanKepada) {
+      if (window.Swal) {
+        Swal.fire({
+          icon: "error",
+          title: "Form Belum Lengkap!",
+          text: "Mohon pilih tujuan nota dinas!",
+          confirmButtonColor: "#7f1d1d",
+        });
+      } else {
+        alert("Mohon pilih tujuan nota dinas!");
       }
+      document.getElementById("ditujukanKepada").focus();
+      return false;
     }
+
     return true;
   }
 
   function saveStep1Data() {
-    notaDinasFormState = {
-      ...notaDinasFormState,
-      namaPengirim: document.getElementById("namaPengirim").value,
-      jabatanPengirim: document.getElementById("jabatanPengirim").value,
-      jenisNaskah: document.getElementById("jenisNaskah").value,
-      sifatNaskah: document.getElementById("sifatNaskah").value,
-      nomorNaskah: document.getElementById("nomorNaskah").value,
-      perihal: document.getElementById("perihal").value,
-      tanggalSurat: document.getElementById("tanggalSurat").value,
-      catatan: document.getElementById("catatan").value,
-      file: window.uploadedFile ? window.uploadedFile.name : null,
-    };
+    notaDinasFormState.namaPengirim = document.getElementById("namaPengirim").value;
+    notaDinasFormState.jabatanPengirim = document.getElementById("jabatanPengirim").value;
+    notaDinasFormState.jenisNaskah = document.getElementById("jenisNaskah").value;
+    notaDinasFormState.sifatNaskah = document.getElementById("sifatNaskah").value;
+    notaDinasFormState.nomorNaskah = document.getElementById("nomorNaskah").value;
+    notaDinasFormState.perihal = document.getElementById("perihal").value;
+    notaDinasFormState.tanggalSurat = document.getElementById("tanggalSurat").value;
+    notaDinasFormState.catatan = document.getElementById("catatan").value;
+    
+    const fileInput = document.getElementById("fileInput");
+    if (fileInput.files[0]) {
+      notaDinasFormState.uploadedFile = fileInput.files[0];
+      notaDinasFormState.fileName = fileInput.files[0].name;
+    }
   }
 
   function saveStep2Data() {
-    notaDinasFormState = {
-      ...notaDinasFormState,
-      ditujukanKepada: document.getElementById("ditujukanKepada").value,
-      instruksi: document.getElementById("instruksi").value,
-      tenggatWaktu: document.getElementById("tenggatWaktu").value,
-      catatanTujuan: document.getElementById("catatanTujuan").value,
-    };
+    notaDinasFormState.ditujukanKepada = document.getElementById("ditujukanKepada").value;
+    notaDinasFormState.tenggatWaktu = document.getElementById("tenggatWaktu").value;
+    notaDinasFormState.catatanTujuan = document.getElementById("catatanTujuan").value;
   }
 
   function updatePreview() {
-    const formatDate = (dateString) => {
-      if (!dateString) return "-";
-      const date = new Date(dateString);
-      return date.toLocaleDateString("id-ID", {
-        year: "numeric",
-        month: "long",
-        day: "2-digit",
-      });
+    const formatDate = (dateStr) => {
+      if (!dateStr) return "-";
+      try {
+        const date = new Date(dateStr);
+        if (!isNaN(date.getTime())) {
+          return date.toLocaleDateString("id-ID", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          });
+        }
+      } catch (e) {
+        return dateStr;
+      }
+      return dateStr;
     };
 
-    document.getElementById("previewNamaPengirim").textContent =
-      notaDinasFormState.namaPengirim || "-";
-    document.getElementById("previewJabatanPengirim").textContent =
-      notaDinasFormState.jabatanPengirim || "-";
-    document.getElementById("previewJenisNaskah").textContent =
-      notaDinasFormState.jenisNaskah || "-";
-    document.getElementById("previewSifatNaskah").textContent =
-      notaDinasFormState.sifatNaskah || "-";
-    document.getElementById("previewNomorNaskah").textContent =
-      notaDinasFormState.nomorNaskah || "-";
-    document.getElementById("previewPerihal").textContent =
-      notaDinasFormState.perihal || "-";
-    document.getElementById("previewTanggalSurat").textContent =
-      formatDate(notaDinasFormState.tanggalSurat) || "-";
-    document.getElementById("previewCatatan").textContent =
-      notaDinasFormState.catatan || "-";
-    document.getElementById("previewTujuan").textContent =
-      notaDinasFormState.ditujukanKepada || "-";
-    document.getElementById("previewInstruksi").textContent =
-      notaDinasFormState.instruksi || "-";
-    document.getElementById("previewTenggatWaktu").textContent =
-      formatDate(notaDinasFormState.tenggatWaktu) || "-";
-    document.getElementById("previewCatatanTujuan").textContent =
-      notaDinasFormState.catatanTujuan || "-";
-
-    const popupNote = document.querySelector(".popup-note");
-    if (popupNote)
-      popupNote.textContent =
-        notaDinasFormState.catatan || "Siapkan tempat dan undangan";
-  }
-
-  function resetNotaDinasForm() {
-    notaDinasFormState = {};
-    currentStep = 1;
-    document.getElementById("namaPengirim").value = "";
-    document.getElementById("jabatanPengirim").value = "";
-    document.getElementById("jenisNaskah").selectedIndex = 0;
-    document.getElementById("sifatNaskah").selectedIndex = 0;
-    document.getElementById("nomorNaskah").value = "";
-    document.getElementById("perihal").value = "";
-    document.getElementById("tanggalSurat").value = "";
-    document.getElementById("catatan").value = "";
-    document.getElementById("ditujukanKepada").selectedIndex = 0;
-    document.getElementById("instruksi").value = "";
-    document.getElementById("tenggatWaktu").value = "";
-    document.getElementById("catatanTujuan").value = "";
-
-    const uploadArea = document.getElementById("uploadArea");
-    const fileInput = document.getElementById("fileInput");
-    if (uploadArea) uploadArea.classList.remove("has-file");
-    if (fileInput) fileInput.value = "";
-    window.uploadedFile = null;
+    // Update preview with form data
+    document.getElementById("previewNamaPengirim").textContent = notaDinasFormState.namaPengirim || "-";
+    document.getElementById("previewJabatanPengirim").textContent = notaDinasFormState.jabatanPengirim || "-";
+    document.getElementById("previewJenisNaskahForm").textContent = notaDinasFormState.jenisNaskah || "-";
+    
+    const sifatBadge = document.getElementById("previewSifatNaskah");
+    if (sifatBadge) {
+      let badgeClass = "badge-umum";
+      const sifat = notaDinasFormState.sifatNaskah || "Umum";
+      if (sifat === "Rahasia") badgeClass = "badge-rahasia";
+      else if (sifat === "Sangat Rahasia") badgeClass = "badge-sangat-rahasia";
+      else if (sifat === "Penting") badgeClass = "badge-penting";
+      
+      sifatBadge.className = `badge-sifat ${badgeClass}`;
+      sifatBadge.textContent = sifat;
+    }
+    
+    document.getElementById("previewNomorNaskah").textContent = notaDinasFormState.nomorNaskah || "-";
+    document.getElementById("previewPerihal").textContent = notaDinasFormState.perihal || "-";
+    document.getElementById("previewTanggalSuratForm").textContent = formatDate(notaDinasFormState.tanggalSurat);
+    document.getElementById("previewCatatan").textContent = notaDinasFormState.catatan || "-";
+    
+    const fileNameEl = document.getElementById("previewFileNameForm");
+    if (fileNameEl) {
+      fileNameEl.textContent = notaDinasFormState.fileName || "Tidak ada file";
+    }
+    
+    document.getElementById("previewTujuan").textContent = notaDinasFormState.ditujukanKepada || "-";
+    document.getElementById("previewTenggatWaktu").textContent = formatDate(notaDinasFormState.tenggatWaktu);
+    document.getElementById("previewCatatanTujuan").textContent = notaDinasFormState.catatanTujuan || "-";
   }
 
   // =============================
-  // SUBMIT (Step 3)
+  // FILE UPLOAD HANDLER
   // =============================
-  window.submitNotaDinas = function () {
-    if (!validateStep1() || !validateStep2()) {
-      alert("Data form belum lengkap!");
+  window.handleFileUpload = function (event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file size (max 50MB)
+    const maxSize = 50 * 1024 * 1024; // 50MB
+    if (file.size > maxSize) {
+      if (window.Swal) {
+        Swal.fire({
+          icon: "error",
+          title: "File Terlalu Besar!",
+          text: "Ukuran file maksimal 50MB",
+          confirmButtonColor: "#7f1d1d",
+        });
+      } else {
+        alert("Ukuran file maksimal 50MB");
+      }
+      event.target.value = "";
       return;
     }
 
-    const notaDinasDataForDB = {
-      noSurat: notaDinasFormState.nomorNaskah,
-      tanggalSurat: notaDinasFormState.tanggalSurat,
-      tanggalTerima: new Date().toISOString().substring(0, 10),
-      perihal: notaDinasFormState.perihal,
-      dari: notaDinasFormState.namaPengirim,
-      kepada: notaDinasFormState.ditujukanKepada,
-      sifat: notaDinasFormState.sifatNaskah,
-      jenisNaskah: notaDinasFormState.jenisNaskah,
-      lampiran: notaDinasFormState.file,
-      catatan: notaDinasFormState.catatan,
-      diEntryOleh: "Staff TU Puslapbinkunhan",
-      namaPengirim: notaDinasFormState.namaPengirim,
-      jabatanPengirim: notaDinasFormState.jabatanPengirim,
-      tujuan: notaDinasFormState.ditujukanKepada,
-      instruksi: notaDinasFormState.instruksi,
-      tenggatWaktu: notaDinasFormState.tenggatWaktu,
-      catatanTujuan: notaDinasFormState.catatanTujuan,
-    };
+    // Validate file type
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "image/jpeg",
+      "image/jpg",
+      "image/png"
+    ];
 
-    const newNotaDinas = KemhanDatabase.addNotaDinas(notaDinasDataForDB);
-
-    if (newNotaDinas) {
-      showSuccessPopup();
-    } else {
-      Notification.error("Gagal menambahkan Nota Dinas ke database.");
+    if (!allowedTypes.includes(file.type)) {
+      if (window.Swal) {
+        Swal.fire({
+          icon: "error",
+          title: "Tipe File Tidak Didukung!",
+          text: "Hanya file PDF, DOC, DOCX, JPG, PNG yang diperbolehkan",
+          confirmButtonColor: "#7f1d1d",
+        });
+      } else {
+        alert("Hanya file PDF, DOC, DOCX, JPG, PNG yang diperbolehkan");
+      }
+      event.target.value = "";
+      return;
     }
+
+    notaDinasFormState.uploadedFile = file;
+    notaDinasFormState.fileName = file.name;
+
+    displayFileInfo(file);
+  };
+
+  function displayFileInfo(file) {
+    const fileInfoDisplay = document.getElementById("fileInfoDisplay");
+    const uploadContent = document.getElementById("uploadContent");
+
+    if (!fileInfoDisplay || !uploadContent) return;
+
+    const fileSize = (file.size / 1024).toFixed(2);
+    const fileSizeText = fileSize > 1024 ? `${(fileSize / 1024).toFixed(2)} MB` : `${fileSize} KB`;
+
+    uploadContent.style.display = "none";
+
+    fileInfoDisplay.innerHTML = `
+      <div class="file-item">
+        <i class="bi bi-file-earmark-pdf"></i>
+        <div class="file-details">
+          <span class="file-name">${file.name}</span>
+          <span class="file-size">${fileSizeText}</span>
+        </div>
+        <button class="file-remove" onclick="removeFile()" type="button">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+    `;
+
+    fileInfoDisplay.style.display = "block";
+  }
+
+  window.removeFile = function () {
+    const fileInput = document.getElementById("fileInput");
+    const fileInfoDisplay = document.getElementById("fileInfoDisplay");
+    const uploadContent = document.getElementById("uploadContent");
+
+    if (fileInput) fileInput.value = "";
+    if (fileInfoDisplay) {
+      fileInfoDisplay.innerHTML = "";
+      fileInfoDisplay.style.display = "none";
+    }
+    if (uploadContent) {
+      uploadContent.style.display = "flex";
+    }
+
+    notaDinasFormState.uploadedFile = null;
+    notaDinasFormState.fileName = null;
   };
 
   // =============================
-  // SUCCESS POPUP CONTROLS
+  // SUBMIT NOTA DINAS
   // =============================
+  window.confirmSubmitNotaDinas = function () {
+    if (window.Swal) {
+      Swal.fire({
+        title: "Konfirmasi Pengiriman",
+        text: "Apakah Anda yakin ingin mengirim nota dinas ini ke Kapus untuk persetujuan?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#7f1d1d",
+        cancelButtonColor: "#6b7280",
+        confirmButtonText: "Ya, Kirim!",
+        cancelButtonText: "Batal",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          submitNotaDinas();
+        }
+      });
+    } else {
+      if (confirm("Apakah Anda yakin ingin mengirim nota dinas ini?")) {
+        submitNotaDinas();
+      }
+    }
+  };
+
+  async function submitNotaDinas() {
+    console.log("📤 Submitting Nota Dinas...");
+
+    const notaDinasData = {
+      namaPengirim: notaDinasFormState.namaPengirim,
+      jabatanPengirim: notaDinasFormState.jabatanPengirim,
+      jenisNaskah: notaDinasFormState.jenisNaskah,
+      sifatNaskah: notaDinasFormState.sifatNaskah,
+      sifat: notaDinasFormState.sifatNaskah,
+      noNaskah: notaDinasFormState.nomorNaskah,
+      noSurat: notaDinasFormState.nomorNaskah,
+      perihal: notaDinasFormState.perihal,
+      tanggalSurat: notaDinasFormState.tanggalSurat,
+      tanggalNaskah: notaDinasFormState.tanggalSurat,
+      catatan: notaDinasFormState.catatan,
+      fileName: notaDinasFormState.fileName,
+      uploadedFile: notaDinasFormState.uploadedFile,
+      
+      // Tujuan
+      ditujukanKepada: notaDinasFormState.ditujukanKepada,
+      kepada: notaDinasFormState.ditujukanKepada,
+      tujuan: notaDinasFormState.ditujukanKepada,
+      tenggatWaktu: notaDinasFormState.tenggatWaktu,
+      catatanTujuan: notaDinasFormState.catatanTujuan,
+      
+      // Metadata
+      dari: notaDinasFormState.namaPengirim,
+      pengirim: notaDinasFormState.namaPengirim,
+      diEntryOleh: currentUserData.nama,
+      tanggalTerima: new Date().toISOString(),
+      tanggalDiterima: new Date().toISOString(),
+      
+      // Status - PENTING: Set to Menunggu Persetujuan Kapus
+      status: "Menunggu Persetujuan Kapus",
+    };
+
+    try {
+      let result;
+      if (isEditMode && currentNotaDinasId) {
+        result = await KemhanDatabase.updateNotaDinas(currentNotaDinasId, notaDinasData);
+        console.log("📝 Nota Dinas Updated:", result);
+      } else {
+        result = await KemhanDatabase.addNotaDinas(notaDinasData);
+        console.log("✅ Nota Dinas Created with ID:", result);
+      }
+
+      if (result) {
+        showSuccessPopup();
+        
+        setTimeout(() => {
+          closeSuccessPopupAndBack();
+        }, 2000);
+      } else {
+        throw new Error("Failed to save");
+      }
+    } catch (error) {
+      console.error("Error submitting:", error);
+      if (window.Swal) {
+        Swal.fire({
+          icon: "error",
+          title: "Gagal!",
+          text: "Gagal menyimpan nota dinas!",
+          confirmButtonColor: "#7f1d1d",
+        });
+      } else {
+        alert("Gagal menyimpan nota dinas!");
+      }
+    }
+  }
+
+  // =============================
+  // SUCCESS POPUP
+  // =============================
+  function showSuccessPopup() {
+    hideAllViews();
+    const successPopup = document.getElementById("successPopup");
+    if (successPopup) {
+      successPopup.style.display = "flex";
+      successPopup.classList.add("active");
+    }
+  }
+
+  window.closeSuccessPopupAndBack = function () {
+    const successPopup = document.getElementById("successPopup");
+    if (successPopup) {
+      successPopup.classList.remove("active");
+      successPopup.style.display = "none";
+    }
+    
+    window.backToTableView();
+  };
+
   function setupPopupOutsideClick() {
     const successPopup = document.getElementById("successPopup");
     if (successPopup) {
       successPopup.addEventListener("click", function (e) {
         if (e.target === successPopup) {
-          window.closeSuccessPopupAndBack();
+          closeSuccessPopupAndBack();
         }
       });
     }
   }
 
-  function showSuccessPopup() {
-    document.getElementById("formView").classList.remove("active");
-    document.getElementById("successPopup").classList.add("active");
+  // =============================
+  // RESET FORM
+  // =============================
+  function resetNotaDinasForm() {
+    console.log("🔄 Resetting Nota Dinas Form...");
+
+    isEditMode = false;
+    currentNotaDinasId = null;
+    currentStep = 1;
+
+    notaDinasFormState = {
+      uploadedFile: null,
+      fileName: null,
+    };
+
+    const formInputs = [
+      "namaPengirim",
+      "jabatanPengirim",
+      "jenisNaskah",
+      "sifatNaskah",
+      "nomorNaskah",
+      "perihal",
+      "tanggalSurat",
+      "catatan",
+      "ditujukanKepada",
+      "tenggatWaktu",
+      "catatanTujuan",
+    ];
+
+    formInputs.forEach((inputId) => {
+      const input = document.getElementById(inputId);
+      if (input) {
+        if (input.tagName === "SELECT") {
+          input.selectedIndex = 0;
+        } else {
+          input.value = "";
+        }
+      }
+    });
+
+    // Reset file input
+    const fileInput = document.getElementById("fileInput");
+    if (fileInput) fileInput.value = "";
+
+    const fileInfoDisplay = document.getElementById("fileInfoDisplay");
+    const uploadContent = document.getElementById("uploadContent");
+
+    if (fileInfoDisplay) {
+      fileInfoDisplay.innerHTML = "";
+      fileInfoDisplay.style.display = "none";
+    }
+
+    if (uploadContent) {
+      uploadContent.style.display = "flex";
+    }
+
+    const formTitle = document.getElementById("formMainTitle");
+    if (formTitle) {
+      formTitle.textContent = "Susun Nota Dinas";
+    }
+
+    goToStep(1);
+
+    console.log("✅ Form reset completed");
   }
 
-  window.closeSuccessPopupAndBack = function () {
-    const successPopup = document.getElementById("successPopup");
-    if (successPopup) successPopup.classList.remove("active");
-    window.backToTableView();
+  // =============================
+  // PDF & PRINT FUNCTIONS
+  // =============================
+  window.downloadPDF = function () {
+    if (window.Swal) {
+      Swal.fire({
+        icon: "info",
+        title: "Download PDF",
+        text: "Fitur download PDF akan segera tersedia",
+        confirmButtonColor: "#7f1d1d",
+      });
+    } else {
+      alert("Fitur download PDF akan segera tersedia");
+    }
+  };
+
+  window.printSurat = function () {
+    window.print();
   };
 
   // =============================
-  // AUTO INIT ON PAGE LOAD
+  // AUTO INIT
   // =============================
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", window.initializePage);
@@ -1103,4 +1378,5 @@
   }
 
   console.log("✅ Nota Dinas Script Loaded");
+
 })();

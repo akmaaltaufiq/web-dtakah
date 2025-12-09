@@ -1,5 +1,5 @@
 // ========================================
-// SURAT KELUAR - FIREBASE REAL-TIME (FULL FIXED)
+// SURAT KELUAR - FIREBASE INTEGRATED (FIXED & COMBINED)
 // ========================================
 (function () {
   "use strict";
@@ -11,36 +11,26 @@
   let currentDate = new Date();
   let selectedDate = null;
   let currentPreviewSuratId = null;
+  let isEditMode = false;
   let currentUserData = null;
   let unsubscribeSuratKeluar = null;
 
   const monthNames = [
-    "Januari",
-    "Februari",
-    "Maret",
-    "April",
-    "Mei",
-    "Juni",
-    "Juli",
-    "Agustus",
-    "September",
-    "Oktober",
-    "November",
-    "Desember",
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
   ];
 
   // ========================================
-  // INITIALIZATION (FULL FIXED)
+  // INITIALIZATION
   // ========================================
   window.initializeSuratKeluarPage = function () {
-    console.log("🚀 Surat Keluar Page Initialized (FULL FIXED)");
+    console.log("🚀 Surat Keluar Page Initialized (FIXED & COMBINED)");
 
-    // LANGSUNG ambil user dari Firebase Auth - JANGAN CEK ROLE DULU
+    // Get current user from Firebase Auth
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         console.log("✅ User authenticated:", user.email);
 
-        // Set current user data
         currentUserData = {
           uid: user.uid,
           email: user.email,
@@ -49,15 +39,13 @@
 
         console.log("👤 Current user data:", currentUserData);
 
-        // Setup real-time listener
+        // Setup all components
         setupRealtimeListener();
-
-        // Setup UI components
         initializeCalendarEvents();
         initializeSifatFilter();
         attachGlobalKeluarEvents();
-
-        // Setup file upload
+        
+        // Setup file upload after DOM is ready
         setTimeout(() => setupFileUploadHandler(), 500);
       } else {
         console.error("❌ No user logged in!");
@@ -67,7 +55,7 @@
   };
 
   // ========================================
-  // REAL-TIME LISTENER
+  // REAL-TIME LISTENER (SIMPLIFIED - NO WHERE CLAUSE)
   // ========================================
   function setupRealtimeListener() {
     console.log("🔄 Setting up real-time listener for surat_keluar...");
@@ -77,14 +65,10 @@
       unsubscribeSuratKeluar();
     }
 
-    // Listen to ALL documents (no where clause)
+    // Listen to ALL documents (filtering done client-side)
     unsubscribeSuratKeluar = db.collection("surat_keluar").onSnapshot(
       (snapshot) => {
-        console.log(
-          "📥 Real-time snapshot received:",
-          snapshot.size,
-          "documents"
-        );
+        console.log("📥 Real-time snapshot received:", snapshot.size, "documents");
 
         snapshot.docChanges().forEach((change) => {
           if (change.type === "added") {
@@ -98,7 +82,7 @@
           }
         });
 
-        // Re-render table every time there's a change
+        // Re-render table on any change
         renderTableKeluar();
       },
       (error) => {
@@ -112,188 +96,131 @@
   // ========================================
   // TABLE RENDERING
   // ========================================
-  function renderTableKeluar() {
+  async function getSuratKeluarData() {
+    try {
+      console.log("🔍 Fetching surat keluar data...");
+      
+      const snapshot = await db.collection("surat_keluar").get();
+      console.log("📥 Firestore returned:", snapshot.size, "documents");
+
+      let data = [];
+      snapshot.forEach(doc => {
+        const docData = doc.data();
+        
+        // CLIENT-SIDE FILTER: Skip deleted documents
+        if (docData.isDeleted === true) {
+          return;
+        }
+
+        data.push({
+          id: doc.id,
+          ...docData,
+          // Convert Firestore Timestamp for sorting
+          _createdAt: docData.createdAt?.toDate ? 
+            docData.createdAt.toDate() : 
+            new Date(docData.createdAt || Date.now())
+        });
+      });
+
+      console.log("📊 Data after filtering deleted:", data.length, "documents");
+
+      // Get filter values
+      const filterText = document.getElementById("searchPerihal")?.value.toLowerCase() || "";
+      const filterDate = document.getElementById("selectedDateText")?.dataset.dateValue || "";
+      const filterSifat = document.getElementById("selectedSifatText")?.dataset.sifatValue || "";
+
+      // Apply filters client-side
+      const filteredData = data.filter(surat => {
+        const matchesText = !filterText || 
+          (surat.perihal && surat.perihal.toLowerCase().includes(filterText)) ||
+          (surat.noNaskah && surat.noNaskah.toLowerCase().includes(filterText)) ||
+          (surat.noSurat && surat.noSurat.toLowerCase().includes(filterText)) ||
+          (surat.deskripsi && surat.deskripsi.toLowerCase().includes(filterText));
+
+        const matchesDate = !filterDate || 
+          (surat.tanggalSurat && surat.tanggalSurat.includes(filterDate));
+
+        const matchesSifat = !filterSifat || surat.sifatSurat === filterSifat;
+
+        return matchesText && matchesDate && matchesSifat;
+      });
+
+      console.log("📊 Data after filters:", filteredData.length, "documents");
+
+      // Sort by createdAt (newest first) - CLIENT SIDE
+      filteredData.sort((a, b) => b._createdAt - a._createdAt);
+
+      return filteredData;
+    } catch (error) {
+      console.error("❌ Error fetching data:", error);
+      return [];
+    }
+  }
+
+  async function renderTableKeluar() {
+    const data = await getSuratKeluarData();
     const tbody = document.getElementById("tableBody");
+    
     if (!tbody) {
       console.error("❌ Table body not found!");
       return;
     }
 
-    console.log("🔄 Rendering table...");
-    tbody.innerHTML =
-      '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #999;">Loading...</td></tr>';
+    console.log("🔄 Rendering table with", data.length, "items");
 
-    // Get filter values
-    const searchInput = document.getElementById("searchPerihal");
-    const filterText = searchInput ? searchInput.value.toLowerCase() : "";
+    // Pagination
+    const startIndex = (currentPageKeluar - 1) * itemsPerPageKeluar;
+    const paginatedData = data.slice(startIndex, startIndex + itemsPerPageKeluar);
 
-    const dateTextEl = document.getElementById("selectedDateText");
-    const filterDate =
-      dateTextEl && dateTextEl.dataset.dateValue
-        ? dateTextEl.dataset.dateValue
-        : "";
+    console.log("📄 Page", currentPageKeluar, "showing", paginatedData.length, "items");
 
-    const sifatTextEl = document.getElementById("selectedSifatText");
-    const filterSifat =
-      sifatTextEl && sifatTextEl.dataset.sifatValue
-        ? sifatTextEl.dataset.sifatValue
-        : "";
+    if (paginatedData.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: #999;">Tidak ada data surat keluar</td></tr>';
+      updatePaginationInfoKeluar(0);
+      return;
+    }
 
-    // Fetch data from Firestore (NO WHERE CLAUSE)
-    db.collection("surat_keluar")
-      .get()
-      .then((querySnapshot) => {
-        console.log(
-          "📥 Firestore query returned:",
-          querySnapshot.size,
-          "documents"
-        );
+    tbody.innerHTML = paginatedData.map((surat, index) => {
+      const statusClass = Utils.getStatusClass(surat.status);
+      const dari = surat.dari || surat.namaPengirim || "-";
+      
+      return `
+        <tr>
+          <td style="text-align: center;">${startIndex + index + 1}</td>
+          <td>${Utils.escapeHtml(surat.perihal || '-')}</td>
+          <td>${Utils.escapeHtml(dari)}</td>
+          <td>${Utils.escapeHtml(surat.deskripsi || surat.catatan || surat.perihal || '-')}</td>
+          <td>${Utils.escapeHtml(surat.sifatSurat || '-')}</td>
+          <td style="text-align: center;">${Utils.escapeHtml(surat.noNaskah || surat.noSurat || '-')}</td>
+          <td style="text-align: center;"><span class="status ${statusClass}">${Utils.escapeHtml(surat.status || 'Pending')}</span></td>
+          <td class="action-icons">
+            <i class="bi bi-eye" title="Preview" onclick="window.previewSuratKeluar('${surat.id}')"></i>
+            <i class="bi bi-pencil-square" title="Edit" onclick="window.editSuratKeluar('${surat.id}')"></i>
+            <i class="bi bi-trash" title="Hapus" onclick="window.hapusSuratKeluar('${surat.id}')"></i>
+          </td>
+        </tr>
+      `;
+    }).join('');
 
-        const data = [];
-
-        querySnapshot.forEach((doc) => {
-          const docData = doc.data();
-
-          // Skip deleted documents (CLIENT-SIDE FILTER)
-          if (docData.isDeleted === true) {
-            return;
-          }
-
-          data.push({
-            id: doc.id,
-            ...docData,
-            // Convert Firestore Timestamp to Date for sorting
-            _createdAt: docData.createdAt
-              ? docData.createdAt.toDate
-                ? docData.createdAt.toDate()
-                : new Date(docData.createdAt)
-              : new Date(),
-          });
-        });
-
-        console.log(
-          "📊 Data after filtering deleted:",
-          data.length,
-          "documents"
-        );
-
-        // Apply filters
-        let filteredData = data.filter((surat) => {
-          const matchesText =
-            !filterText ||
-            (surat.perihal &&
-              surat.perihal.toLowerCase().includes(filterText)) ||
-            (surat.noNaskah &&
-              surat.noNaskah.toLowerCase().includes(filterText)) ||
-            (surat.noSurat && surat.noSurat.toLowerCase().includes(filterText));
-
-          const matchesDate =
-            !filterDate ||
-            (surat.tanggalSurat && surat.tanggalSurat.includes(filterDate));
-
-          const matchesSifat = !filterSifat || surat.sifatSurat === filterSifat;
-
-          return matchesText && matchesDate && matchesSifat;
-        });
-
-        console.log(
-          "📊 Data after all filters:",
-          filteredData.length,
-          "documents"
-        );
-
-        // Sort by createdAt (newest first) - CLIENT SIDE
-        filteredData.sort((a, b) => b._createdAt - a._createdAt);
-
-        // Pagination
-        const startIndex = (currentPageKeluar - 1) * itemsPerPageKeluar;
-        const endIndex = startIndex + itemsPerPageKeluar;
-        const paginatedData = filteredData.slice(startIndex, endIndex);
-
-        console.log(
-          "📄 Showing page",
-          currentPageKeluar,
-          ":",
-          paginatedData.length,
-          "items"
-        );
-
-        // Clear table
-        tbody.innerHTML = "";
-
-        if (paginatedData.length === 0) {
-          tbody.innerHTML =
-            '<tr><td colspan="7" style="text-align: center; padding: 30px; color: #999;">Tidak ada data surat keluar</td></tr>';
-          updatePaginationInfoKeluar(0);
-          return;
-        }
-
-        // Render rows
-        paginatedData.forEach((surat, index) => {
-          const row = document.createElement("tr");
-          const statusClass = Utils.getStatusClass(surat.status);
-
-          row.innerHTML = `
-            <td style="text-align: center;">${startIndex + index + 1}</td>
-            <td>${Utils.escapeHtml(surat.perihal || "-")}</td>
-            <td>${Utils.escapeHtml(
-              surat.deskripsi || surat.catatan || surat.perihal || "-"
-            )}</td>
-            <td>${Utils.escapeHtml(surat.sifatSurat || "-")}</td>
-            <td style="text-align: center;">${Utils.escapeHtml(
-              surat.noNaskah || surat.noSurat || "-"
-            )}</td>
-            <td style="text-align: center;">
-              <span class="status ${statusClass}">${Utils.escapeHtml(
-            surat.status || "Pending"
-          )}</span>
-            </td>
-            <td class="action-icons">
-              <i class="bi bi-eye" title="Lihat" onclick="window.lihatSuratKeluar('${
-                surat.id
-              }')"></i>
-              <i class="bi bi-trash" title="Hapus" onclick="window.hapusSuratKeluar('${
-                surat.id
-              }')"></i>
-            </td>
-          `;
-          tbody.appendChild(row);
-        });
-
-        updatePaginationInfoKeluar(filteredData.length);
-        console.log("✅ Table rendered successfully!");
-      })
-      .catch((error) => {
-        console.error("❌ Error fetching data:", error);
-        tbody.innerHTML =
-          '<tr><td colspan="7" style="text-align: center; padding: 30px; color: #dc2626;">Error: ' +
-          error.message +
-          "</td></tr>";
-      });
+    updatePaginationInfoKeluar(data.length);
+    console.log("✅ Table rendered successfully!");
   }
 
   function updatePaginationInfoKeluar(totalItems) {
     const startIndex = (currentPageKeluar - 1) * itemsPerPageKeluar + 1;
-    const endIndex = Math.min(
-      currentPageKeluar * itemsPerPageKeluar,
-      totalItems
-    );
-
+    const endIndex = Math.min(currentPageKeluar * itemsPerPageKeluar, totalItems);
+    
     const infoElement = document.getElementById("paginationInfo");
     if (infoElement) {
-      infoElement.textContent = `Showing ${Math.max(
-        0,
-        startIndex
-      )}-${endIndex} of ${totalItems}`;
+      infoElement.textContent = `Showing ${Math.max(0, startIndex)}-${endIndex} of ${totalItems}`;
     }
 
+    const maxPage = Math.ceil(totalItems / itemsPerPageKeluar);
     const prevBtn = document.getElementById("prevBtn");
     const nextBtn = document.getElementById("nextBtn");
-    const maxPage = Math.ceil(totalItems / itemsPerPageKeluar);
-
+    
     if (prevBtn) prevBtn.disabled = currentPageKeluar === 1;
-    if (nextBtn)
-      nextBtn.disabled = currentPageKeluar >= maxPage || totalItems === 0;
+    if (nextBtn) nextBtn.disabled = currentPageKeluar >= maxPage || totalItems === 0;
   }
 
   function attachGlobalKeluarEvents() {
@@ -312,9 +239,13 @@
     }
 
     if (nextBtn) {
-      nextBtn.addEventListener("click", () => {
-        currentPageKeluar++;
-        renderTableKeluar();
+      nextBtn.addEventListener("click", async () => {
+        const totalItems = (await getSuratKeluarData()).length;
+        const maxPage = Math.ceil(totalItems / itemsPerPageKeluar);
+        if (currentPageKeluar < maxPage) {
+          currentPageKeluar++;
+          renderTableKeluar();
+        }
       });
     }
 
@@ -349,18 +280,78 @@
   }
 
   // ========================================
-  // FILE UPLOAD
+  // VIEW MANAGEMENT
+  // ========================================
+  window.showTambahForm = function () {
+    toggleView("form");
+    currentSuratKeluarId = null;
+    isEditMode = false;
+    
+    document.getElementById("formTitle").textContent = "Form Registrasi Surat Keluar";
+    document.getElementById("submitBtnText").textContent = "Kirim Surat";
+    
+    resetForm();
+    currentStep = 1;
+    updateFormStepDisplay();
+    
+    // Re-setup file upload handler
+    setTimeout(() => setupFileUploadHandler(), 200);
+  };
+
+  window.backToTable = () => toggleView("table");
+
+  function toggleView(view) {
+    ["table", "form", "preview"].forEach(v => {
+      const el = document.getElementById(`${v}View`);
+      if (el) el.style.display = v === view ? "block" : "none";
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function resetForm() {
+    const form = document.getElementById("suratKeluarForm");
+    if (form) form.reset();
+    
+    document.querySelectorAll('input[name="kepada"]').forEach(cb => cb.checked = false);
+    resetFileUpload();
+  }
+
+  function resetFileUpload() {
+    const uploadArea = document.getElementById("uploadArea");
+    const uploadContent = document.getElementById("uploadContent");
+    const fileInfoDisplay = document.getElementById("fileInfoDisplay");
+    
+    if (uploadArea) uploadArea.classList.remove("has-file");
+    if (uploadContent) uploadContent.style.display = "flex";
+    if (fileInfoDisplay) {
+      fileInfoDisplay.innerHTML = "";
+      fileInfoDisplay.style.display = "none";
+    }
+    
+    const fileInput = document.getElementById("fileInput");
+    if (fileInput) fileInput.value = "";
+    
+    window.uploadedFile = null;
+  }
+
+  // ========================================
+  // FILE UPLOAD HANDLER
   // ========================================
   function setupFileUploadHandler() {
     const fileInput = document.getElementById("fileInput");
     const uploadArea = document.getElementById("uploadArea");
     const fileInfoDisplay = document.getElementById("fileInfoDisplay");
 
-    if (!fileInput) return;
+    if (!fileInput) {
+      console.warn("⚠️ File input not found");
+      return;
+    }
 
+    // Clone to remove old event listeners
     const newFileInput = fileInput.cloneNode(true);
     fileInput.parentNode.replaceChild(newFileInput, fileInput);
 
+    // Click upload area to trigger file input
     if (uploadArea) {
       uploadArea.onclick = function (e) {
         e.preventDefault();
@@ -369,10 +360,14 @@
       };
     }
 
+    // Handle file selection
     newFileInput.addEventListener("change", function (e) {
       const file = e.target.files[0];
       if (!file) return;
 
+      console.log("📎 File selected:", file.name, file.type, file.size);
+
+      // Validate file type
       const validTypes = [
         "application/pdf",
         "application/msword",
@@ -383,41 +378,56 @@
       ];
 
       if (!validTypes.includes(file.type)) {
-        Notification.error("Tipe file tidak didukung!");
+        Notification.error("Tipe file tidak didukung! Gunakan PDF, Word, atau gambar.");
         newFileInput.value = "";
         return;
       }
 
+      // Validate file size (max 50MB)
       if (file.size > 50 * 1024 * 1024) {
-        Notification.error("File terlalu besar! Max 50MB");
+        Notification.error("File terlalu besar! Maksimal 50MB");
         newFileInput.value = "";
         return;
       }
 
+      // Store file globally
       window.uploadedFile = file;
 
+      // Update UI
       if (uploadArea) uploadArea.classList.add("has-file");
 
       if (fileInfoDisplay) {
         const fileSize = (file.size / 1024).toFixed(2);
-        const fileIcon = file.type.includes("pdf")
-          ? '<i class="bi bi-file-pdf-fill text-danger"></i>'
-          : file.type.includes("word")
-          ? '<i class="bi bi-file-word-fill text-primary"></i>'
-          : '<i class="bi bi-file-image-fill text-success"></i>';
+        let iconClass = "bi-file-earmark-text-fill";
+        let iconColor = "#6b7280";
+
+        if (file.type.includes("pdf")) {
+          iconClass = "bi-file-earmark-pdf-fill";
+          iconColor = "#dc2626";
+        } else if (file.type.includes("word")) {
+          iconClass = "bi-file-earmark-word-fill";
+          iconColor = "#2563eb";
+        } else if (file.type.includes("image")) {
+          iconClass = "bi-file-earmark-image-fill";
+          iconColor = "#10b981";
+        }
 
         fileInfoDisplay.innerHTML = `
-          <div class="file-info-card">
-            <div class="file-icon">${fileIcon}</div>
-            <div class="file-details">
-              <div class="file-name">${file.name}</div>
-              <div class="file-size">${fileSize} KB</div>
+          <div class="file-display-card">
+            <div class="file-display-icon" style="background-color: ${iconColor}20;">
+              <i class="bi ${iconClass}" style="color: ${iconColor}; font-size: 28px;"></i>
+            </div>
+            <div class="file-display-info">
+              <div class="file-display-label">FILE TERUPLOAD</div>
+              <div class="file-display-name">${file.name}</div>
+              <div class="file-display-size">${fileSize} KB</div>
             </div>
             <button type="button" class="file-remove-btn" onclick="window.removeUploadedFile(event)">
               <i class="bi bi-x-circle"></i>
             </button>
           </div>
         `;
+        fileInfoDisplay.style.display = "block";
       }
 
       Notification.success(`File "${file.name}" berhasil diunggah!`);
@@ -431,71 +441,33 @@
     const fileInput = document.getElementById("fileInput");
     const uploadArea = document.getElementById("uploadArea");
     const fileInfoDisplay = document.getElementById("fileInfoDisplay");
+    const uploadContent = document.getElementById("uploadContent");
 
     if (fileInput) fileInput.value = "";
     if (uploadArea) uploadArea.classList.remove("has-file");
-    if (fileInfoDisplay) fileInfoDisplay.innerHTML = "";
+    if (uploadContent) uploadContent.style.display = "flex";
+    if (fileInfoDisplay) {
+      fileInfoDisplay.innerHTML = "";
+      fileInfoDisplay.style.display = "none";
+    }
 
     window.uploadedFile = null;
     Notification.info("File dihapus");
   };
 
   // ========================================
-  // VIEW MANAGEMENT
-  // ========================================
-  window.showTambahForm = function () {
-    document.getElementById("tableView").style.display = "none";
-    document.getElementById("formView").style.display = "block";
-    document.getElementById("previewView").style.display = "none";
-
-    currentSuratKeluarId = null;
-    document.getElementById("formTitle").textContent =
-      "Form Registrasi Surat Keluar";
-
-    const form = document.getElementById("suratKeluarForm");
-    if (form) form.reset();
-
-    document
-      .querySelectorAll('input[name="kepada"]')
-      .forEach((cb) => (cb.checked = false));
-
-    const uploadArea = document.getElementById("uploadArea");
-    if (uploadArea) {
-      uploadArea.classList.remove("has-file");
-      document.getElementById("fileInfoDisplay").innerHTML = "";
-    }
-
-    const fileInput = document.getElementById("fileInput");
-    if (fileInput) fileInput.value = "";
-    window.uploadedFile = null;
-
-    currentStep = 1;
-    updateFormStepDisplay();
-
-    setTimeout(() => setupFileUploadHandler(), 200);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  window.backToTable = function () {
-    document.getElementById("tableView").style.display = "block";
-    document.getElementById("formView").style.display = "none";
-    document.getElementById("previewView").style.display = "none";
-  };
-
-  // ========================================
   // FORM STEPS
   // ========================================
   window.nextStep = function () {
-    if (currentStep === 1) {
-      if (!validateSuratKeluarStep1()) return;
+    if (currentStep === 1 && validateSuratKeluarStep1()) {
       currentStep = 2;
-    } else if (currentStep === 2) {
-      if (!validateSuratKeluarStep2()) return;
+      updateFormStepDisplay();
+    } else if (currentStep === 2 && validateSuratKeluarStep2()) {
       updatePreview();
       currentStep = 3;
+      updateFormStepDisplay();
     }
-    updateFormStepDisplay();
-    window.scrollTo({ top: 0 });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   window.prevStep = function () {
@@ -503,46 +475,42 @@
       currentStep--;
       updateFormStepDisplay();
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   function updateFormStepDisplay() {
-    document
-      .querySelectorAll("#formView .step-content")
-      .forEach((el) => el.classList.remove("active"));
-    document
-      .getElementById(`step${currentStep}Content`)
-      ?.classList.add("active");
+    document.querySelectorAll("#formView .step-content").forEach(el => 
+      el.classList.remove("active")
+    );
+    
+    const currentStepEl = document.getElementById(`step${currentStep}Content`);
+    if (currentStepEl) currentStepEl.classList.add("active");
 
     for (let i = 1; i <= 3; i++) {
       const stepNum = document.getElementById(`step${i}Number`);
       if (stepNum) {
-        stepNum.className =
-          i <= currentStep ? "step-number active" : "step-number inactive";
+        stepNum.className = i <= currentStep ? "step-number active" : "step-number inactive";
       }
     }
   }
 
   function validateSuratKeluarStep1() {
     const required = [
-      "jenisSurat",
-      "sifatSurat",
-      "noSurat",
-      "perihal",
-      "tanggalNaskah",
-      "tanggalDiterima",
+      "jenisSurat", "sifatSurat", "noSurat", 
+      "perihal", "tanggalNaskah", "tanggalDiterima"
     ];
 
     for (let id of required) {
       const el = document.getElementById(id);
       if (!el || !el.value.trim()) {
-        Notification.error("Mohon lengkapi semua field Step 1");
+        Notification.error("Mohon lengkapi semua field di Step 1.");
         if (el) el.focus();
         return false;
       }
     }
 
-    if (!window.uploadedFile) {
-      Notification.error("Mohon unggah file naskah");
+    if (!window.uploadedFile && !isEditMode) {
+      Notification.error("Mohon unggah file naskah.");
       return false;
     }
 
@@ -554,22 +522,20 @@
     const jabatanPengirim = document.getElementById("jabatanPengirim");
 
     if (!namaPengirim?.value.trim()) {
-      Notification.error("Mohon isi Nama Pengirim");
+      Notification.error("Mohon isi Nama Pengirim.");
       namaPengirim?.focus();
       return false;
     }
 
     if (!jabatanPengirim?.value.trim()) {
-      Notification.error("Mohon isi Jabatan Pengirim");
+      Notification.error("Mohon isi Jabatan Pengirim.");
       jabatanPengirim?.focus();
       return false;
     }
 
-    const checkedBoxes = document.querySelectorAll(
-      'input[name="kepada"]:checked'
-    );
+    const checkedBoxes = document.querySelectorAll('input[name="kepada"]:checked');
     if (checkedBoxes.length === 0) {
-      Notification.error("Mohon pilih minimal 1 tujuan");
+      Notification.error("Mohon pilih minimal 1 tujuan surat.");
       return false;
     }
 
@@ -577,48 +543,44 @@
   }
 
   function updatePreview() {
-    document.getElementById("previewJenisSurat").textContent =
+    document.getElementById("previewJenisSurat").textContent = 
       document.getElementById("jenisSurat").value || "-";
-    document.getElementById("previewSifatSurat").textContent =
+    document.getElementById("previewSifatSurat").textContent = 
       document.getElementById("sifatSurat").value || "-";
-    document.getElementById("previewNoSurat").textContent =
+    document.getElementById("previewNoSurat").textContent = 
       document.getElementById("noSurat").value || "-";
-    document.getElementById("previewPerihal").textContent =
+    document.getElementById("previewPerihal").textContent = 
       document.getElementById("perihal").value || "-";
-    document.getElementById("previewTanggalNaskah").textContent =
+    document.getElementById("previewTanggalNaskah").textContent = 
       Utils.formatDate(document.getElementById("tanggalNaskah").value) || "-";
-    document.getElementById("previewTanggalDiterima").textContent =
+    document.getElementById("previewTanggalDiterima").textContent = 
       Utils.formatDate(document.getElementById("tanggalDiterima").value) || "-";
-    document.getElementById("previewCatatan").textContent =
+    document.getElementById("previewCatatan").textContent = 
       document.getElementById("catatan").value || "-";
-    document.getElementById("previewFile").textContent = window.uploadedFile
-      ? window.uploadedFile.name
-      : "-";
-    document.getElementById("previewNamaPengirim").textContent =
+    document.getElementById("previewFile").textContent = window.uploadedFile ? 
+      window.uploadedFile.name : (isEditMode ? "File existing" : "-");
+    document.getElementById("previewNamaPengirim").textContent = 
       document.getElementById("namaPengirim").value || "-";
-    document.getElementById("previewJabatanPengirim").textContent =
+    document.getElementById("previewJabatanPengirim").textContent = 
       document.getElementById("jabatanPengirim").value || "-";
 
-    const checkedBoxes = document.querySelectorAll(
-      'input[name="kepada"]:checked'
-    );
-    const kepadaValues = Array.from(checkedBoxes).map((cb) => cb.value);
-    document.getElementById("previewDitujukanKepada").textContent =
-      kepadaValues.join(", ") || "-";
+    const checkedBoxes = document.querySelectorAll('input[name="kepada"]:checked');
+    const kepadaValues = Array.from(checkedBoxes).map(cb => cb.value);
+    document.getElementById("previewDitujukanKepada").textContent = 
+      kepadaValues.length > 0 ? kepadaValues.join(", ") : "-";
   }
 
   // ========================================
-  // SUBMIT
+  // SUBMIT FORM
   // ========================================
-  window.submitFinalForm = function () {
+  window.submitFinalForm = async function () {
     console.log("💾 Submitting form...");
     console.log("👤 Current user:", currentUserData);
 
-    // VALIDASI: Pastikan user sudah login
+    // VALIDATE: Ensure user is logged in
     if (!currentUserData || !currentUserData.uid) {
       console.error("❌ User data not available!");
-
-      // Coba ambil dari auth langsung
+      
       const user = firebase.auth().currentUser;
       if (user) {
         console.log("✅ Got user from firebase.auth().currentUser");
@@ -634,24 +596,18 @@
       }
     }
 
-    const checkedBoxes = document.querySelectorAll(
-      'input[name="kepada"]:checked'
-    );
-    const kepadaString = Array.from(checkedBoxes)
-      .map((cb) => cb.value)
-      .join(", ");
+    const checkedBoxes = document.querySelectorAll('input[name="kepada"]:checked');
+    const kepadaValues = Array.from(checkedBoxes).map(cb => cb.value);
+    const kepadaString = kepadaValues.join(", ");
 
+    // Determine status based on recipients
     let status = "Selesai";
-    if (
-      kepadaString.toLowerCase().includes("kepala pusat") ||
-      kepadaString.toLowerCase().includes("kapus")
-    ) {
+    if (kepadaString.toLowerCase().includes("kepala pusat") || 
+        kepadaString.toLowerCase().includes("kapus")) {
       status = "Menunggu Persetujuan Kapus";
     }
 
-    if (window.showLoading) window.showLoading();
-
-    const newSurat = {
+    const suratData = {
       namaPengirim: document.getElementById("namaPengirim").value,
       jabatanPengirim: document.getElementById("jabatanPengirim").value,
       jenisSurat: document.getElementById("jenisSurat").value,
@@ -664,298 +620,446 @@
       catatan: document.getElementById("catatan").value,
       kepada: kepadaString,
       tujuan: kepadaString,
-      status: status,
-      file: window.uploadedFile ? window.uploadedFile.name : "dokumen.pdf",
-      deskripsi:
-        document.getElementById("catatan").value ||
-        document.getElementById("perihal").value,
       dari: document.getElementById("namaPengirim").value,
-      createdBy: currentUserData.nama || currentUserData.email,
-      createdByUid: currentUserData.uid,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      status: status,
+      deskripsi: document.getElementById("catatan").value || 
+                 document.getElementById("perihal").value,
+      file: window.uploadedFile ? window.uploadedFile.name : "dokumen.pdf",
       isDeleted: false,
       isFavorite: false,
       disposisi: [],
+      createdBy: currentUserData.nama || currentUserData.email,
+      createdByUid: currentUserData.uid,
     };
 
-    console.log("📤 Sending to Firebase:", newSurat);
+    try {
+      if (window.showLoading) window.showLoading();
 
-    db.collection("surat_keluar")
-      .add(newSurat)
-      .then((docRef) => {
-        console.log("✅ Surat saved with ID:", docRef.id);
+      if (isEditMode && currentSuratKeluarId) {
+        console.log("📝 Updating existing surat:", currentSuratKeluarId);
+        
+        await db.collection("surat_keluar").doc(currentSuratKeluarId).update({
+          ...suratData,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        });
 
         if (window.hideLoading) window.hideLoading();
 
-        Notification.success(
-          `Surat Keluar (${newSurat.noSurat}) Berhasil Disimpan!`
-        );
-
-        // Show success feedback
-        if (typeof Swal !== "undefined") {
+        window.loadSwal(() => {
           Swal.fire({
             icon: "success",
-            title: "Berhasil!",
-            html: `<p>Surat "<strong>${newSurat.perihal}</strong>" berhasil ditambahkan!</p>`,
-            timer: 2000,
-            showConfirmButton: false,
-          }).then(() => {
-            backToTable();
-          });
-        } else {
-          setTimeout(() => {
-            backToTable();
-          }, 1500);
-        }
-      })
-      .catch((error) => {
-        console.error("❌ Error saving surat:", error);
-        console.error("Error code:", error.code);
-        console.error("Error message:", error.message);
+            title: "Berhasil Diupdate!",
+            html: `<p>Surat Keluar "<strong>${suratData.perihal}</strong>" berhasil diupdate!</p>`,
+            confirmButtonText: "OK",
+            confirmButtonColor: "#8b0000",
+            timer: 3000,
+            timerProgressBar: true,
+          }).then(() => backToTable());
+        });
+      } else {
+        console.log("➕ Adding new surat");
+        
+        await db.collection("surat_keluar").add({
+          ...suratData,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        });
 
         if (window.hideLoading) window.hideLoading();
 
-        let errorMsg = "Gagal menyimpan surat: " + error.message;
+        window.loadSwal(() => {
+          Swal.fire({
+            icon: "success",
+            title: "Berhasil Ditambahkan!",
+            html: `<p>Surat Keluar "<strong>${suratData.perihal}</strong>" berhasil ditambahkan dan dikirim!</p>`,
+            confirmButtonText: "OK",
+            confirmButtonColor: "#8b0000",
+            timer: 3000,
+            timerProgressBar: true,
+          }).then(() => backToTable());
+        });
+      }
+    } catch (error) {
+      console.error("❌ Error saving surat:", error);
+      console.error("Error code:", error.code);
+      console.error("Error message:", error.message);
 
-        if (error.code === "permission-denied") {
-          errorMsg = "Permission denied! Please check Firestore rules.";
-        } else if (error.code === "unauthenticated") {
-          errorMsg = "Not authenticated! Please login again.";
-          setTimeout(() => {
-            window.location.href = "login.html";
-          }, 2000);
-        }
+      if (window.hideLoading) window.hideLoading();
 
-        Notification.error(errorMsg);
-      });
+      let errorMsg = "Gagal menyimpan surat: " + error.message;
+
+      if (error.code === "permission-denied") {
+        errorMsg = "Permission denied! Periksa Firestore rules.";
+      } else if (error.code === "unauthenticated") {
+        errorMsg = "Not authenticated! Please login again.";
+        setTimeout(() => window.location.href = "login.html", 2000);
+      }
+
+      Notification.error(errorMsg);
+    }
   };
 
   // ========================================
-  // CRUD
+  // CRUD ACTIONS
   // ========================================
-  window.lihatSuratKeluar = function (id) {
-    db.collection("surat_keluar")
-      .doc(id)
-      .get()
-      .then((doc) => {
-        if (!doc.exists) {
-          Notification.error("Surat tidak ditemukan");
-          return;
-        }
-        showPreviewView({ id: doc.id, ...doc.data() });
-      });
+  window.previewSuratKeluar = async function (id) {
+    try {
+      console.log("👁️ Previewing surat:", id);
+      const doc = await db.collection("surat_keluar").doc(id).get();
+      
+      if (!doc.exists) {
+        Notification.error("Surat tidak ditemukan.");
+        return;
+      }
+
+      const surat = { id: doc.id, ...doc.data() };
+      currentPreviewSuratId = id;
+      showPreviewView(surat);
+    } catch (error) {
+      console.error("❌ Error previewing surat:", error);
+      Notification.error("Gagal menampilkan preview.");
+    }
   };
 
   function showPreviewView(surat) {
-    document.getElementById("tableView").style.display = "none";
-    document.getElementById("formView").style.display = "none";
-    document.getElementById("previewView").style.display = "block";
+    toggleView("preview");
 
-    document.getElementById("previewDocTitle").textContent =
-      surat.perihal || "-";
-    document.getElementById("detailTanggalTerima").textContent =
+    document.getElementById("previewDocTitle").textContent = surat.perihal || "-";
+    document.getElementById("previewFileName").textContent = surat.file || "-";
+    document.getElementById("detailTanggalTerima").textContent = 
       Utils.formatDate(surat.tanggalDiterima) || "-";
-    document.getElementById("detailNoSurat").textContent = surat.noSurat || "-";
-    document.getElementById("detailTanggalSurat").textContent =
+    document.getElementById("detailNoSurat").textContent = 
+      surat.noSurat || surat.noNaskah || "-";
+    document.getElementById("detailTanggalSurat").textContent = 
       Utils.formatDate(surat.tanggalSurat) || "-";
-    document.getElementById("detailDari").textContent =
-      surat.namaPengirim || "-";
-    document.getElementById("detailKepada").textContent = surat.kepada || "-";
+    document.getElementById("detailDari").textContent = 
+      surat.dari || surat.namaPengirim || "-";
+    document.getElementById("detailKepada").textContent = 
+      surat.kepada || surat.tujuan || "-";
     document.getElementById("detailPerihal").textContent = surat.perihal || "-";
     document.getElementById("detailLampiran").textContent = surat.file || "-";
-    document.getElementById("detailSifat").textContent =
-      surat.sifatSurat || "-";
-    document.getElementById("detailJenisNaskah").textContent =
-      surat.jenisSurat || "-";
-    document.getElementById("detailCatatan").textContent = surat.catatan || "-";
+    document.getElementById("detailSifat").textContent = surat.sifatSurat || "-";
+    document.getElementById("detailJenisNaskah").textContent = surat.jenisSurat || "-";
+    document.getElementById("detailCatatan").textContent = 
+      surat.catatan || surat.deskripsi || "-";
+
+    const statusClass = Utils.getStatusClass(surat.status);
+    document.getElementById("detailStatus").innerHTML = 
+      `<span class="status ${statusClass}">${surat.status || 'Pending'}</span>`;
+
+    const createdAt = surat.createdAt?.toDate ? 
+      surat.createdAt.toDate().toISOString() : surat.createdAt;
+    const updatedAt = surat.updatedAt?.toDate ? 
+      surat.updatedAt.toDate().toISOString() : surat.updatedAt;
+    
+    document.getElementById("detailCreatedAt").textContent = 
+      Utils.formatDate(createdAt) || "-";
+    document.getElementById("detailUpdatedAt").textContent = 
+      Utils.formatDate(updatedAt) || "-";
   }
 
-  window.hapusSuratKeluar = function (id) {
-    if (typeof Swal !== "undefined") {
-      Swal.fire({
-        title: "Hapus Surat?",
-        text: "Apakah Anda yakin ingin menghapus surat ini?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-        confirmButtonText: "Ya, Hapus!",
-        cancelButtonText: "Batal",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          db.collection("surat_keluar")
-            .doc(id)
-            .update({
-              isDeleted: true,
-              deletedAt: firebase.firestore.FieldValue.serverTimestamp(),
-              deletedBy: currentUserData.nama,
-            })
-            .then(() => {
-              Notification.success("Surat berhasil dihapus!");
-            })
-            .catch((error) => {
-              console.error("❌ Error deleting surat:", error);
-              Notification.error("Gagal menghapus surat");
-            });
-        }
-      });
-    } else {
-      if (confirm("Apakah Anda yakin ingin menghapus surat ini?")) {
-        db.collection("surat_keluar")
-          .doc(id)
-          .update({
-            isDeleted: true,
-            deletedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            deletedBy: currentUserData.nama,
-          })
-          .then(() => {
-            Notification.success("Surat berhasil dihapus!");
-          })
-          .catch((error) => {
-            console.error("❌ Error deleting surat:", error);
-            Notification.error("Gagal menghapus surat");
-          });
+  window.editSuratKeluar = async function (id) {
+    try {
+      console.log("✏️ Editing surat:", id);
+      const doc = await db.collection("surat_keluar").doc(id).get();
+      
+      if (!doc.exists) {
+        Notification.error("Surat tidak ditemukan.");
+        return;
       }
+
+      const surat = { id: doc.id, ...doc.data() };
+      isEditMode = true;
+      currentSuratKeluarId = id;
+
+      toggleView("form");
+      document.getElementById("formTitle").textContent = "Edit Surat Keluar";
+      document.getElementById("submitBtnText").textContent = "Update Surat";
+
+      // Fill form with existing data
+      document.getElementById("jenisSurat").value = surat.jenisSurat || "";
+      document.getElementById("sifatSurat").value = surat.sifatSurat || "";
+      document.getElementById("noSurat").value = surat.noNaskah || surat.noSurat || "";
+      document.getElementById("perihal").value = surat.perihal || "";
+      document.getElementById("tanggalNaskah").value = surat.tanggalSurat || "";
+      document.getElementById("tanggalDiterima").value = surat.tanggalDiterima || "";
+      document.getElementById("catatan").value = surat.catatan || "";
+      document.getElementById("namaPengirim").value = surat.namaPengirim || surat.dari || "";
+      document.getElementById("jabatanPengirim").value = surat.jabatanPengirim || "";
+
+      // Check appropriate kepada checkboxes
+      const kepadaArray = surat.kepada ? surat.kepada.split(", ") : [];
+      document.querySelectorAll('input[name="kepada"]').forEach(cb => {
+        cb.checked = kepadaArray.includes(cb.value);
+      });
+
+      // Display existing file
+      if (surat.file) {
+        displayExistingFile(surat.file);
+      }
+
+      currentStep = 1;
+      updateFormStepDisplay();
+      
+      // Re-setup file upload
+      setTimeout(() => setupFileUploadHandler(), 200);
+    } catch (error) {
+      console.error("❌ Error editing surat:", error);
+      Notification.error("Gagal memuat data surat.");
     }
   };
 
-  // ========================================
-  // FILTERS
-  // ========================================
-  function initializeSifatFilter() {
-    const sifatBtn = document.getElementById("sifatFilterBtn");
-    const sifatModal = document.getElementById("sifatModal");
-    const applySifatBtn = document.getElementById("applySifat");
+  function displayExistingFile(filename) {
+    const uploadArea = document.getElementById("uploadArea");
+    const uploadContent = document.getElementById("uploadContent");
+    const fileInfoDisplay = document.getElementById("fileInfoDisplay");
+    
+    if (!uploadArea || !fileInfoDisplay) return;
 
-    if (!sifatBtn || !sifatModal) return;
+    uploadArea.classList.add("has-file");
+    if (uploadContent) uploadContent.style.display = "none";
 
-    sifatBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      sifatModal.classList.toggle("active");
-    });
+    let iconClass = "bi-file-earmark-text-fill";
+    let iconColor = "#6b7280";
 
-    document.querySelectorAll(".sifat-option").forEach((option) => {
-      option.addEventListener("click", function () {
-        document
-          .querySelectorAll(".sifat-option")
-          .forEach((o) => o.classList.remove("selected"));
-        this.classList.add("selected");
-      });
-    });
-
-    if (applySifatBtn) {
-      applySifatBtn.addEventListener("click", () => {
-        const selected = document.querySelector(".sifat-option.selected");
-        if (selected) {
-          const value = selected.getAttribute("data-value");
-          const text = selected.textContent;
-          document.getElementById("selectedSifatText").textContent = text;
-          document.getElementById("selectedSifatText").dataset.sifatValue =
-            value;
-          renderTableKeluar();
-        }
-        sifatModal.classList.remove("active");
-      });
+    if (filename.toLowerCase().endsWith('.pdf')) {
+      iconClass = "bi-file-earmark-pdf-fill";
+      iconColor = "#dc2626";
+    } else if (filename.toLowerCase().match(/\.(doc|docx)$/)) {
+      iconClass = "bi-file-earmark-word-fill";
+      iconColor = "#2563eb";
+    } else if (filename.toLowerCase().match(/\.(jpg|jpeg|png)$/)) {
+      iconClass = "bi-file-earmark-image-fill";
+      iconColor = "#10b981";
     }
 
-    document.addEventListener("click", (e) => {
-      if (!sifatModal.contains(e.target) && !sifatBtn.contains(e.target)) {
-        sifatModal.classList.remove("active");
-      }
-    });
+    fileInfoDisplay.innerHTML = `
+      <div class="file-display-card">
+        <div class="file-display-icon" style="background-color: ${iconColor}20;">
+          <i class="bi ${iconClass}" style="color: ${iconColor}; font-size: 28px;"></i>
+        </div>
+        <div class="file-display-info">
+          <div class="file-display-label">FILE EXISTING</div>
+          <div class="file-display-name">${filename}</div>
+          <div class="file-display-size">File sudah ada</div>
+        </div>
+      </div>
+    `;
+    fileInfoDisplay.style.display = "block";
   }
 
+  window.hapusSuratKeluar = async function (id) {
+    try {
+      console.log("🗑️ Deleting surat:", id);
+      const doc = await db.collection("surat_keluar").doc(id).get();
+      
+      if (!doc.exists) {
+        Notification.error("Surat tidak ditemukan.");
+        return;
+      }
+
+      const surat = { id: doc.id, ...doc.data() };
+
+      window.loadSwal(() => {
+        Swal.fire({
+          title: "Hapus Surat Keluar?",
+          html: `<p>Yakin menghapus:<br><strong>${surat.perihal}</strong>?</p>`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Ya, Hapus",
+          cancelButtonText: "Batal",
+          confirmButtonColor: "#dc3545",
+          reverseButtons: true,
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            await db.collection("surat_keluar").doc(id).update({
+              isDeleted: true,
+              deletedAt: firebase.firestore.FieldValue.serverTimestamp(),
+              deletedBy: currentUserData?.nama || currentUserData?.email || "Unknown",
+            });
+
+            Swal.fire({
+              icon: "success",
+              title: "Berhasil Dihapus!",
+              timer: 2500,
+              showConfirmButton: false,
+            });
+
+            // If in preview view, go back to table
+            const previewView = document.getElementById("previewView");
+            if (previewView && previewView.style.display !== "none") {
+              backToTable();
+            }
+            currentPreviewSuratId = null;
+          }
+        });
+      });
+    } catch (error) {
+      console.error("❌ Error deleting surat:", error);
+      Notification.error("Gagal menghapus surat.");
+    }
+  };
+
+  window.hapusFromPreview = () => {
+    if (currentPreviewSuratId) {
+      window.hapusSuratKeluar(currentPreviewSuratId);
+    }
+  };
+
+  window.downloadDocument = () => {
+    Notification.info("Fitur download segera tersedia.");
+  };
+
+  window.printDocument = () => {
+    window.print();
+  };
+
+  // ========================================
+  // CALENDAR FILTER
+  // ========================================
   function initializeCalendarEvents() {
     const datePickerBtn = document.getElementById("datePickerBtn");
     const calendarModal = document.getElementById("calendarModal");
-    const applyDateBtn = document.getElementById("applyDate");
-    const prevMonthBtn = document.getElementById("prevMonth");
-    const nextMonthBtn = document.getElementById("nextMonth");
-
+    
     if (!datePickerBtn || !calendarModal) return;
 
     datePickerBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      calendarModal.classList.toggle("active");
-      renderCalendar();
+      const rect = datePickerBtn.getBoundingClientRect();
+      calendarModal.style.top = `${rect.bottom + 8}px`;
+      calendarModal.style.left = `${rect.left}px`;
+      calendarModal.classList.add("active");
+      generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
     });
 
-    if (applyDateBtn) {
-      applyDateBtn.addEventListener("click", () => {
-        if (selectedDate) {
-          const formatted = selectedDate.toISOString().split("T")[0];
-          document.getElementById("selectedDateText").textContent =
-            Utils.formatDateShort(formatted);
-          document.getElementById("selectedDateText").dataset.dateValue =
-            formatted;
-          renderTableKeluar();
-        }
+    document.getElementById("prevMonth")?.addEventListener("click", () => {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    });
+
+    document.getElementById("nextMonth")?.addEventListener("click", () => {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    });
+
+    document.getElementById("applyDate")?.addEventListener("click", () => {
+      if (selectedDate) {
+        const dateISO = selectedDate.toISOString().split("T")[0];
+        document.getElementById("selectedDateText").textContent = 
+          Utils.formatDate(dateISO);
+        document.getElementById("selectedDateText").dataset.dateValue = dateISO;
         calendarModal.classList.remove("active");
-      });
-    }
-
-    if (prevMonthBtn) {
-      prevMonthBtn.addEventListener("click", () => {
-        currentDate.setMonth(currentDate.getMonth() - 1);
-        renderCalendar();
-      });
-    }
-
-    if (nextMonthBtn) {
-      nextMonthBtn.addEventListener("click", () => {
-        currentDate.setMonth(currentDate.getMonth() + 1);
-        renderCalendar();
-      });
-    }
+        currentPageKeluar = 1;
+        renderTableKeluar();
+      }
+    });
 
     document.addEventListener("click", (e) => {
-      if (
-        !calendarModal.contains(e.target) &&
-        !datePickerBtn.contains(e.target)
-      ) {
+      if (!calendarModal.contains(e.target) && e.target !== datePickerBtn) {
         calendarModal.classList.remove("active");
       }
     });
   }
 
-  function renderCalendar() {
-    const calendarDays = document.getElementById("calendarDays");
-    const calendarMonth = document.getElementById("calendarMonth");
-    if (!calendarDays || !calendarMonth) return;
-
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    calendarMonth.textContent = `${monthNames[month]} ${year}`;
-
-    const firstDay = new Date(year, month, 1).getDay();
+  function generateCalendar(year, month) {
+    const firstDay = new Date(year, month, 1);
     const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const startingDayOfWeek = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
+    const calendarDays = document.getElementById("calendarDays");
+    
+    if (!calendarDays) return;
 
     calendarDays.innerHTML = "";
+    document.getElementById("calendarMonth").textContent = 
+      `${monthNames[month]} ${year}`;
 
-    for (let i = 0; i < firstDay; i++) {
+    // Empty days at start
+    for (let i = 0; i < startingDayOfWeek; i++) {
       const emptyDay = document.createElement("button");
       emptyDay.className = "calendar-day empty";
       calendarDays.appendChild(emptyDay);
     }
 
+    const today = new Date();
+    
+    // Actual days
     for (let day = 1; day <= daysInMonth; day++) {
-      const dayBtn = document.createElement("button");
-      dayBtn.className = "calendar-day";
-      dayBtn.textContent = day;
+      const dayButton = document.createElement("button");
+      dayButton.className = "calendar-day";
+      dayButton.textContent = day;
 
-      const date = new Date(year, month, day);
-      if (selectedDate && date.toDateString() === selectedDate.toDateString()) {
-        dayBtn.classList.add("selected");
+      // Mark today
+      if (year === today.getFullYear() && 
+          month === today.getMonth() && 
+          day === today.getDate()) {
+        dayButton.classList.add("today");
       }
 
-      dayBtn.addEventListener("click", () => {
-        selectedDate = date;
-        renderCalendar();
+      // Mark selected
+      if (selectedDate && 
+          selectedDate.getFullYear() === year && 
+          selectedDate.getMonth() === month && 
+          selectedDate.getDate() === day) {
+        dayButton.classList.add("selected");
+      }
+
+      dayButton.addEventListener("click", function () {
+        document.querySelectorAll(".calendar-day").forEach(d => 
+          d.classList.remove("selected")
+        );
+        this.classList.add("selected");
+        selectedDate = new Date(year, month, day);
       });
 
-      calendarDays.appendChild(dayBtn);
+      calendarDays.appendChild(dayButton);
     }
+  }
+
+  // ========================================
+  // SIFAT FILTER
+  // ========================================
+  function initializeSifatFilter() {
+    const sifatBtn = document.getElementById("sifatFilterBtn");
+    const sifatModal = document.getElementById("sifatModal");
+    const selectedSifatText = document.getElementById("selectedSifatText");
+    
+    if (!sifatBtn || !sifatModal) return;
+
+    sifatBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const rect = sifatBtn.getBoundingClientRect();
+      sifatModal.style.top = `${rect.bottom + 8}px`;
+      sifatModal.style.left = `${rect.left}px`;
+      sifatModal.classList.toggle("active");
+    });
+
+    document.querySelectorAll("#sifatModal .sifat-option").forEach(opt => {
+      opt.addEventListener("click", function (e) {
+        e.stopPropagation();
+        document.querySelectorAll("#sifatModal .sifat-option").forEach(b => 
+          b.classList.remove("selected")
+        );
+        this.classList.add("selected");
+      });
+    });
+
+    document.getElementById("applySifat")?.addEventListener("click", function () {
+      const selectedOption = document.querySelector("#sifatModal .sifat-option.selected");
+      if (selectedOption) {
+        const value = selectedOption.dataset.value;
+        selectedSifatText.textContent = value === "" ? "Sifat" : value;
+        selectedSifatText.dataset.sifatValue = value;
+        sifatModal.classList.remove("active");
+        currentPageKeluar = 1;
+        renderTableKeluar();
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!sifatBtn.contains(e.target) && !sifatModal.contains(e.target)) {
+        sifatModal.classList.remove("active");
+      }
+    });
   }
 
   // ========================================
@@ -963,9 +1067,11 @@
   // ========================================
   window.addEventListener("beforeunload", () => {
     if (unsubscribeSuratKeluar) {
+      console.log("🧹 Cleaning up real-time listener");
       unsubscribeSuratKeluar();
     }
   });
+
 })();
 
-console.log("✅ Surat Keluar JS - Firebase Integrated (FULL FIXED)");
+console.log("✅ Surat Keluar JS - Firebase Integrated (FIXED & COMBINED)");

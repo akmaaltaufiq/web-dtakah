@@ -17,6 +17,7 @@
     <div class="main-content">
       <div id="header-placeholder"></div>
 
+      <!-- TABLE VIEW -->
       <div class="table-view active" id="tableView">
         <div class="container">
           <div class="page-header-new">
@@ -65,6 +66,8 @@
               </div>
             </div>
           </div>
+
+          <!-- CALENDAR MODAL -->
           <div class="calendar-modal" id="calendarModal">
             <div class="calendar-container">
               <div class="calendar-header">
@@ -99,6 +102,7 @@
             </div>
           </div>
 
+          <!-- TABLE -->
           <div class="table-wrapper">
             <table class="table-nota">
               <thead>
@@ -130,6 +134,137 @@
         </div>
       </div>
 
+      <!-- PREVIEW VIEW -->
+      <div class="preview-view" id="previewView">
+        <div class="container">
+          <div class="preview-page-header">
+            <div class="preview-header-left">
+              <button class="back-btn" id="backToTableFromPreview">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+              <h2 class="preview-title-main" id="previewTitleMain">Nota Dinas</h2>
+            </div>
+            <div class="header-actions">
+              <button class="icon-btn" onclick="downloadPDF()">
+                <i class="bi bi-download"></i>
+              </button>
+              <button class="icon-btn" onclick="printSurat()">
+                <i class="bi bi-printer"></i>
+              </button>
+              <button class="icon-btn" onclick="hapusSuratFromPreview()">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="preview-grid">
+            <!-- DOCUMENT VIEWER - LEFT COLUMN -->
+            <div class="document-viewer">
+              <div class="doc-placeholder">
+                <i class="bi bi-file-earmark-text"></i>
+                <p>Preview Dokumen</p>
+                <small id="previewFileName">-</small>
+              </div>
+            </div>
+
+            <!-- RIGHT SECTION - DATA & STATUS CARDS -->
+            <div class="preview-right-section">
+              <!-- DATA SURAT CARD -->
+              <div class="data-surat-card">
+                <div class="card-header">
+                  <i class="bi bi-file-text"></i>
+                  Data Surat
+                </div>
+                <div class="card-body">
+                  <div class="data-row">
+                    <div class="data-label">Tanggal Terima</div>
+                    <div class="data-value" id="previewTanggalTerima">-</div>
+                  </div>
+                  <div class="data-row">
+                    <div class="data-label">No Surat</div>
+                    <div class="data-value" id="previewNoSurat">-</div>
+                  </div>
+                  <div class="data-row">
+                    <div class="data-label">Tanggal Surat</div>
+                    <div class="data-value" id="previewTanggalSurat">-</div>
+                  </div>
+                  <div class="data-row">
+                    <div class="data-label">Dari</div>
+                    <div class="data-value" id="previewDari">-</div>
+                  </div>
+                  <div class="data-row">
+                    <div class="data-label">Kepada</div>
+                    <div class="data-value" id="previewKepada">-</div>
+                  </div>
+                  <div class="data-row">
+                    <div class="data-label">Perihal</div>
+                    <div class="data-value" id="previewPerihalDetail">-</div>
+                  </div>
+                  <div class="data-row">
+                    <div class="data-label">Lampiran</div>
+                    <div class="data-value" id="previewLampiran">-</div>
+                  </div>
+                  <div class="data-row">
+                    <div class="data-label">Sifat</div>
+                    <div class="data-value" id="previewSifat">-</div>
+                  </div>
+                  <div class="data-row">
+                    <div class="data-label">Jenis Naskah</div>
+                    <div class="data-value" id="previewJenisNaskah">-</div>
+                  </div>
+                  <div class="data-row">
+                    <div class="data-label">Catatan</div>
+                    <div class="data-value" id="previewCatatanDetail">-</div>
+                  </div>
+                  <div class="data-row">
+                    <div class="data-label">Dientry Oleh</div>
+                    <div class="data-value" id="previewDientry">-</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- STATUS SURAT CARD -->
+              <div class="status-surat-card">
+                <div class="card-header">
+                  <i class="bi bi-speedometer2"></i>
+                  Status Surat
+                </div>
+                <div class="card-body">
+                  <div class="status-section">
+                    <div class="status-label">Status Saat ini</div>
+                    <div class="status-badge" id="previewStatusBadge">
+                      <span class="badge-proses">Proses</span>
+                    </div>
+                  </div>
+                  
+                  <div class="status-section">
+                    <div class="status-label">Progress Disposisi</div>
+                    <div class="progress-bar-container">
+                      <div class="progress-bar" id="previewProgressBar">
+                        <div class="progress-fill" style="width: 50%"></div>
+                      </div>
+                      <div class="progress-text" id="previewProgressText">50%</div>
+                    </div>
+                  </div>
+
+                  <div class="status-section">
+                    <div class="status-label">Update Surat</div>
+                    <select class="form-select-status" id="updateSuratStatus">
+                      <option value="">Update Surat</option>
+                      <option value="proses">Proses</option>
+                      <option value="selesai">Selesai</option>
+                      <option value="revisi">Perlu Revisi</option>
+                      <option value="ditolak">Ditolak</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORM VIEW -->
       <div class="form-view" id="formView">
         <div class="container-form">
           <div class="form-header-top">
@@ -140,7 +275,7 @@
             >
               <i class="bi bi-arrow-left"></i>
             </button>
-            <h2 class="form-main-title">Susun Nota Dinas</h2>
+            <h2 class="form-main-title" id="formMainTitle">Susun Nota Dinas</h2>
           </div>
 
           <div class="progress-steps">
@@ -160,6 +295,7 @@
             </div>
           </div>
 
+          <!-- STEP 1 CONTENT -->
           <div class="step-content active" id="step1Content">
             <h3 class="section-title">IDENTITAS PENGIRIM NASKAH</h3>
 
@@ -247,39 +383,34 @@
                 ></textarea>
               </div>
               <div class="form-group-half">
-          <label class="form-label">File Naskah</label>
-          
-          <!-- UPLOAD AREA -->
-          <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-            
-            <!-- INPUT FILE (HIDDEN) -->
-            <input
-              type="file"
-              id="fileInput"
-              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-              style="display: none"
-              onchange="handleFileUpload(event)"
-            />
-            
-            <!-- KONTEN SEBELUM UPLOAD -->
-            <div class="upload-content" id="uploadContent">
-              <i class="bi bi-cloud-arrow-up"></i>
-              <p>Klik untuk unggah file atau seret file ke sini</p>
-              <span>PDF, DOC, DOCX, JPG, PNG (Max 50MB)</span>
+                <label class="form-label">File Naskah</label>
+                
+                <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                  <input
+                    type="file"
+                    id="fileInput"
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                    style="display: none"
+                    onchange="handleFileUpload(event)"
+                  />
+                  
+                  <div class="upload-content" id="uploadContent">
+                    <i class="bi bi-cloud-arrow-up"></i>
+                    <p>Klik untuk unggah file atau seret file ke sini</p>
+                    <span>PDF, DOC, DOCX, JPG, PNG (Max 50MB)</span>
+                  </div>
+                  
+                  <div class="file-info-display" id="fileInfoDisplay"></div>
+                </div>
+              </div>
             </div>
-            
-            <!-- KONTEN SETELAH UPLOAD (AWALNYA HIDDEN) -->
-            <div class="file-info-display" id="fileInfoDisplay"></div>
-            
-          </div>
-        </div>
-      </div>
 
             <div class="form-actions-bottom">
               <button class="btn-next" onclick="goToStep2()">Tambahkan</button>
             </div>
           </div>
 
+          <!-- STEP 2 CONTENT -->
           <div class="step-content" id="step2Content">
             <h3 class="section-title">Tujuan</h3>
 
@@ -296,16 +427,6 @@
                 <option value="Sekretaris">Sekretaris</option>
                 <option value="Staff TU">Staff TU</option>
               </select>
-            </div>
-
-            <div class="form-group-full">
-              <label class="form-label">Instruksi</label>
-              <textarea
-                class="form-textarea"
-                id="instruksi"
-                placeholder="Masukkan Instruksi"
-                rows="5"
-              ></textarea>
             </div>
 
             <div class="form-group-full">
@@ -331,14 +452,13 @@
             </div>
           </div>
 
-          <!-- STEP 3 PREVIEW - ENHANCED VERSION -->
+          <!-- STEP 3 CONTENT (PREVIEW) -->
           <div class="step-content" id="step3Content">
             <div class="preview-header">
               <h3 class="section-title-main">PREVIEW DATA NOTA DINAS</h3>
               <p class="preview-subtitle">Pastikan semua data sudah benar sebelum mengirim</p>
             </div>
 
-            <!-- SECTION 1: IDENTITAS PENGIRIM -->
             <div class="preview-section">
               <div class="preview-section-header">
                 <i class="bi bi-person-badge"></i>
@@ -367,7 +487,6 @@
               </div>
             </div>
 
-            <!-- SECTION 2: DETAIL ISI -->
             <div class="preview-section">
               <div class="preview-section-header">
                 <i class="bi bi-file-earmark-text"></i>
@@ -383,7 +502,7 @@
                     <i class="bi bi-tag"></i>
                     Jenis Naskah
                   </div>
-                  <div class="preview-value" id="previewJenisNaskah">-</div>
+                  <div class="preview-value" id="previewJenisNaskahForm">-</div>
                 </div>
 
                 <div class="preview-row">
@@ -417,7 +536,7 @@
                     <i class="bi bi-calendar-event"></i>
                     Tanggal Naskah
                   </div>
-                  <div class="preview-value" id="previewTanggalSurat">-</div>
+                  <div class="preview-value" id="previewTanggalSuratForm">-</div>
                 </div>
 
                 <div class="preview-row">
@@ -436,14 +555,13 @@
                   <div class="preview-value">
                     <div class="preview-file-info" id="previewFileInfo">
                       <i class="bi bi-file-earmark-pdf"></i>
-                      <span id="previewFileName">Tidak ada file</span>
+                      <span id="previewFileNameForm">Tidak ada file</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- SECTION 3: TUJUAN -->
             <div class="preview-section">
               <div class="preview-section-header">
                 <i class="bi bi-send"></i>
@@ -460,14 +578,6 @@
                     Ditujukan Kepada
                   </div>
                   <div class="preview-value preview-highlight" id="previewTujuan">-</div>
-                </div>
-
-                <div class="preview-row">
-                  <div class="preview-label">
-                    <i class="bi bi-list-check"></i>
-                    Instruksi
-                  </div>
-                  <div class="preview-value preview-text-area" id="previewInstruksi">-</div>
                 </div>
 
                 <div class="preview-row">
@@ -490,25 +600,6 @@
               </div>
             </div>
 
-            <!-- PREVIEW FILE DOCUMENT -->
-            <div class="preview-section">
-              <div class="preview-section-header">
-                <i class="bi bi-file-earmark-pdf"></i>
-                <h3 class="section-title">DOKUMEN NASKAH</h3>
-              </div>
-              
-              <div class="preview-card preview-file-card">
-                <div class="file-preview-container">
-                  <i class="bi bi-file-earmark-pdf-fill" style="font-size: 64px; color: #dc2626;"></i>
-                  <p class="file-preview-text" id="previewFileNameLarge">Tidak ada dokumen</p>
-                  <button type="button" class="btn-view-pdf" id="viewPdfBtn" style="display: none;">
-                    <i class="bi bi-eye"></i> Lihat Dokumen
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- WARNING BOX -->
             <div class="preview-warning-box">
               <div class="warning-icon">
                 <i class="bi bi-exclamation-triangle-fill"></i>
@@ -519,10 +610,8 @@
               </div>
             </div>
 
-            <!-- ACTION BUTTONS -->
             <div class="form-actions-bottom">
               <button type="button" class="btn-secondary" onclick="goToStep2()">
-                <i class="bi bi-arrow-left"></i>
                 Kembali
               </button>
               <button type="button" class="btn-submit" onclick="confirmSubmitNotaDinas()">
@@ -531,7 +620,10 @@
               </button>
             </div>
           </div>
+        </div>
+      </div>
 
+      <!-- SUCCESS POPUP -->
       <div class="success-popup" id="successPopup">
         <div class="success-content">
           <button class="close-btn-popup" onclick="closeSuccessPopupAndBack()">
@@ -547,217 +639,6 @@
         </div>
       </div>
 
-      <div class="disposisi-view" id="disposisiView">
-        <div class="container">
-          <div class="disposisi-page-header">
-            <div class="disposisi-header-left">
-              <button class="back-btn" id="backToTable">
-                <i class="bi bi-chevron-left"></i>
-              </button>
-              <h2 class="disposisi-title">Nota Dinas</h2>
-            </div>
-            <div class="header-actions">
-              <button class="icon-btn" onclick="downloadPDF()">
-                <i class="bi bi-download"></i>
-              </button>
-              <button class="icon-btn" onclick="printSurat()">
-                <i class="bi bi-printer"></i>
-              </button>
-              <button class="icon-btn" onclick="hapusSuratFromDetail()">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
-          </div>
-
-          <div class="disposisi-grid">
-            <div class="data-surat-card">
-              <div class="card-header">Data Surat</div>
-              <div class="card-body">
-                <div class="data-row">
-                  <div class="data-label">Tanggal Terima</div>
-                  <div class="data-value" id="detailTanggalTerima">-</div>
-                </div>
-                <div class="data-row">
-                  <div class="data-label">No Surat</div>
-                  <div class="data-value" id="detailNoSurat">-</div>
-                </div>
-                <div class="data-row">
-                  <div class="data-label">Tanggal Surat</div>
-                  <div class="data-value" id="detailTanggalSurat">-</div>
-                </div>
-                <div class="data-row">
-                  <div class="data-label">Dari</div>
-                  <div class="data-value" id="detailDari">-</div>
-                </div>
-                <div class="data-row">
-                  <div class="data-label">Kepada</div>
-                  <div class="data-value" id="detailKepada">-</div>
-                </div>
-                <div class="data-row">
-                  <div class="data-label">Perihal</div>
-                  <div class="data-value" id="detailPerihal">-</div>
-                </div>
-                <div class="data-row">
-                  <div class="data-label">Lampiran</div>
-                  <div class="data-value" id="detailLampiran">-</div>
-                </div>
-                <div class="data-row">
-                  <div class="data-label">Sifat</div>
-                  <div class="data-value" id="detailSifat">-</div>
-                </div>
-                <div class="data-row">
-                  <div class="data-label">Jenis Naskah</div>
-                  <div class="data-value" id="detailJenisNaskah">-</div>
-                </div>
-                <div class="data-row">
-                  <div class="data-label">Catatan</div>
-                  <div class="data-value" id="detailCatatan">-</div>
-                </div>
-                <div class="data-row">
-                  <div class="data-label">Dientry Oleh</div>
-                  <div class="data-value" id="detailDientry">-</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="preview-card">
-              <h3 class="preview-title" id="detailPreviewTitle">-</h3>
-              <div class="preview-navigation">
-                <button class="nav-arrow">
-                  <i class="bi bi-chevron-left"></i>
-                </button>
-                <button class="nav-arrow">
-                  <i class="bi bi-chevron-right"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="disposisi-action-card">
-            <div class="disposisi-action-header">Tindak lanjut</div>
-            <div class="disposisi-options">
-              <div class="disposisi-checkbox">
-                <input type="checkbox" id="disp1" />
-                <label for="disp1">1. Untuk Diketahui</label>
-              </div>
-              <div class="disposisi-checkbox">
-                <input type="checkbox" id="disp7" />
-                <label for="disp7">7. Ambil Langkah Seperlunya</label>
-              </div>
-              <div class="disposisi-checkbox">
-                <input type="checkbox" id="disp2" />
-                <label for="disp2">2. Untuk Dilaksanakan</label>
-              </div>
-              <div class="disposisi-checkbox">
-                <input type="checkbox" id="disp8" />
-                <label for="disp8">8. Dikicarakan</label>
-              </div>
-              <div class="disposisi-checkbox">
-                <input type="checkbox" id="disp3" />
-                <label for="disp3">3. Untuk Dipelajari</label>
-              </div>
-              <div class="disposisi-checkbox">
-                <input type="checkbox" id="disp9" />
-                <label for="disp9">9. Dilaporkan</label>
-              </div>
-              <div class="disposisi-checkbox">
-                <input type="checkbox" id="disp4" />
-                <label for="disp4">4. Disiapkan Jawaban</label>
-              </div>
-              <div class="disposisi-checkbox">
-                <input type="checkbox" id="disp10" />
-                <label for="disp10">10. Segera Selesaikan</label>
-              </div>
-              <div class="disposisi-checkbox">
-                <input type="checkbox" id="disp5" />
-                <label for="disp5">5. Jawab Langsung</label>
-              </div>
-              <div class="disposisi-checkbox">
-                <input type="checkbox" id="disp11" />
-                <label for="disp11">11. Copy untuk.....</label>
-              </div>
-              <div class="disposisi-checkbox">
-                <input type="checkbox" id="disp6" />
-                <label for="disp6">6. ACC untuk ditindak lanjuti</label>
-              </div>
-              <div class="disposisi-checkbox">
-                <input type="checkbox" id="disp12" />
-                <label for="disp12">12. Arsip</label>
-              </div>
-            </div>
-
-            <div class="disposisi-form">
-              <div class="form-group">
-                <label class="form-label">Keterangan</label>
-                <textarea
-                  class="form-textarea"
-                  id="keteranganDisposisi"
-                  placeholder="Masukkan keterangan tambahan..."
-                ></textarea>
-              </div>
-
-              <div class="disposisi-form-group">
-              <label class="disposisi-form-label">Kepada</label>
-              <div class="disposisi-checkbox-grid">
-              <label class="disposisi-checkbox">
-                <input type="checkbox" value="1" />
-                <span>1. Kepala Pusat Data dan Informasi</span>
-              </label>
-              <label class="disposisi-checkbox">
-                <input type="checkbox" value="7" />
-                <span>7. Kepala Subbidang Manajemen Sistem Informasi</span>
-              </label>
-              <label class="disposisi-checkbox">
-                <input type="checkbox" value="2" />
-                <span>2. Kepala Bagian Tata Usaha</span>
-              </label>
-              <label class="disposisi-checkbox">
-                <input type="checkbox" value="8" />
-                <span>8. Kepala Bidang Infrastruktur Teknologi Informasi & Komunikasi</span>
-              </label>
-              <label class="disposisi-checkbox">
-                <input type="checkbox" value="3" />
-                <span>3. Kepala Subbagian Umum</span>
-              </label>
-              <label class="disposisi-checkbox">
-                <input type="checkbox" value="9" />
-                <span>9. Kepala Subbidang Perencanaan & Pengembangan Infrastruktur</span>
-              </label>
-              <label class="disposisi-checkbox">
-                <input type="checkbox" value="4" />
-                <span>4. Kepala Bidang Banglola Sisfohan</span>
-              </label>
-              <label class="disposisi-checkbox">
-                <input type="checkbox" value="10" />
-                <span>10. Kepala Subbidang Operasional & Layanan Infrastruktur</span>
-              </label>
-              <label class="disposisi-checkbox">
-                <input type="checkbox" value="5" />
-                <span>5. Kepala Subbidang Pengembangan & Pengelolaan Aplikasi</span>
-              </label>
-              <label class="disposisi-checkbox">
-                <input type="checkbox" value="11" />
-                <span>11. Kepala Subbidang Pemeliharaan Infrastruktur</span>
-              </label>
-              <label class="disposisi-checkbox">
-                <input type="checkbox" value="6" />
-                <span>6. Kepala Subbidang Pengumpulan & Pengelolaan Data</span>
-              </label>
-              <label class="disposisi-checkbox">
-                <input type="checkbox" value="12" />
-                <span>12. Kepala Bidang Pengamanan Sistem Informasi & Persandian</span>
-              </label>
-            </div>
-
-            <div class="form-actions">
-              <button class="btn-kirim" id="kirimDisposisi">
-                <i class="bi bi-send-fill"></i> Kirim
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div id="footer-placeholder"></div>
     </div>
 
@@ -765,7 +646,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-    <!-- Firebase Config -->
     <script src="assets/js/firebase-config.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
