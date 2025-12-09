@@ -1,5 +1,5 @@
 // =============================
-// SURAT MASUK - FIREBASE INTEGRATED WITH FIXED DELETE
+// SURAT MASUK - FIREBASE INTEGRATED (NO DISPOSISI ICON)
 // =============================
 (function () {
   "use strict";
@@ -15,7 +15,7 @@
   // INITIALIZATION
   // =============================
   window.initializeSuratMasukPage = function () {
-    console.log("📄 Surat Masuk Page Initialized (Fixed Delete)");
+    console.log("📄 Surat Masuk Page Initialized (No Disposisi Icon)");
 
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -355,7 +355,7 @@
   };
 
   // =============================
-  // TABLE RENDERING - FILTER isDeleted
+  // TABLE RENDERING - TANPA ICON DISPOSISI
   // =============================
   async function renderTable() {
     const tbody = document.getElementById("tableBody");
@@ -370,7 +370,7 @@
       snapshot.forEach((doc) => {
         const docData = doc.data();
         
-        // ⚠️ CRITICAL: Skip deleted documents
+        // Skip deleted documents
         if (docData.isDeleted === true) {
           console.log("🗑️ Skipping deleted document:", doc.id);
           return;
@@ -403,6 +403,7 @@
         const row = document.createElement("tr");
         const tanggalDiterimaFormatted = Utils.formatDate(surat.tanggalDiterima);
 
+        // HANYA ICON PREVIEW DAN HAPUS
         row.innerHTML = `
           <td style="text-align: center; font-weight: 600; width: 50px;">${startIndex + index + 1}</td>
           <td style="width: 130px;">${tanggalDiterimaFormatted}</td>
@@ -410,15 +411,11 @@
           <td style="min-width: 200px;">${surat.perihal}</td>
           <td style="width: 150px;">${surat.dari}</td>
           <td style="min-width: 180px;">${surat.kepada}</td>
-          <td style="width: 150px; text-align: center;">
+          <td style="width: 120px; text-align: center;">
             <div class="action-buttons">
               <div class="btn-action-group">
                 <button class="btn-action" title="Lihat" onclick="window.lihatSurat('${surat.id}')">
                   <i class="bi bi-eye"></i>
-                </button>
-                <div class="btn-action-separator"></div>
-                <button class="btn-action" title="Disposisi" onclick="window.disposisiSurat('${surat.id}')">
-                  <i class="bi bi-send"></i>
                 </button>
               </div>
               <button class="btn-delete" title="Hapus" onclick="window.hapusSurat('${surat.id}')">
@@ -519,7 +516,6 @@
                 confirmButtonColor: "#28a745"
               });
 
-              // If in detail view, go back to list
               const detailView = document.getElementById("detailPreviewView");
               if (detailView && !detailView.classList.contains("hidden")) {
                 setTimeout(() => showListView(), 500);
@@ -615,14 +611,6 @@
   };
 
   // =============================
-  // DISPOSISI
-  // =============================
-  window.disposisiSurat = function (id) {
-    console.log("📤 Disposisi surat:", id);
-    Notification.info("Fitur disposisi dalam pengembangan");
-  };
-
-  // =============================
   // PAGINATION
   // =============================
   window.previousPage = function () {
@@ -663,4 +651,4 @@
 
 })();
 
-console.log("✅ Surat Masuk JS - Firebase Integrated with Fixed Delete");
+console.log("✅ Surat Masuk JS - Without Disposisi Icon");
