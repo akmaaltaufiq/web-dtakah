@@ -427,7 +427,7 @@
                 icon: "success",
                 title: "Berhasil Dipulihkan!",
                 html: `<p>Surat "<strong>${surat.perihal || 'Tanpa Judul'}</strong>" berhasil dipulihkan!</p>`,
-                timer: 3000,
+                timer: 2000,
                 showConfirmButton: true,
                 confirmButtonText: "OK",
                 confirmButtonColor: "#28a745"
@@ -512,7 +512,7 @@
                 icon: "success",
                 title: "Terhapus Permanen!",
                 html: `<p>Surat "<strong>${perihal}</strong>" telah dihapus permanen dari database.</p>`,
-                timer: 3000,
+                timer: 2000,
                 showConfirmButton: true,
                 confirmButtonText: "OK",
                 confirmButtonColor: "#28a745"

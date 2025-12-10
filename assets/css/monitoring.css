@@ -1,4 +1,8 @@
-/* Monitoring Surat */
+/* =============================
+   MONITORING SURAT - REAL-TIME
+   ============================= */
+
+/* Container */
 .monitoring-container {
   background: white;
   border-radius: 10px;
@@ -14,7 +18,31 @@
   margin-bottom: 24px;
 }
 
-/* Tabs */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+}
+
+/* =============================
+   TABS
+   ============================= */
 .tabs-container {
   display: flex;
   gap: 8px;
@@ -38,6 +66,7 @@
 
 .tab-btn:hover {
   color: #333;
+  background: rgba(139, 0, 0, 0.05);
 }
 
 .tab-btn.active {
@@ -46,7 +75,9 @@
   font-weight: 600;
 }
 
-/* Filters */
+/* =============================
+   FILTERS
+   ============================= */
 .filters-container {
   display: flex;
   gap: 12px;
@@ -56,6 +87,7 @@
   background: #ffffff;
   border-radius: 8px;
   border: 1px solid #e5e7eb;
+  flex-wrap: wrap;
 }
 
 .filter-icon {
@@ -91,6 +123,7 @@
 
 .date-picker-btn:hover {
   border-color: #9ca3af;
+  background: #f9fafb;
 }
 
 .date-picker-btn i {
@@ -114,7 +147,7 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
-  min-width: 140px;
+  min-width: 180px;
   transition: border-color 0.2s;
 }
 
@@ -132,6 +165,7 @@
   position: relative;
   flex: 1;
   max-width: 350px;
+  min-width: 200px;
 }
 
 .search-filter input {
@@ -142,6 +176,7 @@
   font-size: 14px;
   background: white;
   color: #374151;
+  transition: all 0.2s;
 }
 
 .search-filter input::placeholder {
@@ -188,7 +223,9 @@
   font-size: 16px;
 }
 
-/* Calendar Modal */
+/* =============================
+   CALENDAR MODAL
+   ============================= */
 .calendar-modal {
   display: none;
   position: fixed;
@@ -204,15 +241,37 @@
 
 .calendar-modal.active {
   display: flex;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .calendar-container {
   background-color: white;
   border-radius: 16px;
   padding: 30px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   max-width: 500px;
   width: 90%;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .calendar-header {
@@ -248,7 +307,8 @@
 }
 
 .calendar-nav button:hover {
-  background-color: #e9ecef;
+  background-color: #7f1d1d;
+  color: white;
 }
 
 .calendar-weekdays {
@@ -289,12 +349,14 @@
 
 .calendar-day:hover:not(.empty):not(.selected) {
   background-color: #f8f9fa;
+  color: #1a1a1a;
 }
 
 .calendar-day.selected {
   background-color: #7f1d1d;
   color: white;
   font-weight: 600;
+  transform: scale(1.05);
 }
 
 .calendar-day.today {
@@ -325,13 +387,23 @@
 
 .calendar-apply-btn:hover {
   background-color: #991b1b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(127, 29, 29, 0.3);
 }
 
-/* Monitoring Table */
+/* =============================
+   MONITORING TABLE
+   ============================= */
+.table-responsive {
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
 .monitoring-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
+  min-width: 1000px;
 }
 
 .monitoring-table thead {
@@ -339,20 +411,35 @@
 }
 
 .monitoring-table th {
-  padding: 12px 8px;
+  padding: 14px 12px;
   font-weight: 600;
-  color: #666;
-  border-bottom: 2px solid #e5e5e5;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
   white-space: nowrap;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
 }
 
 .monitoring-table td {
-  padding: 12px 8px;
+  padding: 14px 12px;
   border-bottom: 1px solid #f0f0f0;
   vertical-align: middle;
+  transition: background-color 0.2s;
 }
 
-/* Status Badges */
+.monitoring-table tbody tr {
+  transition: all 0.2s;
+}
+
+.monitoring-table tbody tr:hover {
+  background-color: #f9fafb;
+  transform: translateX(2px);
+}
+
+/* =============================
+   STATUS BADGES - COLOR CODED
+   ============================= */
 .status-badge {
   padding: 6px 14px;
   border-radius: 16px;
@@ -360,44 +447,77 @@
   font-weight: 600;
   display: inline-block;
   white-space: nowrap;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
-.status-badge.badge-pending {
-  background: #dbeafe;
-  color: #1e40af;
+/* PROSES - BIRU */
+.status-badge[style*="#DBEAFE"],
+.status-badge[style*="#1E40AF"] {
+  animation: pulse-blue 2s infinite;
+  box-shadow: 0 2px 8px rgba(30, 64, 175, 0.2);
 }
 
-.status-badge.badge-proses {
-  background: #fef3c7;
-  color: #d97706;
+@keyframes pulse-blue {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(30, 64, 175, 0.2);
+  }
+  50% {
+    box-shadow: 0 2px 12px rgba(30, 64, 175, 0.4);
+  }
 }
 
-.status-badge.badge-selesai {
-  background: #d1fae5;
-  color: #059669;
+/* SEDANG DITINJAU - KUNING */
+.status-badge[style*="#FEF3C7"],
+.status-badge[style*="#D97706"] {
+  animation: pulse-yellow 2s infinite;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.2);
 }
 
-.status-badge.badge-siap-kirim {
-  background: #e0e7ff;
-  color: #4f46e5;
+@keyframes pulse-yellow {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(217, 119, 6, 0.2);
+  }
+  50% {
+    box-shadow: 0 2px 12px rgba(217, 119, 6, 0.4);
+  }
 }
 
-.status-badge.badge-diterima {
-  background: #d1fae5;
-  color: #059669;
+/* SELESAI - HIJAU */
+.status-badge[style*="#D1FAE5"],
+.status-badge[style*="#059669"] {
+  animation: pulse-green 2s infinite;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.2);
 }
 
-.status-badge.badge-ditolak {
-  background: #fee2e2;
-  color: #dc2626;
+@keyframes pulse-green {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.2);
+  }
+  50% {
+    box-shadow: 0 2px 12px rgba(5, 150, 105, 0.4);
+  }
 }
 
-.status-badge.badge-dihapus {
-  background: #f3f4f6;
-  color: #6b7280;
+/* DITOLAK - MERAH */
+.status-badge[style*="#FEE2E2"],
+.status-badge[style*="#DC2626"] {
+  animation: pulse-red 2s infinite;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
 }
 
-/* Action Buttons */
+@keyframes pulse-red {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+  }
+  50% {
+    box-shadow: 0 2px 12px rgba(220, 38, 38, 0.4);
+  }
+}
+
+/* =============================
+   ACTION BUTTONS
+   ============================= */
 .action-btn {
   padding: 8px 12px;
   border: none;
@@ -418,6 +538,8 @@
 
 .view-btn:hover {
   background: #c7d2fe;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
 }
 
 .delete-btn {
@@ -427,9 +549,13 @@
 
 .delete-btn:hover {
   background: #fecaca;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 38, 38, 0.2);
 }
 
-/* Footer */
+/* =============================
+   TABLE FOOTER & PAGINATION
+   ============================= */
 .table-footer {
   display: flex;
   justify-content: space-between;
@@ -440,7 +566,8 @@
 
 .showing-info {
   font-size: 14px;
-  color: #666;
+  color: #6b7280;
+  font-weight: 500;
 }
 
 .pagination {
@@ -449,9 +576,9 @@
 }
 
 .pagination-btn {
-  width: 36px;
-  height: 36px;
-  border: 1px solid #e5e5e5;
+  width: 38px;
+  height: 38px;
+  border: 1px solid #e5e7eb;
   background: white;
   border-radius: 6px;
   cursor: pointer;
@@ -464,31 +591,112 @@
 .pagination-btn:hover:not(:disabled) {
   background: #f9fafb;
   border-color: #7f1d1d;
+  transform: translateY(-2px);
 }
 
 .pagination-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
+  background: #f3f4f6;
 }
 
 .pagination-btn i {
   font-size: 14px;
-  color: #666;
+  color: #6b7280;
 }
 
-/* Responsive */
+.pagination-btn:hover:not(:disabled) i {
+  color: #7f1d1d;
+}
+
+/* =============================
+   LOADING STATE
+   ============================= */
+.loading-row {
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-color: #f3f4f6;
+  }
+  50% {
+    background-color: #e5e7eb;
+  }
+  100% {
+    background-color: #f3f4f6;
+  }
+}
+
+/* =============================
+   RESPONSIVE
+   ============================= */
+@media (max-width: 1200px) {
+  .monitoring-title {
+    font-size: 32px;
+  }
+  
+  .filters-container {
+    gap: 8px;
+  }
+}
+
 @media (max-width: 768px) {
-  .monitoring-table {
-    font-size: 12px;
-    min-width: 800px;
+  .monitoring-container {
+    padding: 20px;
   }
 
-  .monitoring-table th,
-  .monitoring-table td {
-    padding: 8px 6px;
+  .monitoring-title {
+    font-size: 28px;
   }
 
   .filters-container {
     flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .filter-icon {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 12px;
+  }
+
+  .search-filter {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .realtime-indicator {
+    top: 10px;
+    right: 10px;
+    font-size: 11px;
+    padding: 8px 14px;
+  }
+
+  .table-footer {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .monitoring-table th,
+  .monitoring-table td {
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  .status-badge {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .action-btn {
+    padding: 6px 10px;
+  }
+
+  .action-btn i {
+    font-size: 14px;
   }
 }
