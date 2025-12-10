@@ -22,8 +22,7 @@
       <!-- Sidebar -->
       <div class="navigation-sidebar">
         <div class="logo-section">
-          <div class="logo-emblem">
-          </div>
+          <div class="logo-emblem"></div>
           <div class="logo-text">D-TAKAH</div>
         </div>
 
@@ -334,7 +333,7 @@
 
     <!-- Kapus Dashboard Script -->
     <script>
-      console.log("📄 Dashboard Kapus loaded v2.0 - Final");
+      console.log("📄 Dashboard Kapus loaded - WITH NOTA DINAS REAL-TIME");
 
       let currentUserData = null;
       let unsubscribeSuratMasuk = null;
@@ -347,13 +346,11 @@
       function initDashboardKapus() {
         console.log("🚀 Initializing Dashboard Kapus...");
 
-        // Check authentication and role
         checkUserRole(["kapus"])
           .then((userData) => {
             console.log("✅ Kapus access granted:", userData);
             currentUserData = userData;
 
-            // Display user information
             const displayName = userData.nama || userData.email;
 
             document.getElementById("kapusName").textContent = displayName;
@@ -362,12 +359,10 @@
             document.getElementById("sidebarUserName").textContent =
               displayName;
 
-            // Load dashboard data with real-time listeners
             loadKapusDashboard();
           })
           .catch((error) => {
             console.error("❌ Access denied:", error);
-            // User will be redirected by checkUserRole
           });
       }
 
@@ -377,7 +372,6 @@
       function loadKapusDashboard() {
         console.log("📊 Loading Kapus dashboard with real-time listeners...");
 
-        // Setup real-time listeners for all collections
         setupSuratMasukListener();
         setupSuratKeluarListener();
         setupNotaDinasListener();
@@ -407,16 +401,12 @@
 
               console.log("📨 Surat Masuk for Kapus:", suratMasuk.length);
 
-              // Update stats
               document.getElementById("statSuratMasuk").textContent =
                 suratMasuk.length;
               document.getElementById("badgeSuratMasuk").textContent =
                 suratMasuk.length;
 
-              // Render list
               renderSuratMasukList(suratMasuk);
-
-              // Update total notification badge
               updateTotalNotif();
             },
             (error) => {
@@ -449,16 +439,12 @@
 
               console.log("📤 Surat Keluar for Kapus:", suratKeluar.length);
 
-              // Update stats
               document.getElementById("statSuratKeluar").textContent =
                 suratKeluar.length;
               document.getElementById("badgeSuratKeluar").textContent =
                 suratKeluar.length;
 
-              // Render list
               renderSuratKeluarList(suratKeluar);
-
-              // Update total notification badge
               updateTotalNotif();
             },
             (error) => {
@@ -468,7 +454,7 @@
       }
 
       // ========================================
-      // REAL-TIME LISTENER - NOTA DINAS
+      // REAL-TIME LISTENER - NOTA DINAS (NEW!)
       // ========================================
       function setupNotaDinasListener() {
         if (unsubscribeNotaDinas) {
@@ -491,16 +477,12 @@
 
               console.log("📝 Nota Dinas for Kapus:", notaDinas.length);
 
-              // Update stats
               document.getElementById("statNotaDinas").textContent =
                 notaDinas.length;
               document.getElementById("badgeNotaDinas").textContent =
                 notaDinas.length;
 
-              // Render list
               renderNotaDinasList(notaDinas);
-
-              // Update total notification badge
               updateTotalNotif();
             },
             (error) => {
@@ -530,7 +512,6 @@
           notifBadge.textContent = totalNotif;
         }
 
-        // Count total disetujui bulan ini
         countDisetujuiBulanIni();
       }
 
@@ -677,7 +658,7 @@
       }
 
       // ========================================
-      // RENDER NOTA DINAS LIST
+      // RENDER NOTA DINAS LIST (NEW!)
       // ========================================
       function renderNotaDinasList(data) {
         const container = document.getElementById("notaDinasList");
@@ -695,28 +676,28 @@
 
         container.innerHTML = data
           .map(
-            (surat) => `
+            (nota) => `
             <div class="surat-item">
-              <strong>${surat.perihal || "Tanpa Perihal"}</strong>
+              <strong>${nota.perihal || "Tanpa Perihal"}</strong>
               <div class="surat-meta">
                 <span><i class="bi bi-calendar3"></i> ${
-                  surat.tanggalSurat ? formatDate(surat.tanggalSurat) : "-"
+                  nota.tanggalSurat ? formatDate(nota.tanggalSurat) : "-"
                 }</span>
                 <span><i class="bi bi-person"></i> Dari: ${
-                  surat.dari || "N/A"
+                  nota.dari || nota.namaPengirim || "N/A"
                 }</span>
                 <span><i class="bi bi-hash"></i> ${
-                  surat.noSurat || "N/A"
+                  nota.noSurat || nota.noNaskah || "N/A"
                 }</span>
               </div>
               <div class="surat-actions">
                 <button class="btn-approve" onclick="approveSurat('${
-                  surat.id
+                  nota.id
                 }', 'nota-dinas')">
                   <i class="bi bi-check-circle"></i> Setujui & TTD Digital
                 </button>
                 <button class="btn-reject" onclick="rejectSurat('${
-                  surat.id
+                  nota.id
                 }', 'nota-dinas')">
                   <i class="bi bi-x-circle"></i> Tolak
                 </button>

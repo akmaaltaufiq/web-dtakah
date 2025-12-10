@@ -1,12 +1,16 @@
 // ==========================================
-// KEMHAN DATABASE - LOCAL STORAGE MANAGER
+// KEMHAN DATABASE - HYBRID SYSTEM
+// Primary: Firebase Firestore
+// Fallback: localStorage (for legacy support)
 // ==========================================
 
-// Storage Keys Configuration
+console.log("📦 Loading Kemhan Database (Hybrid Mode)...");
+
+// Storage Keys Configuration (localStorage only)
 const STORAGE_KEYS = {
   SURAT_MASUK: "kemhan_surat_masuk",
   SURAT_KELUAR: "kemhan_surat_keluar",
-  NOTA_DINAS: "kemhan_nota_dinas",
+  NOTA_DINAS: "kemhan_nota_dinas", // DEPRECATED - now in Firebase
   DISPOSISI: "kemhan_disposisi",
   FAVORIT: "kemhan_favorit",
   DELETED: "kemhan_surat_deleted",
@@ -22,7 +26,7 @@ const STORAGE_KEYS = {
 // KEMHAN DATABASE CLASS
 // ==========================================
 class KemhanDatabase {
-  // ========== GENERIC CRUD ==========
+  // ========== GENERIC CRUD (localStorage) ==========
   static get(key) {
     try {
       const data = localStorage.getItem(key);
@@ -58,7 +62,7 @@ class KemhanDatabase {
       Object.values(STORAGE_KEYS).forEach((key) => {
         localStorage.removeItem(key);
       });
-      console.log("✅ All data cleared");
+      console.log("✅ All localStorage data cleared");
       return true;
     } catch (error) {
       console.error("Error clearing all data:", error);
@@ -66,7 +70,7 @@ class KemhanDatabase {
     }
   }
 
-  // ========== NOTIFICATIONS ==========
+  // ========== NOTIFICATIONS (localStorage) ==========
   static getNotifications() {
     const data = this.get(STORAGE_KEYS.NOTIFICATIONS);
     return data.sort((a, b) => (a.isRead === b.isRead ? 0 : a.isRead ? 1 : -1));
@@ -110,8 +114,9 @@ class KemhanDatabase {
     return newNotif;
   }
 
-  // ========== SURAT MASUK ==========
+  // ========== SURAT MASUK (LEGACY - localStorage) ==========
   static getSuratMasuk(includeDeleted = false) {
+    console.warn("⚠️ getSuratMasuk() is legacy - prefer Firebase directly");
     const data = this.get(STORAGE_KEYS.SURAT_MASUK);
     let filteredData = data;
 
@@ -137,6 +142,7 @@ class KemhanDatabase {
   }
 
   static addSuratMasuk(surat) {
+    console.warn("⚠️ addSuratMasuk() is legacy - prefer Firebase directly");
     const data = this.get(STORAGE_KEYS.SURAT_MASUK);
     const newId = data.length > 0 ? Math.max(...data.map((s) => s.id)) + 1 : 1;
 
@@ -184,7 +190,11 @@ class KemhanDatabase {
       };
       this.saveSuratMasuk(data);
 
-      if (!updates.disposisi && !updates.deletedAt && updates.isDeleted !== true) {
+      if (
+        !updates.disposisi &&
+        !updates.deletedAt &&
+        updates.isDeleted !== true
+      ) {
         this.addToMonitoring({
           suratId: id,
           action: "surat_updated",
@@ -198,8 +208,9 @@ class KemhanDatabase {
     return null;
   }
 
-  // ========== SURAT KELUAR ==========
+  // ========== SURAT KELUAR (LEGACY - localStorage) ==========
   static getSuratKeluar(includeDeleted = false) {
+    console.warn("⚠️ getSuratKeluar() is legacy - prefer Firebase directly");
     const data = this.get(STORAGE_KEYS.SURAT_KELUAR);
     const processedData = data.map((s) => ({
       ...s,
@@ -220,8 +231,10 @@ class KemhanDatabase {
   }
 
   static addSuratKeluar(surat) {
+    console.warn("⚠️ addSuratKeluar() is legacy - prefer Firebase directly");
     const data = this.getSuratKeluar(true);
-    const newId = data.length > 0 ? Math.max(...data.map((s) => s.id)) + 1 : 101;
+    const newId =
+      data.length > 0 ? Math.max(...data.map((s) => s.id)) + 1 : 101;
 
     const newSurat = {
       ...surat,
@@ -279,81 +292,64 @@ class KemhanDatabase {
     return null;
   }
 
-  // ========== NOTA DINAS ==========
+  // ========================================
+  // NOTA DINAS - FIREBASE WRAPPERS
+  // ========================================
+
+  /**
+   * Get Nota Dinas from FIREBASE (not localStorage)
+   * Returns empty array - use Firebase directly instead
+   */
   static getNotaDinas(includeDeleted = false) {
-    const data = this.get(STORAGE_KEYS.NOTA_DINAS);
-    return includeDeleted ? data : data.filter((s) => !s.isDeleted);
+    console.warn(
+      "⚠️ DEPRECATED: Use Firebase db.collection('nota_dinas') directly"
+    );
+    console.warn("⚠️ Nota Dinas is now stored in Firebase, not localStorage");
+
+    // Return empty array to prevent errors
+    // If old code calls this, it won't crash but should be updated
+    return [];
   }
 
   static getNotaDinasById(id) {
-    const data = this.get(STORAGE_KEYS.NOTA_DINAS);
-    return data.find((s) => s.id === parseInt(id));
-  }
-
-  static saveNotaDinas(data) {
-    return this.save(STORAGE_KEYS.NOTA_DINAS, data);
-  }
-
-  static addNotaDinas(notaDinas) {
-    const data = this.getNotaDinas(true);
-    const newId = data.length > 0 ? Math.max(...data.map((s) => s.id)) + 1 : 201;
-
-    const newNotaDinas = {
-      ...notaDinas,
-      id: newId,
-      type: "nota-dinas",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      isDeleted: false,
-      isFavorite: false,
-      disposisi: notaDinas.disposisi || [],
-    };
-
-    data.push(newNotaDinas);
-    this.saveNotaDinas(data);
-
-    this.addToMonitoring({
-      suratId: newId,
-      action: "nota_dinas_created",
-      type: "nota-dinas",
-      data: { perihal: notaDinas.perihal, noSurat: notaDinas.noSurat },
-    });
-
-    this._addNotification({
-      suratId: newId,
-      type: "nota-dinas",
-      title: `Nota Dinas Baru: ${notaDinas.noSurat}`,
-      time: "Baru Saja",
-    });
-
-    return newNotaDinas;
-  }
-
-  static updateNotaDinas(id, updates) {
-    const data = this.get(STORAGE_KEYS.NOTA_DINAS);
-    const index = data.findIndex((s) => s.id === parseInt(id));
-
-    if (index !== -1) {
-      data[index] = {
-        ...data[index],
-        ...updates,
-        updatedAt: new Date().toISOString(),
-      };
-      this.saveNotaDinas(data);
-
-      this.addToMonitoring({
-        suratId: id,
-        action: "nota_dinas_updated",
-        type: "nota-dinas",
-        data: updates,
-      });
-
-      return data[index];
-    }
+    console.warn(
+      "⚠️ DEPRECATED: Use Firebase db.collection('nota_dinas').doc(id).get() directly"
+    );
     return null;
   }
 
-  // ========== SOFT DELETE ==========
+  static saveNotaDinas(data) {
+    console.warn(
+      "⚠️ DEPRECATED: Nota Dinas should be saved to Firebase, not localStorage"
+    );
+    return false;
+  }
+
+  static addNotaDinas(notaDinas) {
+    console.error(
+      "❌ DEPRECATED: Use Firebase db.collection('nota_dinas').add() instead"
+    );
+    console.error(
+      "❌ This function no longer works - Nota Dinas is Firebase-only"
+    );
+
+    // Return null to indicate failure
+    return null;
+  }
+
+  static updateNotaDinas(id, updates) {
+    console.error(
+      "❌ DEPRECATED: Use Firebase db.collection('nota_dinas').doc(id).update() instead"
+    );
+    return null;
+  }
+
+  static deleteNotaDinas(id) {
+    console.error("❌ DEPRECATED: Use Firebase to soft-delete nota_dinas");
+    return null;
+  }
+
+  // ========== SOFT DELETE (LEGACY) ==========
   static deleteSurat(id, type = "masuk") {
     if (type === "masuk") {
       const surat = this.getSuratMasukById(id);
@@ -390,22 +386,8 @@ class KemhanDatabase {
         return data[index];
       }
     } else if (type === "nota-dinas") {
-      const data = this.getNotaDinas(true);
-      const index = data.findIndex((s) => s.id === parseInt(id));
-      if (index !== -1) {
-        data[index].isDeleted = true;
-        data[index].deletedAt = new Date().toISOString();
-        this.saveNotaDinas(data);
-
-        this.addToMonitoring({
-          suratId: id,
-          action: "nota_dinas_deleted",
-          type: "nota-dinas",
-          data: { perihal: data[index].perihal, noSurat: data[index].noSurat },
-        });
-
-        return data[index];
-      }
+      console.error("❌ Use Firebase to delete nota-dinas documents");
+      return null;
     }
     return null;
   }
@@ -413,11 +395,14 @@ class KemhanDatabase {
   static getAllDeleted() {
     const masuk = this.getAllSuratMasuk(true).filter((s) => s.isDeleted);
     const keluar = this.getSuratKeluar(true).filter((s) => s.isDeleted);
-    const notaDinas = this.getNotaDinas(true).filter((s) => s.isDeleted);
-    return [...masuk, ...keluar, ...notaDinas];
+
+    // Note: Nota Dinas deleted items should come from Firebase
+    console.warn("⚠️ getAllDeleted() doesn't include Firebase nota_dinas");
+
+    return [...masuk, ...keluar];
   }
 
-  // ========== RESTORE ==========
+  // ========== RESTORE (LEGACY) ==========
   static restoreSurat(id, type = "masuk") {
     if (type === "masuk") {
       const surat = this.getSuratMasukById(id);
@@ -454,27 +439,13 @@ class KemhanDatabase {
         return data[index];
       }
     } else if (type === "nota-dinas") {
-      const data = this.getNotaDinas(true);
-      const index = data.findIndex((s) => s.id === parseInt(id));
-      if (index !== -1 && data[index].isDeleted) {
-        data[index].isDeleted = false;
-        data[index].deletedAt = null;
-        this.saveNotaDinas(data);
-
-        this.addToMonitoring({
-          suratId: id,
-          action: "nota_dinas_restored",
-          type: "nota-dinas",
-          data: { perihal: data[index].perihal, noSurat: data[index].noSurat },
-        });
-
-        return data[index];
-      }
+      console.error("❌ Use Firebase to restore nota-dinas documents");
+      return null;
     }
     return null;
   }
 
-  // ========== PERMANENT DELETE ==========
+  // ========== PERMANENT DELETE (LEGACY) ==========
   static permanentDelete(id, type = "masuk") {
     if (type === "masuk") {
       const data = this.getAllSuratMasuk(true);
@@ -511,27 +482,15 @@ class KemhanDatabase {
         return deleted;
       }
     } else if (type === "nota-dinas") {
-      const data = this.getNotaDinas(true);
-      const index = data.findIndex((s) => s.id === parseInt(id));
-      if (index !== -1) {
-        const deleted = data[index];
-        data.splice(index, 1);
-        this.saveNotaDinas(data);
-
-        this.addToMonitoring({
-          suratId: id,
-          action: "nota_dinas_permanent_deleted",
-          type: "nota-dinas",
-          data: { perihal: deleted.perihal, noSurat: deleted.noSurat },
-        });
-
-        return deleted;
-      }
+      console.error(
+        "❌ Use Firebase to permanently delete nota-dinas documents"
+      );
+      return null;
     }
     return null;
   }
 
-  // ========== FAVORIT ==========
+  // ========== FAVORIT (LEGACY) ==========
   static toggleFavorite(id, type = "masuk") {
     if (type === "masuk") {
       const surat = this.getSuratMasukById(id);
@@ -542,7 +501,9 @@ class KemhanDatabase {
 
         this.addToMonitoring({
           suratId: id,
-          action: updated.isFavorite ? "added_to_favorite" : "removed_from_favorite",
+          action: updated.isFavorite
+            ? "added_to_favorite"
+            : "removed_from_favorite",
           type: "masuk",
           data: { perihal: surat.perihal, noSurat: surat.noSurat },
         });
@@ -558,7 +519,9 @@ class KemhanDatabase {
 
         this.addToMonitoring({
           suratId: id,
-          action: data[index].isFavorite ? "added_to_favorite" : "removed_from_favorite",
+          action: data[index].isFavorite
+            ? "added_to_favorite"
+            : "removed_from_favorite",
           type: "keluar",
           data: { perihal: data[index].perihal, noSurat: data[index].noSurat },
         });
@@ -566,21 +529,8 @@ class KemhanDatabase {
         return data[index];
       }
     } else if (type === "nota-dinas") {
-      const data = this.getNotaDinas(true);
-      const index = data.findIndex((s) => s.id === parseInt(id));
-      if (index !== -1) {
-        data[index].isFavorite = !data[index].isFavorite;
-        this.saveNotaDinas(data);
-
-        this.addToMonitoring({
-          suratId: id,
-          action: data[index].isFavorite ? "added_to_favorite" : "removed_from_favorite",
-          type: "nota-dinas",
-          data: { perihal: data[index].perihal, noSurat: data[index].noSurat },
-        });
-
-        return data[index];
-      }
+      console.error("❌ Use Firebase to toggle favorite for nota-dinas");
+      return null;
     }
     return null;
   }
@@ -592,15 +542,15 @@ class KemhanDatabase {
     const keluar = this.getSuratKeluar()
       .filter((s) => s.isFavorite)
       .map((s) => ({ ...s, type: "keluar" }));
-    const notaDinas = this.getNotaDinas()
-      .filter((s) => s.isFavorite)
-      .map((s) => ({ ...s, type: "nota-dinas" }));
-    return [...masuk, ...keluar, ...notaDinas].sort(
+
+    console.warn("⚠️ getAllFavorites() doesn't include Firebase nota_dinas");
+
+    return [...masuk, ...keluar].sort(
       (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
     );
   }
 
-  // ========== DISPOSISI ==========
+  // ========== DISPOSISI (LEGACY) ==========
   static addDisposisi(suratId, disposisi) {
     const surat = this.getSuratMasukById(suratId);
     if (!surat) return null;
@@ -649,7 +599,9 @@ class KemhanDatabase {
     const surat = this.getSuratMasukById(suratId);
     if (!surat || !surat.disposisi) return null;
 
-    const index = surat.disposisi.findIndex((d) => d.id === parseInt(disposisiId));
+    const index = surat.disposisi.findIndex(
+      (d) => d.id === parseInt(disposisiId)
+    );
     if (index !== -1) {
       surat.disposisi[index] = {
         ...surat.disposisi[index],
@@ -682,7 +634,7 @@ class KemhanDatabase {
     return null;
   }
 
-  // ========== MONITORING ==========
+  // ========== MONITORING (localStorage) ==========
   static getMonitoring() {
     return this.get(STORAGE_KEYS.MONITORING);
   }
@@ -700,21 +652,27 @@ class KemhanDatabase {
   }
 
   static getMonitoringBySurat(suratId) {
-    return this.getMonitoring().filter((log) => log.suratId === parseInt(suratId));
+    return this.getMonitoring().filter(
+      (log) => log.suratId === parseInt(suratId)
+    );
   }
 
   // ========== STATISTICS ==========
   static getStatistics() {
     const masuk = this.getAllSuratMasuk();
     const keluar = this.getSuratKeluar();
-    const notaDinas = this.getNotaDinas();
     const deleted = this.getAllDeleted();
     const favorites = this.getAllFavorites();
+
+    // Note: Nota Dinas count should come from Firebase
+    console.warn(
+      "⚠️ getStatistics() nota dinas count is 0 (use Firebase instead)"
+    );
 
     return {
       totalMasuk: masuk.length,
       totalKeluar: keluar.length,
-      totalNotaDinas: notaDinas.length,
+      totalNotaDinas: 0, // Use Firebase for real count
       totalDeleted: deleted.length,
       totalFavorites: favorites.length,
       pending: masuk.filter((s) => s.status === "Pending").length,
@@ -728,77 +686,23 @@ class KemhanDatabase {
     // Check if data already exists
     const existingMasuk = this.get(STORAGE_KEYS.SURAT_MASUK);
     const existingKeluar = this.get(STORAGE_KEYS.SURAT_KELUAR);
-    
+
     if (existingMasuk.length > 0 || existingKeluar.length > 0) {
-      console.log("✅ Data sudah ada, skip dummy initialization");
+      console.log("✅ localStorage data exists, skip initialization");
       return;
     }
 
-    console.log("🔄 Initializing dummy data...");
+    console.log("🔄 Initializing localStorage dummy data...");
 
-    // DUMMY SURAT MASUK
-    const dummyMasuk = [
-      {
-        noSurat: "001/2025",
-        tanggalSurat: "2025-01-10",
-        tanggalDiterima: "2025-01-11",
-        perihal: "Pengajuan Magang Mahasiswa Prodi Sistem Informasi",
-        dari: "UPN Veteran Jakarta",
-        kepada: "Kepala Bidang Banglola Sisfohan",
-        jenisSurat: "Permohonan Kerja Sama",
-        sifatSurat: "Umum",
-        file: "Pengajuan_Magang_UPNVJ.pdf",
-        status: "Proses",
-        namaPengirim: "Dr. Ahmad Budiman",
-        jabatanPengirim: "Dekan Fakultas Ilmu Komputer",
-        catatan: "Mohon diproses segera",
-        isDeleted: false,
-        isFavorite: false,
-        disposisi: [],
-      },
-    ];
-
-    const processedMasuk = dummyMasuk.map((surat, idx) => ({
-      ...surat,
-      id: idx + 1,
-      type: "masuk",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }));
-    this.saveSuratMasuk(processedMasuk);
-
-    // DUMMY SURAT KELUAR - Empty initially
+    // Initialize empty arrays for localStorage
+    this.saveSuratMasuk([]);
     this.saveSuratKeluar([]);
-
-    // DUMMY NOTA DINAS - Empty initially
-    this.saveNotaDinas([]);
-
-    // INITIAL NOTIFICATIONS
-    const initialNotifications = [
-      {
-        id: 1,
-        suratId: 1,
-        type: "masuk",
-        title: "Surat Baru: Pengajuan Magang...",
-        time: "10 Menit Lalu",
-        isRead: false,
-        createdAt: new Date().toISOString(),
-      },
-    ];
-    this.saveNotifications(initialNotifications);
-
-    // MONITORING LOGS
+    this.saveNotifications([]);
     this.save(STORAGE_KEYS.MONITORING, []);
-    this.addToMonitoring({
-      suratId: 1,
-      action: "surat_created",
-      type: "masuk",
-      data: { perihal: dummyMasuk[0].perihal, noSurat: dummyMasuk[0].noSurat },
-      timestamp: "2025-01-11T09:00:00Z",
-    });
 
-    console.log("✅ Dummy data initialized successfully");
-    console.log("📊 Statistics:", KemhanDatabase.getStatistics());
+    console.log("✅ localStorage initialized (empty)");
+    console.log("📊 localStorage Stats:", this.getStatistics());
+    console.log("⚠️ NOTE: Nota Dinas uses Firebase - not in localStorage");
   }
 }
 
@@ -807,19 +711,25 @@ class KemhanDatabase {
 // ==========================================
 document.addEventListener("DOMContentLoaded", function () {
   KemhanDatabase.initializeDummyData();
-  console.log("✅ Kemhan Database Ready");
-  console.log("📊 Current Stats:", KemhanDatabase.getStatistics());
+  console.log("✅ Kemhan Database Ready (Hybrid Mode)");
+  console.log("📊 localStorage Stats:", KemhanDatabase.getStatistics());
+  console.log(
+    "🔥 Firebase: Use db.collection() for surat_masuk, surat_keluar, nota_dinas"
+  );
+  console.log("💾 localStorage: Legacy fallback only");
 });
 
 // ==========================================
 // EXPORT TO GLOBAL SCOPE
 // ==========================================
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.KemhanDatabase = KemhanDatabase;
   window.STORAGE_KEYS = STORAGE_KEYS;
 }
 
 // For module environments
-if (typeof module !== 'undefined' && module.exports) {
+if (typeof module !== "undefined" && module.exports) {
   module.exports = { KemhanDatabase, STORAGE_KEYS };
 }
+
+console.log("✅ Kemhan Database loaded successfully (Hybrid Mode)");

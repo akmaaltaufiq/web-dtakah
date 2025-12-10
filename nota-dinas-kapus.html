@@ -185,8 +185,7 @@
       <!-- Sidebar -->
       <div class="navigation-sidebar">
         <div class="logo-section">
-          <div class="logo-emblem">
-          </div>
+          <div class="logo-emblem"></div>
           <div class="logo-text">D-TAKAH</div>
         </div>
 
@@ -452,59 +451,150 @@
     <script src="assets/js/main.js"></script>
 
     <script>
+      // ========================================
+      // NOTA DINAS KAPUS - REAL-TIME SCRIPT
+      // Letakkan di dalam <script> tag di nota-dinas-kapus.html
+      // ========================================
+      console.log("📄 Nota Dinas Kapus page loaded - REALTIME");
+
       let currentUserData = null;
       let currentNotaDinasId = null;
+      let unsubscribeNotaDinas = null;
 
-      // Protect page - only kapus
-      checkUserRole(["kapus"])
-        .then((userData) => {
-          currentUserData = userData;
-          document.getElementById("sidebarUserName").textContent =
-            userData.nama || "Kapus";
-          loadNotaDinas();
-        })
-        .catch((error) => {
-          console.error("Access denied:", error);
-        });
+      // ========================================
+      // INITIALIZE
+      // ========================================
+      function initNotaDinasKapus() {
+        console.log("🚀 Initializing Nota Dinas Kapus...");
 
-      // Set current date
-      document.getElementById("currentDate").textContent =
-        new Date().toLocaleDateString("id-ID", {
-          day: "2-digit",
-          month: "long",
-          year: "numeric",
-        });
+        // Check authentication and role
+        checkUserRole(["kapus"])
+          .then((userData) => {
+            console.log("✅ Kapus access granted:", userData);
+            currentUserData = userData;
 
-      // Load Nota Dinas untuk Kapus
+            // Display user info
+            const sidebarUserName = document.getElementById("sidebarUserName");
+            if (sidebarUserName) {
+              sidebarUserName.textContent = userData.nama || userData.email;
+            }
+
+            // Set current date
+            const currentDateEl = document.getElementById("currentDate");
+            if (currentDateEl) {
+              currentDateEl.textContent = new Date().toLocaleDateString(
+                "id-ID",
+                {
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                }
+              );
+            }
+
+            // Setup real-time listener
+            setupRealtimeListener();
+          })
+          .catch((error) => {
+            console.error("❌ Access denied:", error);
+            // User will be redirected by checkUserRole
+          });
+      }
+
+      // ========================================
+      // REAL-TIME LISTENER
+      // ========================================
+      function setupRealtimeListener() {
+        console.log("🔌 Setting up real-time listener for Kapus...");
+
+        if (unsubscribeNotaDinas) {
+          unsubscribeNotaDinas();
+        }
+
+        // Listen to nota dinas yang perlu approval Kapus
+        unsubscribeNotaDinas = db
+          .collection("nota_dinas")
+          .where("isDeleted", "==", false)
+          .where("status", "==", "Menunggu Persetujuan Kapus")
+          .onSnapshot(
+            (snapshot) => {
+              console.log("📥 Kapus received:", snapshot.size, "nota dinas");
+
+              snapshot.docChanges().forEach((change) => {
+                if (change.type === "added") {
+                  console.log("➕ New nota dinas for approval:", change.doc.id);
+
+                  // Show notification
+                  if (window.Swal) {
+                    Swal.fire({
+                      icon: "info",
+                      title: "Nota Dinas Baru!",
+                      text: "Ada nota dinas baru yang perlu ditandatangani",
+                      toast: true,
+                      position: "top-end",
+                      showConfirmButton: false,
+                      timer: 3000,
+                      timerProgressBar: true,
+                    });
+                  }
+                }
+              });
+
+              // Re-render table
+              loadNotaDinas();
+            },
+            (error) => {
+              console.error("❌ Real-time listener error:", error);
+              loadNotaDinas();
+            }
+          );
+      }
+
+      // ========================================
+      // LOAD NOTA DINAS TABLE
+      // ========================================
       function loadNotaDinas() {
         const tbody = document.getElementById("notaDinasTableBody");
+        if (!tbody) return;
 
-        // Get nota dinas yang perlu TTD Kapus
-        const allNotaDinas = KemhanDatabase.getNotaDinas();
-        const notaDinasKapus = allNotaDinas.filter(
-          (s) =>
-            s.status === "Menunggu Persetujuan Kapus" || s.status === "Pending"
-        );
+        tbody.innerHTML =
+          '<tr><td colspan="7" style="text-align: center; padding: 20px; color: #999;">Loading...</td></tr>';
 
-        if (notaDinasKapus.length === 0) {
-          tbody.innerHTML = `
+        db.collection("nota_dinas")
+          .where("isDeleted", "==", false)
+          .where("status", "==", "Menunggu Persetujuan Kapus")
+          .orderBy("createdAt", "desc")
+          .get()
+          .then((snapshot) => {
+            const notaDinasList = [];
+            snapshot.forEach((doc) => {
+              notaDinasList.push({
+                id: doc.id,
+                ...doc.data(),
+              });
+            });
+
+            console.log("📊 Nota dinas for Kapus:", notaDinasList.length);
+
+            if (notaDinasList.length === 0) {
+              tbody.innerHTML = `
           <tr>
             <td colspan="7" style="text-align: center; padding: 40px; color: #9ca3af;">
               Tidak ada nota dinas yang perlu ditandatangani
             </td>
           </tr>
         `;
-          return;
-        }
+              return;
+            }
 
-        tbody.innerHTML = notaDinasKapus
-          .map(
-            (nota, index) => `
+            tbody.innerHTML = notaDinasList
+              .map(
+                (nota, index) => `
         <tr>
           <td style="text-align: center;">${index + 1}</td>
           <td>${nota.noSurat || nota.noNaskah || "-"}</td>
-          <td>${nota.perihal || "-"}</td>
-          <td>${nota.dari || nota.pengirim || "-"}</td>
+          <td>${Utils.escapeHtml(nota.perihal || "-")}</td>
+          <td>${Utils.escapeHtml(nota.dari || nota.pengirim || "-")}</td>
           <td>
             <span class="badge-status badge-tinggi">Tinggi</span>
           </td>
@@ -512,38 +602,70 @@
             <span class="badge-status badge-menunggu">Menunggu TTD</span>
           </td>
           <td style="text-align: center;">
-            <button class="btn-preview" onclick="previewNotaDinas(${nota.id})">
+            <button class="btn-preview" onclick="previewNotaDinas('${
+              nota.id
+            }')">
               <i class="bi bi-eye"></i> Preview
             </button>
-            <button class="btn-ttd" onclick="buatTTD(${nota.id})">
+            <button class="btn-ttd" onclick="buatTTD('${nota.id}')">
               <i class="bi bi-pen"></i> TTD
             </button>
           </td>
         </tr>
       `
-          )
-          .join("");
+              )
+              .join("");
+          })
+          .catch((error) => {
+            console.error("❌ Error loading nota dinas:", error);
+            tbody.innerHTML = `
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 40px; color: #dc2626;">
+            Error loading data
+          </td>
+        </tr>
+      `;
+          });
       }
 
-      // Preview Nota Dinas
-      window.previewNotaDinas = function (id) {
-        const nota = KemhanDatabase.getNotaDinasById(id);
-        if (!nota) return;
+      // ========================================
+      // PREVIEW NOTA DINAS
+      // ========================================
+      window.previewNotaDinas = async function (id) {
+        try {
+          const doc = await db.collection("nota_dinas").doc(id).get();
+          if (!doc.exists) {
+            Notification.error("Nota dinas tidak ditemukan!");
+            return;
+          }
 
-        currentNotaDinasId = id;
+          const nota = { id: doc.id, ...doc.data() };
+          currentNotaDinasId = id;
 
-        document.getElementById("previewNoSurat").textContent =
-          nota.noSurat || nota.noNaskah || "-";
-        document.getElementById("previewPerihal").textContent =
-          nota.perihal || "-";
-        document.getElementById("previewPengirim").textContent =
-          nota.dari || nota.pengirim || "-";
-        document.getElementById("previewTanggalSurat").textContent =
-          nota.tanggalSurat ? Utils.formatDate(nota.tanggalSurat) : "-";
-        document.getElementById("previewCatatan").textContent =
-          nota.catatan || "-";
+          const formatDate = (dateField) => {
+            if (!dateField) return "-";
+            const date = dateField.toDate
+              ? dateField.toDate()
+              : new Date(dateField);
+            return Utils.formatDate(date.toISOString());
+          };
 
-        document.getElementById("previewModal").classList.add("active");
+          document.getElementById("previewNoSurat").textContent =
+            nota.noSurat || nota.noNaskah || "-";
+          document.getElementById("previewPerihal").textContent =
+            nota.perihal || "-";
+          document.getElementById("previewPengirim").textContent =
+            nota.dari || nota.pengirim || "-";
+          document.getElementById("previewTanggalSurat").textContent =
+            formatDate(nota.tanggalSurat);
+          document.getElementById("previewCatatan").textContent =
+            nota.catatan || "-";
+
+          document.getElementById("previewModal").classList.add("active");
+        } catch (error) {
+          console.error("❌ Error previewing:", error);
+          Notification.error("Gagal menampilkan preview.");
+        }
       };
 
       window.closePreview = function () {
@@ -564,60 +686,108 @@
         }
       };
 
-      // Buat TTD
-      window.buatTTD = function (notaDinasId) {
-        currentNotaDinasId = notaDinasId;
-        const nota = KemhanDatabase.getNotaDinasById(notaDinasId);
+      // ========================================
+      // BUAT TTD DIGITAL
+      // ========================================
+      window.buatTTD = async function (notaDinasId) {
+        try {
+          currentNotaDinasId = notaDinasId;
+          const doc = await db.collection("nota_dinas").doc(notaDinasId).get();
 
-        if (nota) {
+          if (!doc.exists) {
+            Notification.error("Nota dinas tidak ditemukan!");
+            return;
+          }
+
+          const nota = { id: doc.id, ...doc.data() };
+
           document.getElementById("ttdPerihal").textContent =
             nota.perihal || "-";
+
           const modal = new bootstrap.Modal(
             document.getElementById("ttdModal")
           );
           modal.show();
+        } catch (error) {
+          console.error("❌ Error:", error);
+          Notification.error("Gagal membuka form TTD.");
         }
       };
 
-      // Submit TTD
-      window.submitTTD = function () {
-        // Update nota dinas dengan TTD digital
-        KemhanDatabase.updateNotaDinas(currentNotaDinasId, {
-          status: "Selesai",
-          ttdDigital: `TTD_${currentUserData.nama}_${Date.now()}`,
-          approvedBy: currentUserData.nama,
-          approvedAt: new Date().toISOString(),
-        });
+      // ========================================
+      // SUBMIT TTD
+      // ========================================
+      window.submitTTD = async function () {
+        try {
+          console.log("✍️ Submitting TTD for:", currentNotaDinasId);
 
-        Swal.fire({
-          icon: "success",
-          title: "Nota Dinas Berhasil Ditandatangani!",
-          text: "TTD Digital telah diterapkan",
-          timer: 2000,
-        });
+          await db
+            .collection("nota_dinas")
+            .doc(currentNotaDinasId)
+            .update({
+              status: "Disetujui Kapus",
+              ttdDigital: `TTD_${currentUserData.nama}_${Date.now()}`,
+              approvedBy: currentUserData.nama,
+              approvedAt: firebase.firestore.FieldValue.serverTimestamp(),
+              updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            });
 
-        bootstrap.Modal.getInstance(document.getElementById("ttdModal")).hide();
+          Swal.fire({
+            icon: "success",
+            title: "Nota Dinas Berhasil Ditandatangani!",
+            text: "TTD Digital telah diterapkan",
+            timer: 2000,
+            showConfirmButton: false,
+          });
 
-        loadNotaDinas();
+          bootstrap.Modal.getInstance(
+            document.getElementById("ttdModal")
+          ).hide();
+
+          console.log("✅ TTD submitted successfully");
+        } catch (error) {
+          console.error("❌ Error submitting TTD:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Gagal!",
+            text: "Gagal menandatangani nota dinas: " + error.message,
+            confirmButtonColor: "#dc2626",
+          });
+        }
       };
 
-      // Buat Disposisi
-      window.buatDisposisi = function (notaDinasId) {
-        currentNotaDinasId = notaDinasId;
-        const nota = KemhanDatabase.getNotaDinasById(notaDinasId);
+      // ========================================
+      // BUAT DISPOSISI
+      // ========================================
+      window.buatDisposisi = async function (notaDinasId) {
+        try {
+          currentNotaDinasId = notaDinasId;
+          const doc = await db.collection("nota_dinas").doc(notaDinasId).get();
 
-        if (nota) {
+          if (!doc.exists) {
+            Notification.error("Nota dinas tidak ditemukan!");
+            return;
+          }
+
+          const nota = { id: doc.id, ...doc.data() };
+
           document.getElementById("disposisiPerihal").textContent =
             nota.perihal || "-";
+
           const modal = new bootstrap.Modal(
             document.getElementById("disposisiModal")
           );
           modal.show();
+        } catch (error) {
+          console.error("❌ Error:", error);
+          Notification.error("Gagal membuka form disposisi.");
         }
       };
 
-      // Submit Disposisi
-      window.submitDisposisi = function () {
+      // ========================================
+      // SUBMIT DISPOSISI
+      // ========================================
+      window.submitDisposisi = async function () {
         const kepada = document.getElementById("disposisiKepada").value;
         const instruksi = document.getElementById("disposisiInstruksi").value;
         const prioritas = document.getElementById("disposisiPrioritas").value;
@@ -627,39 +797,70 @@
           return;
         }
 
-        const disposisi = {
-          kepada: kepada,
-          judul: "Disposisi dari Kapus",
-          instruksi: instruksi,
-          prioritas: prioritas,
-          dari: currentUserData.nama,
-          jabatanDari: "Kepala Pusat",
-          tanggal: new Date().toISOString(),
-          status: "Proses",
-        };
+        try {
+          const disposisi = {
+            kepada: kepada,
+            judul: "Disposisi dari Kapus",
+            instruksi: instruksi,
+            prioritas: prioritas,
+            dari: currentUserData.nama,
+            jabatanDari: "Kepala Pusat",
+            tanggal: firebase.firestore.FieldValue.serverTimestamp(),
+            status: "Proses",
+          };
 
-        KemhanDatabase.addDisposisi(currentNotaDinasId, disposisi);
+          // Get current disposisi array
+          const doc = await db
+            .collection("nota_dinas")
+            .doc(currentNotaDinasId)
+            .get();
+          const currentDisposisi = doc.data().disposisi || [];
 
-        Swal.fire({
-          icon: "success",
-          title: "Disposisi Berhasil Dikirim!",
-          text: `Disposisi telah dikirim ke ${kepada}`,
-          timer: 2000,
-        });
+          // Add new disposisi
+          await db
+            .collection("nota_dinas")
+            .doc(currentNotaDinasId)
+            .update({
+              disposisi: [...currentDisposisi, disposisi],
+              status: "Proses",
+              updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            });
 
-        bootstrap.Modal.getInstance(
-          document.getElementById("disposisiModal")
-        ).hide();
-        document.getElementById("disposisiKepada").value = "";
-        document.getElementById("disposisiInstruksi").value = "";
+          Swal.fire({
+            icon: "success",
+            title: "Disposisi Berhasil Dikirim!",
+            text: `Disposisi telah dikirim ke ${kepada}`,
+            timer: 2000,
+            showConfirmButton: false,
+          });
 
-        loadNotaDinas();
+          bootstrap.Modal.getInstance(
+            document.getElementById("disposisiModal")
+          ).hide();
+
+          document.getElementById("disposisiKepada").value = "";
+          document.getElementById("disposisiInstruksi").value = "";
+          document.getElementById("disposisiPrioritas").value = "Normal";
+        } catch (error) {
+          console.error("❌ Error submitting disposisi:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Gagal!",
+            text: "Gagal mengirim disposisi: " + error.message,
+            confirmButtonColor: "#dc2626",
+          });
+        }
       };
 
-      // Logout handler
-      document
-        .getElementById("logoutLink")
-        .addEventListener("click", function (e) {
+      // ========================================
+      // LOGOUT HANDLER
+      // ========================================
+      const logoutLink = document.getElementById("logoutLink");
+      if (logoutLink) {
+        const newLogoutLink = logoutLink.cloneNode(true);
+        logoutLink.parentNode.replaceChild(newLogoutLink, logoutLink);
+
+        newLogoutLink.addEventListener("click", function (e) {
           e.preventDefault();
           Swal.fire({
             title: "Yakin ingin logout?",
@@ -668,12 +869,41 @@
             confirmButtonText: "Ya, logout",
             cancelButtonText: "Batal",
             confirmButtonColor: "#d33",
+            reverseButtons: true,
           }).then((result) => {
             if (result.isConfirmed) {
-              window.logoutUser();
+              if (window.logoutUser) {
+                logoutUser();
+              } else {
+                sessionStorage.clear();
+                localStorage.clear();
+                window.location.replace("login.html?logout=true");
+              }
             }
           });
         });
+      }
+
+      // ========================================
+      // CLEANUP
+      // ========================================
+      window.addEventListener("beforeunload", () => {
+        if (unsubscribeNotaDinas) {
+          console.log("🧹 Cleaning up listener");
+          unsubscribeNotaDinas();
+        }
+      });
+
+      // ========================================
+      // START INITIALIZATION
+      // ========================================
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initNotaDinasKapus);
+      } else {
+        initNotaDinasKapus();
+      }
+
+      console.log("✅ Nota Dinas Kapus script loaded - REALTIME");
     </script>
   </body>
 </html>
