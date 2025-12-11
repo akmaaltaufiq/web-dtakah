@@ -95,76 +95,239 @@
         margin-bottom: 24px;
       }
 
-      /* Preview Modal Styles */
-      .preview-modal {
+      /* Disposisi View Styles */
+      .disposisi-view {
         display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 9999;
-        overflow-y: auto;
       }
-      .preview-modal.active {
+      .disposisi-view.active {
+        display: block;
+      }
+      .breadcrumb-nav {
         display: flex;
         align-items: center;
-        justify-content: center;
+        margin-bottom: 20px;
+        gap: 12px;
       }
-      .preview-content {
+      .breadcrumb-nav .btn-secondary {
+        background: #8b0000;
+        border-color: #8b0000;
+        color: white;
+      }
+      .breadcrumb-nav .btn-secondary:hover {
+        background: #6b0000;
+        border-color: #6b0000;
+      }
+      .breadcrumb-text {
+        color: #6b7280;
+        font-size: 14px;
+      }
+      .breadcrumb-text .separator {
+        margin: 0 8px;
+        color: #9ca3af;
+      }
+      .breadcrumb-text .current {
+        color: #1f2937;
+        font-weight: 500;
+      }
+      .form-disposisi-panel {
         background: white;
-        border-radius: 12px;
-        width: 90%;
-        max-width: 800px;
+        border-radius: 8px;
         padding: 24px;
-        position: relative;
-        max-height: 90vh;
-        overflow-y: auto;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        max-width: 100%;
+        width: 100%;
       }
-      .preview-header {
+
+      /* Preview View Styles */
+      .preview-view {
+        display: none;
+      }
+      .preview-view.active {
+        display: block;
+      }
+      .preview-panel {
+        background: white;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        max-width: 100%;
+        width: 100%;
+      }
+      .file-preview-section {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 0;
+        margin-bottom: 24px;
+        overflow: hidden;
+      }
+      .file-preview-header {
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 12px 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+      }
+      .file-preview-title {
+        font-weight: 600;
+        color: #1f2937;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .file-preview-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .file-preview-actions button {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        padding: 4px 8px;
+        cursor: pointer;
+        color: #374151;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+      .file-preview-actions button:hover {
+        background: #f3f4f6;
+      }
+      .file-preview-content {
+        background: #f3f4f6;
+        min-height: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      .file-preview-content iframe {
+        width: 100%;
+        height: 600px;
+        border: none;
+        background: white;
+      }
+      .file-preview-content img {
+        max-width: 100%;
+        max-height: 600px;
+        height: auto;
+        object-fit: contain;
+      }
+      .file-preview-navigation {
+        background: #f9fafb;
+        border-top: 1px solid #e5e7eb;
+        padding: 12px 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+      }
+      .file-preview-navigation button {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #374151;
+        transition: all 0.2s;
+      }
+      .file-preview-navigation button:hover:not(:disabled) {
+        background: #f3f4f6;
+        border-color: #8b0000;
+        color: #8b0000;
+      }
+      .file-preview-navigation button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .file-preview-section .no-file {
+        color: #9ca3af;
+        padding: 60px 20px;
+        font-size: 14px;
+        text-align: center;
+      }
+      .file-preview-section .no-file i {
+        font-size: 48px;
+        color: #d1d5db;
+        margin-bottom: 12px;
+        display: block;
+      }
+      .panel-header {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1f2937;
         margin-bottom: 20px;
         padding-bottom: 16px;
         border-bottom: 2px solid #e5e7eb;
       }
-      .preview-title {
-        font-size: 20px;
-        font-weight: 700;
-        color: #1f2937;
+      .detail-item {
+        margin-bottom: 16px;
       }
-      .preview-close {
-        background: none;
-        border: none;
-        font-size: 24px;
-        cursor: pointer;
-        color: #6b7280;
-      }
-      .preview-close:hover {
-        color: #dc2626;
-      }
-      .preview-section {
-        margin-bottom: 20px;
-      }
-      .preview-label {
+      .detail-label {
         font-size: 12px;
         font-weight: 600;
         color: #6b7280;
         margin-bottom: 4px;
+        text-transform: uppercase;
       }
-      .preview-value {
+      .detail-value {
         font-size: 14px;
         color: #1f2937;
-        margin-bottom: 12px;
       }
-      .preview-actions {
+      .checkbox-group {
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 12px;
+        max-height: 200px;
+        overflow-y: auto;
+        margin-bottom: 16px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px 16px;
+      }
+      .checkbox-item {
         display: flex;
-        gap: 12px;
-        margin-top: 24px;
-        padding-top: 16px;
-        border-top: 2px solid #e5e7eb;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 8px;
+        background: #f9fafb;
+        border-radius: 6px;
+        transition: all 0.2s;
+      }
+      .checkbox-item:hover {
+        background: #f3f4f6;
+      }
+      .checkbox-item input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #8b0000;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .checkbox-item label {
+        cursor: pointer;
+        margin: 0;
+        font-size: 13px;
+        flex: 1;
+        word-wrap: break-word;
+        line-height: 1.4;
+        color: #374151;
+      }
+      .selected-badge {
+        display: inline-block;
+        background: #8b0000;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-left: 8px;
       }
     </style>
   </head>
@@ -173,8 +336,7 @@
       <!-- Sidebar -->
       <div class="navigation-sidebar">
         <div class="logo-section">
-          <div class="logo-emblem">
-          </div>
+          <div class="logo-emblem"></div>
           <div class="logo-text">D-TAKAH</div>
         </div>
 
@@ -222,167 +384,298 @@
       <!-- Main Content -->
       <div class="main-content">
         <div class="content-container" style="padding: 24px">
-          <div class="page-header">
-            <h1 style="font-size: 24px; font-weight: 700; margin: 0">
-              Surat Masuk - Perlu Tindakan
-            </h1>
-            <div style="color: #6b7280">
-              <i class="bi bi-calendar3"></i>
-              <span id="currentDate"></span>
+          
+          <!-- Table View -->
+          <div id="tableView">
+            <div class="page-header">
+              <h1 style="font-size: 24px; font-weight: 700; margin: 0">
+                Surat Masuk - Perlu Tindakan
+              </h1>
+              <div style="color: #6b7280">
+                <i class="bi bi-calendar3"></i>
+                <span id="currentDate"></span>
+              </div>
             </div>
-          </div>
 
-          <!-- Table -->
-          <div
-            style="
-              background: white;
-              border-radius: 8px;
-              padding: 20px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            "
-          >
-            <table class="surat-table">
-              <thead>
-                <tr>
-                  <th style="width: 50px">No</th>
-                  <th>Nomor Surat</th>
-                  <th>Perihal</th>
-                  <th>Pengirim</th>
-                  <th style="width: 120px">Prioritas</th>
-                  <th style="width: 150px">Status</th>
-                  <th style="width: 200px; text-align: center">
-                    Aksi Diperlukan
-                  </th>
-                </tr>
-              </thead>
-              <tbody id="suratMasukTableBody">
-                <tr>
-                  <td
-                    colspan="7"
-                    style="text-align: center; padding: 40px; color: #9ca3af"
-                  >
-                    Loading data...
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Preview Modal -->
-    <div class="preview-modal" id="previewModal">
-      <div class="preview-content">
-        <div class="preview-header">
-          <div class="preview-title">Detail Surat Masuk</div>
-          <button class="preview-close" onclick="closePreview()">
-            <i class="bi bi-x"></i>
-          </button>
-        </div>
-
-        <div class="preview-section">
-          <div class="preview-label">Nomor Surat</div>
-          <div class="preview-value" id="previewNoSurat">-</div>
-        </div>
-
-        <div class="preview-section">
-          <div class="preview-label">Perihal</div>
-          <div class="preview-value" id="previewPerihal">-</div>
-        </div>
-
-        <div class="preview-section">
-          <div class="preview-label">Pengirim</div>
-          <div class="preview-value" id="previewPengirim">-</div>
-        </div>
-
-        <div class="preview-section">
-          <div class="preview-label">Tanggal Surat</div>
-          <div class="preview-value" id="previewTanggalSurat">-</div>
-        </div>
-
-        <div class="preview-section">
-          <div class="preview-label">Tanggal Diterima</div>
-          <div class="preview-value" id="previewTanggalDiterima">-</div>
-        </div>
-
-        <div class="preview-section">
-          <div class="preview-label">Catatan</div>
-          <div class="preview-value" id="previewCatatan">-</div>
-        </div>
-
-        <div class="preview-actions">
-          <button class="btn-disposisi-cepat" onclick="disposisiFromPreview()">
-            <i class="bi bi-send"></i> Disposisi Cepat
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal Disposisi Cepat -->
-    <div class="modal fade" id="disposisiModal" tabindex="-1">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Disposisi Cepat</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label"><strong>Perihal Surat:</strong></label>
-              <p id="disposisiPerihal" style="color: #374151">-</p>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Tujuan Disposisi *</label>
-              <select class="form-select" id="disposisiKepada" required>
-                <option value="">-- Pilih Tujuan --</option>
-                <option value="Kabid Banglola Sisfohan">
-                  Kabid Banglola Sisfohan
-                </option>
-                <option value="Kasubbid Infosan">Kasubbid Infosan</option>
-                <option value="Kasubbag TU">Kasubbag TU</option>
-                <option value="Kasubbag MSI">Kasubbag MSI</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Instruksi *</label>
-              <textarea
-                class="form-control"
-                id="disposisiInstruksi"
-                rows="4"
-                placeholder="Masukkan instruksi disposisi"
-                required
-              ></textarea>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Prioritas</label>
-              <select class="form-select" id="disposisiPrioritas">
-                <option value="Normal">Normal</option>
-                <option value="Penting">Penting</option>
-                <option value="Sangat Penting">Sangat Penting</option>
-              </select>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
+            <div
+              style="
+                background: white;
+                border-radius: 8px;
+                padding: 20px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+              "
             >
-              Batal
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              onclick="submitDisposisiCepat()"
-            >
-              <i class="bi bi-send-fill"></i> Kirim Disposisi
-            </button>
+              <table class="surat-table">
+                <thead>
+                  <tr>
+                    <th style="width: 50px">No</th>
+                    <th>Nomor Surat</th>
+                    <th>Perihal</th>
+                    <th>Pengirim</th>
+                    <th style="width: 120px">Prioritas</th>
+                    <th style="width: 150px">Status</th>
+                    <th style="width: 200px; text-align: center">
+                      Aksi Diperlukan
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="suratMasukTableBody">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="text-align: center; padding: 40px; color: #9ca3af"
+                    >
+                      Loading data...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
+
+          <!-- Preview View -->
+          <div id="previewView" class="preview-view">
+            <div class="breadcrumb-nav">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="backToTable()"
+                style="display: flex; align-items: center; gap: 8px;"
+              >
+                <i class="bi bi-arrow-left"></i> Kembali
+              </button>
+              <div class="breadcrumb-text">
+                <span style="color: #9ca3af;">Surat Masuk</span>
+                <span class="separator">/</span>
+                <span class="current">Preview</span>
+              </div>
+            </div>
+
+            <div class="preview-panel">
+              <div class="panel-header">
+                <i class="bi bi-file-earmark-text"></i> Detail Surat Masuk
+              </div>
+
+              <!-- File Preview Section -->
+              <div class="file-preview-section">
+                <div class="file-preview-header">
+                  <div class="file-preview-title">
+                    <span id="filePreviewTitle">Pengajuan Magang Mahasiswa Prodi Sistem Informasi</span>
+                  </div>
+                  <div class="file-preview-actions">
+                    <button type="button" onclick="zoomOut()" title="Zoom Out">
+                      <i class="bi bi-zoom-out"></i>
+                    </button>
+                    <button type="button" onclick="zoomIn()" title="Zoom In">
+                      <i class="bi bi-zoom-in"></i>
+                    </button>
+                    <button type="button" onclick="downloadFile()" title="Download">
+                      <i class="bi bi-download"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="file-preview-content" id="filePreviewContent">
+                  <div class="no-file">
+                    <i class="bi bi-file-earmark"></i>
+                    <p>Tidak ada file yang dilampirkan</p>
+                  </div>
+                </div>
+                <div class="file-preview-navigation">
+                  <button type="button" id="prevPage" disabled>
+                    <i class="bi bi-chevron-left"></i>
+                  </button>
+                  <button type="button" id="nextPage" disabled>
+                    <i class="bi bi-chevron-right"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="detail-item">
+                <div class="detail-label">Nomor Surat</div>
+                <div class="detail-value" id="previewNoSurat">-</div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-label">Perihal</div>
+                <div class="detail-value" id="previewPerihal">-</div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-label">Pengirim</div>
+                <div class="detail-value" id="previewPengirim">-</div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-label">Tanggal Surat</div>
+                <div class="detail-value" id="previewTanggalSurat">-</div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-label">Tanggal Diterima</div>
+                <div class="detail-value" id="previewTanggalDiterima">-</div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-label">Catatan</div>
+                <div class="detail-value" id="previewCatatan">-</div>
+              </div>
+
+              <div style="display: flex; gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 2px solid #e5e7eb;">
+                <button class="btn btn-success flex-fill" onclick="disposisiFromPreview()">
+                  <i class="bi bi-send"></i> Buat Disposisi
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Disposisi View -->
+          <div id="disposisiView" class="disposisi-view">
+            <!-- Breadcrumb Navigation -->
+            <div class="breadcrumb-nav">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="backToTable()"
+                style="display: flex; align-items: center; gap: 8px;"
+              >
+                <i class="bi bi-arrow-left"></i> Kembali
+              </button>
+              <div class="breadcrumb-text">
+                <span style="color: #9ca3af;">Surat Masuk</span>
+                <span class="separator">/</span>
+                <span class="current">Disposisi</span>
+              </div>
+            </div>
+
+            <div class="form-disposisi-panel">
+              <div class="panel-header">
+                <i class="bi bi-send-fill"></i> Form Disposisi Surat
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label" style="font-weight: 600; color: #374151;">Perihal Surat:</label>
+                <p id="detailPerihal" style="color: #1f2937; background: #f3f4f6; padding: 10px; border-radius: 6px;">-</p>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">
+                  Penerima Disposisi <span class="text-danger">*</span>
+                  <span class="selected-badge" id="penerimaCount">0 dipilih</span>
+                </label>
+                <div class="checkbox-group">
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="penerima1" name="penerima" value="Kabid Banglola Sisfohan">
+                    <label for="penerima1">Kabid Banglola Sisfohan</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="penerima2" name="penerima" value="Kasubbid Infosan">
+                    <label for="penerima2">Kasubbid Infosan</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="penerima3" name="penerima" value="Kasubbag TU">
+                    <label for="penerima3">Kasubbag TU</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="penerima4" name="penerima" value="Kasubbag MSI">
+                    <label for="penerima4">Kasubbag MSI</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="penerima5" name="penerima" value="Kasubbid Data">
+                    <label for="penerima5">Kasubbid Data</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="penerima6" name="penerima" value="Kabid Informasi">
+                    <label for="penerima6">Kabid Informasi</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="penerima7" name="penerima" value="Kasubbag Keuangan">
+                    <label for="penerima7">Kasubbag Keuangan</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="penerima8" name="penerima" value="Kasubbid Perencanaan">
+                    <label for="penerima8">Kasubbid Perencanaan</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="penerima9" name="penerima" value="Staf Administrasi">
+                    <label for="penerima9">Staf Administrasi</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">
+                  Petunjuk Disposisi <span class="text-danger">*</span>
+                  <span class="selected-badge" id="petunjukCount">0 dipilih</span>
+                </label>
+                <div class="checkbox-group">
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="petunjuk1" name="petunjuk" value="ACC">
+                    <label for="petunjuk1">ACC</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="petunjuk2" name="petunjuk" value="Sesuaikan">
+                    <label for="petunjuk2">Sesuaikan</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="petunjuk3" name="petunjuk" value="Tindaklanjuti">
+                    <label for="petunjuk3">Tindaklanjuti</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="petunjuk4" name="petunjuk" value="Untuk Diketahui">
+                    <label for="petunjuk4">Untuk Diketahui</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="petunjuk5" name="petunjuk" value="Koordinasikan">
+                    <label for="petunjuk5">Koordinasikan</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="petunjuk6" name="petunjuk" value="Segera">
+                    <label for="petunjuk6">Segera</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="petunjuk7" name="petunjuk" value="Pelajari dan Beri Saran">
+                    <label for="petunjuk7">Pelajari dan Beri Saran</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="petunjuk8" name="petunjuk" value="Ingatkan">
+                    <label for="petunjuk8">Ingatkan</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="petunjuk9" name="petunjuk" value="Arsipkan">
+                    <label for="petunjuk9">Arsipkan</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Catatan Tambahan</label>
+                <textarea
+                  class="form-control"
+                  id="disposisiInstruksi"
+                  rows="4"
+                  placeholder="Masukkan catatan atau instruksi tambahan"
+                ></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Prioritas</label>
+                <select class="form-select" id="disposisiPrioritas">
+                  <option value="Normal">Normal</option>
+                  <option value="Penting">Penting</option>
+                  <option value="Sangat Penting">Sangat Penting</option>
+                </select>
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-success w-100"
+                onclick="submitDisposisiCepat()"
+              >
+                <i class="bi bi-send-fill"></i> Kirim Disposisi
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -489,9 +782,7 @@
             <button class="btn-preview" onclick="previewSurat('${surat.id}')">
               <i class="bi bi-eye"></i> Preview
             </button>
-            <button class="btn-disposisi-cepat" onclick="buatDisposisiCepat('${
-              surat.id
-            }')">
+            <button class="btn-disposisi-cepat" onclick="buatDisposisiCepat('${surat.id}')">
               <i class="bi bi-send"></i> Disposisi
             </button>
           </td>
@@ -501,10 +792,13 @@
           .join("");
       }
 
+      let currentFileURL = null;
+      let currentZoom = 100;
+
       // Preview Surat
-      window.previewSurat = function (id) {
+      window.previewSurat = function (suratId) {
         db.collection("surat_masuk")
-          .doc(id)
+          .doc(suratId)
           .get()
           .then((doc) => {
             if (!doc.exists) {
@@ -513,37 +807,108 @@
             }
 
             const surat = doc.data();
-            currentSuratId = id;
+            currentSuratId = suratId;
+            currentFileURL = surat.fileURL || null;
+            currentZoom = 100;
 
-            document.getElementById("previewNoSurat").textContent =
-              surat.noSurat || "-";
-            document.getElementById("previewPerihal").textContent =
-              surat.perihal || "-";
-            document.getElementById("previewPengirim").textContent =
-              surat.dari || surat.namaPengirim || "-";
-            document.getElementById("previewTanggalSurat").textContent =
-              surat.tanggalSurat || "-";
-            document.getElementById("previewTanggalDiterima").textContent =
-              surat.tanggalDiterima || "-";
-            document.getElementById("previewCatatan").textContent =
-              surat.catatan || "-";
+            // Update detail fields
+            document.getElementById("previewNoSurat").textContent = surat.noSurat || "-";
+            document.getElementById("previewPerihal").textContent = surat.perihal || "-";
+            document.getElementById("previewPengirim").textContent = surat.dari || surat.namaPengirim || "-";
+            document.getElementById("previewTanggalSurat").textContent = surat.tanggalSurat || "-";
+            document.getElementById("previewTanggalDiterima").textContent = surat.tanggalDiterima || "-";
+            document.getElementById("previewCatatan").textContent = surat.catatan || "-";
 
-            document.getElementById("previewModal").classList.add("active");
+            // Update file preview title
+            document.getElementById("filePreviewTitle").textContent = surat.perihal || "Dokumen Surat";
+
+            // Handle file preview
+            const filePreviewContent = document.getElementById("filePreviewContent");
+
+            if (surat.fileURL) {
+              const fileExtension = surat.fileName ? surat.fileName.split('.').pop().toLowerCase() : '';
+              
+              if (fileExtension === 'pdf' || surat.fileURL.includes('.pdf')) {
+                filePreviewContent.innerHTML = `
+                  <iframe src="${surat.fileURL}#zoom=${currentZoom}" type="application/pdf"></iframe>
+                `;
+              } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                filePreviewContent.innerHTML = `
+                  <img src="${surat.fileURL}" id="previewImage" alt="Preview">
+                `;
+              } else {
+                filePreviewContent.innerHTML = `
+                  <div class="no-file">
+                    <i class="bi bi-file-earmark"></i>
+                    <p>File tidak dapat ditampilkan</p>
+                    <a href="${surat.fileURL}" target="_blank" class="btn btn-sm btn-primary mt-2">
+                      <i class="bi bi-download"></i> Download File
+                    </a>
+                  </div>
+                `;
+              }
+            } else {
+              filePreviewContent.innerHTML = `
+                <div class="no-file">
+                  <i class="bi bi-file-earmark"></i>
+                  <p>Tidak ada file yang dilampirkan</p>
+                </div>
+              `;
+            }
+
+            // Switch to preview view
+            document.getElementById("tableView").style.display = "none";
+            document.getElementById("disposisiView").classList.remove("active");
+            document.getElementById("previewView").classList.add("active");
           });
       };
 
-      window.closePreview = function () {
-        document.getElementById("previewModal").classList.remove("active");
+      // Zoom In
+      window.zoomIn = function() {
+        if (currentZoom < 200) {
+          currentZoom += 10;
+          updateZoom();
+        }
       };
 
-      window.disposisiFromPreview = function () {
-        closePreview();
+      // Zoom Out
+      window.zoomOut = function() {
+        if (currentZoom > 50) {
+          currentZoom -= 10;
+          updateZoom();
+        }
+      };
+
+      // Update Zoom
+      function updateZoom() {
+        const img = document.getElementById('previewImage');
+        if (img) {
+          img.style.transform = `scale(${currentZoom / 100})`;
+        }
+        const iframe = document.querySelector('.file-preview-content iframe');
+        if (iframe && currentFileURL) {
+          iframe.src = `${currentFileURL}#zoom=${currentZoom}`;
+        }
+      }
+
+      // Download File
+      window.downloadFile = function() {
+        if (currentFileURL) {
+          window.open(currentFileURL, '_blank');
+        } else {
+          Swal.fire("Info", "Tidak ada file untuk didownload", "info");
+        }
+      };
+
+      // Disposisi from Preview
+      window.disposisiFromPreview = function() {
         if (currentSuratId) {
+          document.getElementById("previewView").classList.remove("active");
           buatDisposisiCepat(currentSuratId);
         }
       };
 
-      // Buat Disposisi Cepat
+      // Show Disposisi View
       window.buatDisposisiCepat = function (suratId) {
         currentSuratId = suratId;
 
@@ -553,30 +918,77 @@
           .then((doc) => {
             if (doc.exists) {
               const surat = doc.data();
-              document.getElementById("disposisiPerihal").textContent =
-                surat.perihal || "-";
-              const modal = new bootstrap.Modal(
-                document.getElementById("disposisiModal")
-              );
-              modal.show();
+              
+              // Fill only perihal in form
+              document.getElementById("detailPerihal").textContent = surat.perihal || "-";
+
+              // Reset form
+              document.querySelectorAll('input[name="penerima"]').forEach(cb => cb.checked = false);
+              document.querySelectorAll('input[name="petunjuk"]').forEach(cb => cb.checked = false);
+              document.getElementById("disposisiInstruksi").value = "";
+              document.getElementById("disposisiPrioritas").value = "Normal";
+              updatePenerimaCount();
+              updatePetunjukCount();
+
+              // Switch view
+              document.getElementById("tableView").style.display = "none";
+              document.getElementById("previewView").classList.remove("active");
+              document.getElementById("disposisiView").classList.add("active");
             }
           });
       };
 
-      // Submit Disposisi Cepat
+      // Back to table
+      window.backToTable = function() {
+        document.getElementById("tableView").style.display = "block";
+        document.getElementById("disposisiView").classList.remove("active");
+        document.getElementById("previewView").classList.remove("active");
+        currentSuratId = null;
+      };
+
+      // Update checkbox counters
+      document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('input[name="penerima"]').forEach(checkbox => {
+          checkbox.addEventListener('change', updatePenerimaCount);
+        });
+
+        document.querySelectorAll('input[name="petunjuk"]').forEach(checkbox => {
+          checkbox.addEventListener('change', updatePetunjukCount);
+        });
+      });
+
+      function updatePenerimaCount() {
+        const checked = document.querySelectorAll('input[name="penerima"]:checked').length;
+        document.getElementById('penerimaCount').textContent = checked + ' dipilih';
+      }
+
+      function updatePetunjukCount() {
+        const checked = document.querySelectorAll('input[name="petunjuk"]:checked').length;
+        document.getElementById('petunjukCount').textContent = checked + ' dipilih';
+      }
+
+      // Submit Disposisi
       window.submitDisposisiCepat = function () {
-        const kepada = document.getElementById("disposisiKepada").value;
+        const penerima = Array.from(document.querySelectorAll('input[name="penerima"]:checked'))
+          .map(cb => cb.value);
+        const petunjuk = Array.from(document.querySelectorAll('input[name="petunjuk"]:checked'))
+          .map(cb => cb.value);
         const instruksi = document.getElementById("disposisiInstruksi").value;
         const prioritas = document.getElementById("disposisiPrioritas").value;
 
-        if (!kepada || !instruksi) {
-          Swal.fire("Error", "Tujuan dan Instruksi wajib diisi!", "error");
+        if (penerima.length === 0) {
+          Swal.fire("Error", "Pilih minimal 1 penerima disposisi!", "error");
+          return;
+        }
+
+        if (petunjuk.length === 0) {
+          Swal.fire("Error", "Pilih minimal 1 petunjuk disposisi!", "error");
           return;
         }
 
         const disposisi = {
-          kepada: kepada,
-          judul: "Disposisi dari Kapus",
+          kepada: penerima.join(", "),
+          judul: petunjuk.join(", "),
           instruksi: instruksi,
           prioritas: prioritas,
           dari: currentUserData.nama,
@@ -598,15 +1010,11 @@
             Swal.fire({
               icon: "success",
               title: "Disposisi Berhasil Dikirim!",
-              text: `Disposisi telah dikirim ke ${kepada}`,
+              text: `Disposisi telah dikirim ke ${penerima.join(", ")}`,
               timer: 2000,
             });
 
-            bootstrap.Modal.getInstance(
-              document.getElementById("disposisiModal")
-            ).hide();
-            document.getElementById("disposisiKepada").value = "";
-            document.getElementById("disposisiInstruksi").value = "";
+            backToTable();
           })
           .catch((error) => {
             console.error("Error:", error);

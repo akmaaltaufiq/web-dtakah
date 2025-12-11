@@ -68,22 +68,6 @@
       .btn-ttd:hover {
         background: #7c3aed;
       }
-      .btn-disposisi {
-        background: #10b981;
-        color: white;
-        border: none;
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-size: 13px;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        margin-right: 8px;
-      }
-      .btn-disposisi:hover {
-        background: #059669;
-      }
       .btn-preview {
         background: #3b82f6;
         color: white;
@@ -321,12 +305,6 @@
           <button class="btn-ttd" onclick="ttdFromPreview()">
             <i class="bi bi-pen"></i> TTD Digital
           </button>
-          <button class="btn-disposisi" onclick="disposisiFromPreview()">
-            <i class="bi bi-send"></i> Disposisi
-          </button>
-        </div>
-      </div>
-    </div>
 
     <!-- Modal TTD Digital -->
     <div class="modal fade" id="ttdModal" tabindex="-1">
@@ -363,76 +341,6 @@
             </button>
             <button type="button" class="btn btn-primary" onclick="submitTTD()">
               <i class="bi bi-check-circle"></i> Setujui & TTD
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal Disposisi -->
-    <div class="modal fade" id="disposisiModal" tabindex="-1">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Disposisi Nota Dinas</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label"
-                ><strong>Perihal Nota Dinas:</strong></label
-              >
-              <p id="disposisiPerihal" style="color: #374151">-</p>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Tujuan Disposisi *</label>
-              <select class="form-select" id="disposisiKepada" required>
-                <option value="">-- Pilih Tujuan --</option>
-                <option value="Kabid Banglola Sisfohan">
-                  Kabid Banglola Sisfohan
-                </option>
-                <option value="Kasubbid Infosan">Kasubbid Infosan</option>
-                <option value="Kasubbag TU">Kasubbag TU</option>
-                <option value="Kasubbag MSI">Kasubbag MSI</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Instruksi *</label>
-              <textarea
-                class="form-control"
-                id="disposisiInstruksi"
-                rows="4"
-                placeholder="Masukkan instruksi disposisi"
-                required
-              ></textarea>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Prioritas</label>
-              <select class="form-select" id="disposisiPrioritas">
-                <option value="Normal">Normal</option>
-                <option value="Penting">Penting</option>
-                <option value="Sangat Penting">Sangat Penting</option>
-              </select>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Batal
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              onclick="submitDisposisi()"
-            >
-              <i class="bi bi-send-fill"></i> Kirim Disposisi
             </button>
           </div>
         </div>
@@ -679,13 +587,6 @@
         }
       };
 
-      window.disposisiFromPreview = function () {
-        closePreview();
-        if (currentNotaDinasId) {
-          buatDisposisi(currentNotaDinasId);
-        }
-      };
-
       // ========================================
       // BUAT TTD DIGITAL
       // ========================================
@@ -751,102 +652,6 @@
             icon: "error",
             title: "Gagal!",
             text: "Gagal menandatangani nota dinas: " + error.message,
-            confirmButtonColor: "#dc2626",
-          });
-        }
-      };
-
-      // ========================================
-      // BUAT DISPOSISI
-      // ========================================
-      window.buatDisposisi = async function (notaDinasId) {
-        try {
-          currentNotaDinasId = notaDinasId;
-          const doc = await db.collection("nota_dinas").doc(notaDinasId).get();
-
-          if (!doc.exists) {
-            Notification.error("Nota dinas tidak ditemukan!");
-            return;
-          }
-
-          const nota = { id: doc.id, ...doc.data() };
-
-          document.getElementById("disposisiPerihal").textContent =
-            nota.perihal || "-";
-
-          const modal = new bootstrap.Modal(
-            document.getElementById("disposisiModal")
-          );
-          modal.show();
-        } catch (error) {
-          console.error("❌ Error:", error);
-          Notification.error("Gagal membuka form disposisi.");
-        }
-      };
-
-      // ========================================
-      // SUBMIT DISPOSISI
-      // ========================================
-      window.submitDisposisi = async function () {
-        const kepada = document.getElementById("disposisiKepada").value;
-        const instruksi = document.getElementById("disposisiInstruksi").value;
-        const prioritas = document.getElementById("disposisiPrioritas").value;
-
-        if (!kepada || !instruksi) {
-          Swal.fire("Error", "Tujuan dan Instruksi wajib diisi!", "error");
-          return;
-        }
-
-        try {
-          const disposisi = {
-            kepada: kepada,
-            judul: "Disposisi dari Kapus",
-            instruksi: instruksi,
-            prioritas: prioritas,
-            dari: currentUserData.nama,
-            jabatanDari: "Kepala Pusat",
-            tanggal: firebase.firestore.FieldValue.serverTimestamp(),
-            status: "Proses",
-          };
-
-          // Get current disposisi array
-          const doc = await db
-            .collection("nota_dinas")
-            .doc(currentNotaDinasId)
-            .get();
-          const currentDisposisi = doc.data().disposisi || [];
-
-          // Add new disposisi
-          await db
-            .collection("nota_dinas")
-            .doc(currentNotaDinasId)
-            .update({
-              disposisi: [...currentDisposisi, disposisi],
-              status: "Proses",
-              updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            });
-
-          Swal.fire({
-            icon: "success",
-            title: "Disposisi Berhasil Dikirim!",
-            text: `Disposisi telah dikirim ke ${kepada}`,
-            timer: 2000,
-            showConfirmButton: false,
-          });
-
-          bootstrap.Modal.getInstance(
-            document.getElementById("disposisiModal")
-          ).hide();
-
-          document.getElementById("disposisiKepada").value = "";
-          document.getElementById("disposisiInstruksi").value = "";
-          document.getElementById("disposisiPrioritas").value = "Normal";
-        } catch (error) {
-          console.error("❌ Error submitting disposisi:", error);
-          Swal.fire({
-            icon: "error",
-            title: "Gagal!",
-            text: "Gagal mengirim disposisi: " + error.message,
             confirmButtonColor: "#dc2626",
           });
         }
