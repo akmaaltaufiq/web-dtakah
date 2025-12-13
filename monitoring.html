@@ -12,7 +12,7 @@
     />
   </head>
   <body>
-    <div id="sidebar-placeholder"></div>
+     <div id="sidebar-placeholder"></div>
 
     <div class="main-content">
       <div id="header-placeholder"></div>
@@ -22,66 +22,35 @@
           <h1 class="monitoring-title">Monitoring Surat</h1>
 
           <div class="tabs-container">
-            <button class="tab-btn active" data-tab="masuk">Masuk</button>
-            <button class="tab-btn" data-tab="keluar">Keluar</button>
-            <button class="tab-btn" data-tab="nota-dinas">Nota Dinas</button>
+            <button class="tab-btn active" data-tab="masuk">
+              <i class="bi bi-envelope-fill"></i>
+              Masuk
+            </button>
+            <button class="tab-btn" data-tab="keluar">
+              <i class="bi bi-send-fill"></i>
+              Keluar
+            </button>
+            <button class="tab-btn" data-tab="nota-dinas">
+              <i class="bi bi-file-earmark-text-fill"></i>
+              Nota Dinas
+            </button>
           </div>
           
-
           <div class="filters-container">
             <div class="filter-icon">
               <i class="bi bi-funnel"></i>
               <span>Filter By</span>
             </div>
 
-            <button class="date-picker-btn" id="datePickerBtn">
+            <button class="date-picker-btn" id="datePickerBtn" type="button">
+              <i class="bi bi-calendar3"></i>
               <span id="selectedDateText">Tanggal</span>
               <i class="bi bi-chevron-down"></i>
             </button>
 
-            <div class="calendar-modal" id="calendarModal">
-              <div class="calendar-container">
-                <div class="calendar-header">
-                  <h3 id="calendarMonth">February 2025</h3>
-                  <div class="calendar-nav">
-                    <button id="prevMonth">
-                      <i class="bi bi-chevron-left"></i>
-                    </button>
-                    <button id="nextMonth">
-                      <i class="bi bi-chevron-right"></i>
-                    </button>
-                  </div>
-                </div>
-
-                <div class="calendar-weekdays">
-                  <div class="calendar-weekday">S</div>
-                  <div class="calendar-weekday">M</div>
-                  <div class="calendar-weekday">T</div>
-                  <div class="calendar-weekday">W</div>
-                  <div class="calendar-weekday">T</div>
-                  <div class="calendar-weekday">F</div>
-                  <div class="calendar-weekday">S</div>
-                </div>
-
-                <div class="calendar-days" id="calendarDays"></div>
-
-                <div class="calendar-footer">
-                  <button class="calendar-apply-btn" id="applyDate">
-                    Terapkan
-                  </button>
-                </div>
-              </div>
-            </div>
-
             <div class="filter-group">
               <select class="filter-select" id="statusFilter">
-                <option value="">Status Surat</option>
-                <option value="pending">Pending</option>
-                <option value="proses">Proses</option>
-                <option value="menunggu persetujuan">Menunggu Persetujuan</option>
-                <option value="disetujui">Disetujui</option>
-                <option value="siap kirim">Siap Kirim</option>
-                <option value="ditolak">Ditolak</option>
+                <option value="">Semua Status</option>
               </select>
             </div>
 
@@ -89,14 +58,14 @@
               <i class="bi bi-search"></i>
               <input
                 type="text"
-                placeholder="Ketik Perihal Surat"
+                placeholder="Cari perihal, nomor, atau pengirim..."
                 id="searchPerihal"
               />
             </div>
 
-            <button class="reset-filter" id="resetBtn">
+            <button class="reset-filter" id="resetBtn" type="button">
               <i class="bi bi-arrow-clockwise"></i>
-              Reset Filter
+              Reset
             </button>
           </div>
 
@@ -104,15 +73,27 @@
             <table class="monitoring-table">
               <thead>
                 <tr>
-                  <th style="text-align: left; width: 200px">Dari</th>
                   <th style="text-align: left; width: 200px">
-                    Nomor Agenda Surat
+                    <i class="bi bi-person-badge"></i> Dari
                   </th>
-                  <th style="text-align: left; width: 130px">Tanggal Surat</th>
-                  <th style="text-align: left; width: 180px">Kepada</th>
-                  <th style="text-align: left">Perihal</th>
-                  <th style="text-align: center; width: 150px">Status</th>
-                  <th style="text-align: center; width: 100px">Aksi</th>
+                  <th style="text-align: left; width: 200px">
+                    <i class="bi bi-hash"></i> Nomor Surat
+                  </th>
+                  <th style="text-align: left; width: 130px">
+                    <i class="bi bi-calendar-event"></i> Tanggal
+                  </th>
+                  <th style="text-align: left; width: 180px">
+                    <i class="bi bi-person-check"></i> Kepada
+                  </th>
+                  <th style="text-align: left">
+                    <i class="bi bi-file-text"></i> Perihal
+                  </th>
+                  <th style="text-align: center; width: 150px">
+                    <i class="bi bi-flag"></i> Status
+                  </th>
+                  <th style="text-align: center; width: 100px">
+                    <i class="bi bi-gear"></i> Aksi
+                  </th>
                 </tr>
               </thead>
               <tbody id="monitoringTableBody">
@@ -123,7 +104,8 @@
 
           <div class="table-footer">
             <div class="showing-info" id="monitoringPaginationInfo">
-              Showing 0-0 of 0
+              <i class="bi bi-info-circle"></i>
+              <span>Showing 0-0 of 0</span>
             </div>
             <div class="pagination">
               <button
@@ -131,6 +113,7 @@
                 id="prevBtnMonitoring"
                 disabled
                 onclick="previousPageMonitoring()"
+                title="Halaman Sebelumnya"
               >
                 <i class="bi bi-chevron-left"></i>
               </button>
@@ -138,6 +121,7 @@
                 class="pagination-btn"
                 id="nextBtnMonitoring"
                 onclick="nextPageMonitoring()"
+                title="Halaman Selanjutnya"
               >
                 <i class="bi bi-chevron-right"></i>
               </button>
@@ -149,10 +133,51 @@
       <div id="footer-placeholder"></div>
     </div>
 
+    <!-- Modal Backdrop -->
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+
+    <!-- Calendar Modal -->
+    <div class="calendar-modal" id="calendarModal">
+      <div class="calendar-container">
+        <div class="calendar-header">
+          <h3 id="calendarMonth">
+            <i class="bi bi-calendar3"></i> Desember 2025
+          </h3>
+          <div class="calendar-nav">
+            <button type="button" id="prevMonth" title="Bulan Sebelumnya">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+            <button type="button" id="nextMonth" title="Bulan Selanjutnya">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="calendar-weekdays">
+          <div class="calendar-weekday">Min</div>
+          <div class="calendar-weekday">Sen</div>
+          <div class="calendar-weekday">Sel</div>
+          <div class="calendar-weekday">Rab</div>
+          <div class="calendar-weekday">Kam</div>
+          <div class="calendar-weekday">Jum</div>
+          <div class="calendar-weekday">Sab</div>
+        </div>
+
+        <div class="calendar-days" id="calendarDays"></div>
+
+        <div class="calendar-footer">
+          <button class="calendar-apply-btn" id="applyDate" type="button">
+            <i class="bi bi-check-circle"></i> Terapkan
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Firebase Config -->
     <script src="assets/js/firebase-config.js"></script>

@@ -666,18 +666,16 @@
       const typeLabel = item.type === "masuk" ? "Masuk" :
                         item.type === "keluar" ? "Keluar" : "Nota Dinas";
       
-      // Action buttons based on role
-      const actionButtons = MonitoringState.userRole === "admin" ? `
+      // Action buttons - View untuk semua, Delete hanya untuk Admin
+      const actionButtons = `
         <button class="action-btn view-btn" onclick="MonitoringActions.viewDetail('${item.firestoreId}', '${item.type}')" title="Lihat Detail">
           <i class="bi bi-eye"></i>
         </button>
-        <button class="action-btn delete-btn" onclick="MonitoringActions.deleteSurat('${item.firestoreId}', '${item.type}')" title="Hapus">
+        ${MonitoringState.userRole === "admin" ? `
+        <button class="action-btn delete-btn" onclick="MonitoringActions.deleteSurat('${item.firestoreId}', '${item.type}', '${Utils.escapeHtml(item.perihal || 'surat ini')}')" title="Hapus">
           <i class="bi bi-trash"></i>
         </button>
-      ` : `
-        <button class="action-btn view-btn" onclick="MonitoringActions.viewDetail('${item.firestoreId}', '${item.type}')" title="Lihat Detail">
-          <i class="bi bi-eye"></i>
-        </button>
+        ` : ''}
       `;
       
       return `
@@ -925,55 +923,18 @@
     },
     
     /**
-     * Delete surat (Admin only)
+     * Delete surat (Admin only) - Enhanced version
      */
-    async deleteSurat(id, type) {
+    async deleteSurat(id, type, perihal = 'surat ini') {
+      console.log("🗑️ Delete button clicked:", { id, type, perihal });
+      
+      // Check admin permission
       if (MonitoringState.userRole !== "admin") {
+        console.warn("⚠️ Access denied - not admin");
         NotificationManager.show("Akses Ditolak", "Hanya Admin yang dapat menghapus surat", "error");
         return;
       }
       
-      if (!window.Swal) {
-        if (!confirm("Yakin ingin menghapus surat ini?")) return;
-        await this.performDelete(id, type);
-        return;
-      }
-      
-      const collectionMap = {
-        "masuk": "surat_masuk",
-        "keluar": "surat_keluar",
-        "nota-dinas": "nota_dinas"
-      };
-      
-      const typeLabel = type === "masuk" ? "Surat Masuk" :
-                        type === "keluar" ? "Surat Keluar" : "Nota Dinas";
-      
-      Swal.fire({
-        title: `Hapus ${typeLabel}?`,
-        html: `
-          <p>Surat akan dipindahkan ke <strong>Surat Dihapus</strong></p>
-          <p style="color: #6b7280; font-size: 14px; margin-top: 12px;">
-            Data masih dapat dipulihkan dari halaman Surat Dihapus
-          </p>
-        `,
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#dc2626",
-        cancelButtonColor: "#6b7280",
-        confirmButtonText: '<i class="bi bi-trash"></i> Ya, Hapus!',
-        cancelButtonText: "Batal",
-        reverseButtons: true
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          await this.performDelete(id, type);
-        }
-      });
-    },
-    
-    /**
-     * Perform delete operation
-     */
-    async performDelete(id, type) {
       const collectionMap = {
         "masuk": "surat_masuk",
         "keluar": "surat_keluar",
@@ -982,44 +943,122 @@
       
       const collection = collectionMap[type];
       if (!collection) {
+        console.error("❌ Invalid type:", type);
         NotificationManager.show("Error", "Tipe surat tidak valid", "error");
         return;
       }
+      
+      const typeLabel = type === "masuk" ? "Surat Masuk" :
+                        type === "keluar" ? "Surat Keluar" : "Nota Dinas";
+      
+      // Load SweetAlert and show confirmation
+      window.loadSwal(() => {
+        Swal.fire({
+          title: `Hapus ${typeLabel}?`,
+          html: `
+            <div style="text-align: left; padding: 0 20px;">
+              <p style="margin-bottom: 16px;">Yakin ingin menghapus surat:</p>
+              <div style="background: #fef2f2; padding: 12px; border-radius: 8px; border-left: 4px solid #dc2626; margin-bottom: 16px;">
+                <strong style="color: #991b1b;">"${perihal}"</strong>
+              </div>
+              <div style="background: #fef9c3; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
+                <p style="margin: 0; font-size: 14px; color: #854d0e;">
+                  <i class="bi bi-info-circle"></i> 
+                  Surat akan dipindahkan ke <strong>Surat Dihapus</strong>
+                </p>
+              </div>
+              <p style="font-size: 13px; color: #6b7280; margin: 0;">
+                Data masih dapat dipulihkan dari menu Surat Dihapus
+              </p>
+            </div>
+          `,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#dc2626",
+          cancelButtonColor: "#6b7280",
+          confirmButtonText: '<i class="bi bi-trash"></i> Ya, Hapus!',
+          cancelButtonText: "Batal",
+          reverseButtons: true,
+          customClass: {
+            popup: 'swal-wide'
+          }
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            await this.performDelete(id, type, collection, perihal);
+          }
+        });
+      });
+    },
+    
+    /**
+     * Perform delete operation
+     */
+    async performDelete(id, type, collection, perihal) {
+      console.log("🗑️ Performing delete:", { id, type, collection });
       
       try {
         // Show loading
         if (window.Swal) {
           Swal.fire({
             title: 'Menghapus...',
-            text: 'Mohon tunggu',
+            html: '<div style="padding: 20px;"><i class="bi bi-arrow-repeat" style="font-size: 48px; animation: spin 1s linear infinite;"></i><p style="margin-top: 16px;">Mohon tunggu...</p></div>',
             allowOutsideClick: false,
             showConfirmButton: false,
-            willOpen: () => Swal.showLoading()
+            willOpen: () => {
+              Swal.showLoading();
+            }
           });
         }
         
-        // Soft delete
-        await db.collection(collection).doc(id).update({
+        // Get document first to verify it exists
+        const docRef = db.collection(collection).doc(id);
+        const doc = await docRef.get();
+        
+        if (!doc.exists) {
+          throw new Error("Surat tidak ditemukan");
+        }
+        
+        // Soft delete - update isDeleted flag
+        await docRef.update({
           isDeleted: true,
           deletedAt: firebase.firestore.FieldValue.serverTimestamp(),
-          deletedBy: MonitoringState.currentUser?.nama || MonitoringState.userEmail,
-          deletedByUid: MonitoringState.currentUser?.uid,
+          deletedBy: MonitoringState.currentUser?.nama || MonitoringState.userEmail || "Admin",
+          deletedByUid: MonitoringState.currentUser?.uid || null,
         });
         
-        console.log("✅ Surat deleted:", id);
+        console.log("✅ Surat soft-deleted successfully");
         
         // Show success
         if (window.Swal) {
           Swal.fire({
             icon: "success",
             title: "Berhasil Dihapus!",
-            text: "Surat telah dipindahkan ke Surat Dihapus",
-            timer: 2000,
-            showConfirmButton: false,
+            html: `
+              <div style="text-align: center; padding: 0 20px;">
+                <p style="margin-bottom: 16px;">Surat "<strong>${perihal}</strong>" telah dihapus</p>
+                <div style="background: #d1fae5; padding: 12px; border-radius: 8px; margin-bottom: 16px;">
+                  <p style="margin: 0; font-size: 14px; color: #065f46;">
+                    <i class="bi bi-check-circle"></i> 
+                    Tersimpan di <strong>Surat Dihapus</strong>
+                  </p>
+                </div>
+                <p style="font-size: 13px; color: #6b7280; margin: 0;">
+                  Anda dapat memulihkan surat ini kapan saja dari menu Surat Dihapus
+                </p>
+              </div>
+            `,
+            showConfirmButton: true,
+            confirmButtonText: "OK",
+            confirmButtonColor: "#059669",
+            timer: 4000,
+            timerProgressBar: true
           });
         } else {
           NotificationManager.show("Berhasil", "Surat berhasil dihapus", "success");
         }
+        
+        // Data will auto-refresh via real-time listener
+        console.log("✅ Delete operation completed");
         
       } catch (error) {
         console.error("❌ Error deleting:", error);
@@ -1028,8 +1067,18 @@
           Swal.fire({
             icon: "error",
             title: "Gagal Menghapus",
-            text: "Terjadi kesalahan: " + error.message,
-            confirmButtonColor: "#dc2626"
+            html: `
+              <div style="text-align: center;">
+                <p style="margin-bottom: 12px;">Terjadi kesalahan saat menghapus surat</p>
+                <div style="background: #fef2f2; padding: 12px; border-radius: 8px;">
+                  <p style="margin: 0; font-size: 13px; color: #991b1b; font-family: monospace;">
+                    ${error.message}
+                  </p>
+                </div>
+              </div>
+            `,
+            confirmButtonColor: "#dc2626",
+            confirmButtonText: "Tutup"
           });
         } else {
           NotificationManager.show("Error", "Gagal menghapus: " + error.message, "error");
@@ -1048,6 +1097,7 @@
     init() {
       const datePickerBtn = document.getElementById("datePickerBtn");
       const calendarModal = document.getElementById("calendarModal");
+      const modalBackdrop = document.getElementById("modalBackdrop");
       const applyBtn = document.getElementById("applyDate");
       const prevBtn = document.getElementById("prevMonth");
       const nextBtn = document.getElementById("nextMonth");
@@ -1073,29 +1123,20 @@
         console.log("📅 Calendar toggle:", !isActive);
         
         if (isActive) {
-          calendarModal.classList.remove("active");
+          this.closeCalendar();
         } else {
-          // Reset to current month when opening
-          const now = new Date();
-          MonitoringState.currentMonth = now.getMonth();
-          MonitoringState.currentYear = now.getFullYear();
-          
-          calendarModal.classList.add("active");
-          this.render();
+          this.openCalendar();
         }
       });
       
       // Apply date filter
       if (applyBtn) {
-        // Remove old listeners
-        const newApplyBtn = applyBtn.cloneNode(true);
-        applyBtn.parentNode.replaceChild(newApplyBtn, applyBtn);
-        
-        newApplyBtn.addEventListener("click", (e) => {
+        applyBtn.addEventListener("click", (e) => {
           e.preventDefault();
           e.stopPropagation();
           
-          console.log("📅 Apply button clicked, selected date:", MonitoringState.selectedDate);
+          console.log("📅 Apply button clicked");
+          console.log("📅 Selected date:", MonitoringState.selectedDate);
           
           if (MonitoringState.selectedDate) {
             const dateText = document.getElementById("selectedDateText");
@@ -1105,15 +1146,21 @@
               console.log("✅ Date text updated to:", formattedDate);
             }
             
-            // Set the date filter
-            MonitoringState.dateFilter = new Date(MonitoringState.selectedDate);
+            // Set the date filter (create new date object to avoid reference issues)
+            MonitoringState.dateFilter = new Date(
+              MonitoringState.selectedDate.getFullYear(),
+              MonitoringState.selectedDate.getMonth(),
+              MonitoringState.selectedDate.getDate()
+            );
+            
             console.log("✅ Date filter set to:", MonitoringState.dateFilter.toLocaleDateString());
             
             // Close modal
-            calendarModal.classList.remove("active");
+            this.closeCalendar();
             
-            // Apply filters
+            // Apply filters after a small delay
             setTimeout(() => {
+              console.log("🔍 Applying filters with date:", MonitoringState.dateFilter);
               FilterManager.applyFilters();
             }, 100);
             
@@ -1126,11 +1173,7 @@
       
       // Previous month
       if (prevBtn) {
-        // Remove old listeners
-        const newPrevBtn = prevBtn.cloneNode(true);
-        prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
-        
-        newPrevBtn.addEventListener("click", (e) => {
+        prevBtn.addEventListener("click", (e) => {
           e.preventDefault();
           e.stopPropagation();
           
@@ -1139,18 +1182,14 @@
             MonitoringState.currentMonth = 11;
             MonitoringState.currentYear--;
           }
-          console.log("◀️ Previous month:", MonitoringState.currentMonth, MonitoringState.currentYear);
+          console.log("◀️ Previous month:", MonitoringState.currentMonth + 1, MonitoringState.currentYear);
           this.render();
         });
       }
       
       // Next month
       if (nextBtn) {
-        // Remove old listeners
-        const newNextBtn = nextBtn.cloneNode(true);
-        nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
-        
-        newNextBtn.addEventListener("click", (e) => {
+        nextBtn.addEventListener("click", (e) => {
           e.preventDefault();
           e.stopPropagation();
           
@@ -1159,29 +1198,79 @@
             MonitoringState.currentMonth = 0;
             MonitoringState.currentYear++;
           }
-          console.log("▶️ Next month:", MonitoringState.currentMonth, MonitoringState.currentYear);
+          console.log("▶️ Next month:", MonitoringState.currentMonth + 1, MonitoringState.currentYear);
           this.render();
         });
       }
       
-      // Close on outside click
-      document.addEventListener("click", (e) => {
-        if (!calendarModal.contains(e.target) && 
-            e.target !== datePickerBtn &&
-            !datePickerBtn.contains(e.target)) {
-          if (calendarModal.classList.contains("active")) {
-            console.log("📅 Closing calendar (outside click)");
-            calendarModal.classList.remove("active");
-          }
+      // Close on backdrop click
+      if (modalBackdrop) {
+        modalBackdrop.addEventListener("click", () => {
+          console.log("📅 Closing calendar (backdrop click)");
+          this.closeCalendar();
+        });
+      }
+      
+      // Close on escape key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && calendarModal.classList.contains("active")) {
+          console.log("📅 Closing calendar (escape key)");
+          this.closeCalendar();
         }
       });
       
-      // Prevent modal from closing when clicking inside
-      calendarModal.addEventListener("click", (e) => {
-        e.stopPropagation();
-      });
-      
       console.log("✅ Calendar initialized");
+    },
+    
+    /**
+     * Open calendar modal
+     */
+    openCalendar() {
+      const calendarModal = document.getElementById("calendarModal");
+      const modalBackdrop = document.getElementById("modalBackdrop");
+      const datePickerBtn = document.getElementById("datePickerBtn");
+      
+      if (!calendarModal || !datePickerBtn) return;
+      
+      // Reset to current month when opening
+      const now = new Date();
+      MonitoringState.currentMonth = now.getMonth();
+      MonitoringState.currentYear = now.getFullYear();
+      
+      // Position modal near button
+      const btnRect = datePickerBtn.getBoundingClientRect();
+      calendarModal.style.position = "fixed";
+      calendarModal.style.top = (btnRect.bottom + 8) + "px";
+      calendarModal.style.left = btnRect.left + "px";
+      
+      // Show modal and backdrop
+      calendarModal.classList.add("active");
+      if (modalBackdrop) {
+        modalBackdrop.classList.add("active");
+      }
+      
+      // Render calendar
+      this.render();
+      
+      console.log("📅 Calendar opened");
+    },
+    
+    /**
+     * Close calendar modal
+     */
+    closeCalendar() {
+      const calendarModal = document.getElementById("calendarModal");
+      const modalBackdrop = document.getElementById("modalBackdrop");
+      
+      if (calendarModal) {
+        calendarModal.classList.remove("active");
+      }
+      
+      if (modalBackdrop) {
+        modalBackdrop.classList.remove("active");
+      }
+      
+      console.log("📅 Calendar closed");
     },
     
     /**
@@ -1197,8 +1286,8 @@
       }
       
       const monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
       ];
       
       calendarMonth.textContent = `${monthNames[MonitoringState.currentMonth]} ${MonitoringState.currentYear}`;
@@ -1210,13 +1299,13 @@
       calendarDays.innerHTML = "";
       
       console.log("📅 Rendering calendar:", monthNames[MonitoringState.currentMonth], MonitoringState.currentYear);
-      console.log("📅 First day of week:", firstDay, "Days in month:", daysInMonth);
       
       // Empty days at start (Sunday = 0)
       for (let i = 0; i < firstDay; i++) {
         const emptyDay = document.createElement("button");
         emptyDay.className = "calendar-day empty";
         emptyDay.disabled = true;
+        emptyDay.type = "button";
         emptyDay.innerHTML = "&nbsp;";
         calendarDays.appendChild(emptyDay);
       }
@@ -1262,8 +1351,19 @@
           // Add new selection
           dayBtn.classList.add("selected");
           
-          MonitoringState.selectedDate = new Date(date);
-          console.log("📅 Date selected:", MonitoringState.selectedDate.toLocaleDateString());
+          // Save to state
+          MonitoringState.selectedDate = new Date(
+            MonitoringState.currentYear,
+            MonitoringState.currentMonth,
+            day
+          );
+          
+          console.log("📅 Date selected:", {
+            date: MonitoringState.selectedDate.toLocaleDateString(),
+            day: day,
+            month: MonitoringState.currentMonth + 1,
+            year: MonitoringState.currentYear
+          });
         });
         
         calendarDays.appendChild(dayBtn);
