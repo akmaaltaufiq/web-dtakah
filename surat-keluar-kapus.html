@@ -91,8 +91,253 @@
         margin-bottom: 24px;
       }
 
-      /* Preview Modal Styles */
-      .preview-modal {
+      /* Preview View Styles */
+      .preview-view {
+        display: none;
+      }
+      .preview-view.active {
+        display: block;
+      }
+      .breadcrumb-nav {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 12px;
+      }
+      .breadcrumb-nav .btn-secondary {
+        background: #8b0000;
+        border-color: #8b0000;
+        color: white;
+      }
+      .breadcrumb-nav .btn-secondary:hover {
+        background: #6b0000;
+        border-color: #6b0000;
+      }
+      .breadcrumb-text {
+        color: #6b7280;
+        font-size: 14px;
+      }
+      .breadcrumb-text .separator {
+        margin: 0 8px;
+        color: #9ca3af;
+      }
+      .breadcrumb-text .current {
+        color: #1f2937;
+        font-weight: 500;
+      }
+      .preview-panel {
+        background: white;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        max-width: 100%;
+        width: 100%;
+      }
+      .file-preview-section {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 0;
+        margin-bottom: 24px;
+        overflow: hidden;
+      }
+      .file-preview-header {
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .file-preview-title {
+        font-weight: 600;
+        color: #1f2937;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .file-preview-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .file-preview-actions button {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        padding: 4px 8px;
+        cursor: pointer;
+        color: #374151;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+      .file-preview-actions button:hover {
+        background: #f3f4f6;
+      }
+      .file-preview-content {
+        background: #f3f4f6;
+        min-height: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      .file-preview-content iframe {
+        width: 100%;
+        height: 600px;
+        border: none;
+        background: white;
+      }
+      .file-preview-content img {
+        max-width: 100%;
+        max-height: 600px;
+        height: auto;
+        object-fit: contain;
+      }
+      .file-preview-navigation {
+        background: #f9fafb;
+        border-top: 1px solid #e5e7eb;
+        padding: 12px 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+      }
+      .file-preview-navigation button {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #374151;
+        transition: all 0.2s;
+      }
+      .file-preview-navigation button:hover:not(:disabled) {
+        background: #f3f4f6;
+        border-color: #8b0000;
+        color: #8b0000;
+      }
+      .file-preview-navigation button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .file-preview-section .no-file {
+        color: #9ca3af;
+        padding: 60px 20px;
+        font-size: 14px;
+        text-align: center;
+      }
+      .file-preview-section .no-file i {
+        font-size: 48px;
+        color: #d1d5db;
+        margin-bottom: 12px;
+        display: block;
+      }
+      .panel-header {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #e5e7eb;
+      }
+      .detail-item {
+        margin-bottom: 16px;
+      }
+      .detail-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #6b7280;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+      }
+      .detail-value {
+        font-size: 14px;
+        color: #1f2937;
+      }
+
+      /* Signature Section */
+      .signature-section {
+        background: #f9fafb;
+        border: 2px dashed #e5e7eb;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 24px;
+        margin-bottom: 24px;
+        text-align: center;
+      }
+      .signature-section.signed {
+        border: 2px solid #10b981;
+        background: #f0fdf4;
+      }
+      .signature-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .btn-open-signature {
+        background: #8b45f6;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+      }
+      .btn-open-signature:hover {
+        background: #7c3aed;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(139, 69, 246, 0.3);
+      }
+      .signature-display {
+        background: white;
+        border: 1px solid #10b981;
+        border-radius: 6px;
+        padding: 20px;
+        text-align: center;
+      }
+      .signature-display img {
+        max-width: 100%;
+        height: auto;
+        max-height: 150px;
+        margin-bottom: 12px;
+      }
+      .signature-info {
+        margin-top: 8px;
+        font-size: 12px;
+        color: #059669;
+        font-weight: 500;
+      }
+      .btn-change-signature {
+        background: #3b82f6;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        margin-top: 12px;
+      }
+      .btn-change-signature:hover {
+        background: #2563eb;
+      }
+
+      /* Signature Modal */
+      .signature-modal {
         display: none;
         position: fixed;
         top: 0;
@@ -101,66 +346,299 @@
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         z-index: 9999;
-        overflow-y: auto;
-      }
-      .preview-modal.active {
-        display: flex;
         align-items: center;
         justify-content: center;
-      }
-      .preview-content {
-        background: white;
-        border-radius: 12px;
-        width: 90%;
-        max-width: 800px;
-        padding: 24px;
-        position: relative;
-        max-height: 90vh;
+        padding: 20px;
         overflow-y: auto;
       }
-      .preview-header {
+      .signature-modal.active {
+        display: flex;
+      }
+      .signature-modal-content {
+        background: white;
+        border-radius: 12px;
+        max-width: 900px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        margin: auto;
+      }
+      .signature-modal-header {
+        padding: 20px 24px;
+        border-bottom: 2px solid #e5e7eb;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 20px;
-        padding-bottom: 16px;
-        border-bottom: 2px solid #e5e7eb;
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 10;
       }
-      .preview-title {
+      .signature-modal-header h3 {
+        margin: 0;
         font-size: 20px;
         font-weight: 700;
         color: #1f2937;
       }
-      .preview-close {
-        background: none;
+      .btn-close-modal {
+        background: transparent;
         border: none;
         font-size: 24px;
-        cursor: pointer;
         color: #6b7280;
+        cursor: pointer;
+        padding: 0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
       }
-      .preview-close:hover {
-        color: #dc2626;
+      .btn-close-modal:hover {
+        background: #f3f4f6;
+        color: #1f2937;
       }
-      .preview-section {
-        margin-bottom: 20px;
+      .signature-tabs {
+        display: flex;
+        border-bottom: 2px solid #e5e7eb;
+        background: #f9fafb;
+        position: sticky;
+        top: 70px;
+        z-index: 9;
       }
-      .preview-label {
-        font-size: 12px;
+      .signature-tab {
+        flex: 1;
+        padding: 16px 24px;
+        background: transparent;
+        border: none;
+        border-bottom: 3px solid transparent;
+        cursor: pointer;
+        font-size: 14px;
         font-weight: 600;
         color: #6b7280;
-        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.2s;
       }
-      .preview-value {
-        font-size: 14px;
-        color: #1f2937;
-        margin-bottom: 12px;
+      .signature-tab:hover {
+        background: #f3f4f6;
+        color: #374151;
       }
-      .preview-actions {
+      .signature-tab.active {
+        background: white;
+        color: #8b45f6;
+        border-bottom-color: #8b45f6;
+      }
+      .signature-tab-content {
+        display: none;
+        padding: 24px;
+      }
+      .signature-tab-content.active {
+        display: block;
+      }
+      
+      /* Draw Tab */
+      .draw-container {
+        text-align: center;
+      }
+      .draw-canvas-wrapper {
+        background: #f9fafb;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+      #signatureCanvas {
+        border: 2px dashed #d1d5db;
+        border-radius: 4px;
+        cursor: crosshair;
+        touch-action: none;
+        background: white;
+        display: block;
+        margin: 0 auto;
+        max-width: 100%;
+      }
+      .draw-tools {
         display: flex;
         gap: 12px;
-        margin-top: 24px;
-        padding-top: 16px;
-        border-top: 2px solid #e5e7eb;
+        justify-content: center;
+        margin-top: 16px;
+        flex-wrap: wrap;
+      }
+      .draw-tools button {
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+      }
+      .btn-clear {
+        background: #f3f4f6;
+        color: #374151;
+      }
+      .btn-clear:hover {
+        background: #e5e7eb;
+      }
+      .btn-save-sig {
+        background: #10b981;
+        color: white;
+      }
+      .btn-save-sig:hover {
+        background: #059669;
+      }
+
+      /* Type Tab */
+      .type-container {
+        text-align: center;
+      }
+      .type-input-wrapper {
+        margin-bottom: 20px;
+      }
+      .type-input {
+        width: 100%;
+        max-width: 500px;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 16px;
+        text-align: center;
+        margin-bottom: 16px;
+      }
+      .type-input:focus {
+        outline: none;
+        border-color: #8b45f6;
+      }
+      .type-preview {
+        background: #f9fafb;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 40px 20px;
+        min-height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+      .type-preview-text {
+        font-size: 48px;
+        color: #1f2937;
+      }
+      .font-options {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+      .font-option {
+        padding: 10px 20px;
+        border: 2px solid #e5e7eb;
+        border-radius: 6px;
+        background: white;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+        font-weight: 500;
+      }
+      .font-option:hover {
+        border-color: #8b45f6;
+        background: #faf5ff;
+      }
+      .font-option.active {
+        border-color: #8b45f6;
+        background: #f3e8ff;
+        color: #8b45f6;
+      }
+
+      /* Upload Tab */
+      .upload-container {
+        text-align: center;
+      }
+      .upload-area {
+        border: 2px dashed #d1d5db;
+        border-radius: 8px;
+        padding: 60px 40px;
+        background: #f9fafb;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-bottom: 20px;
+      }
+      .upload-area:hover {
+        border-color: #8b45f6;
+        background: #faf5ff;
+      }
+      .upload-area.dragover {
+        border-color: #8b45f6;
+        background: #f3e8ff;
+      }
+      .upload-icon {
+        font-size: 48px;
+        color: #9ca3af;
+        margin-bottom: 16px;
+      }
+      .upload-text {
+        font-size: 16px;
+        color: #6b7280;
+        margin-bottom: 8px;
+      }
+      .upload-hint {
+        font-size: 13px;
+        color: #9ca3af;
+      }
+      .upload-preview {
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        display: none;
+      }
+      .upload-preview.active {
+        display: block;
+      }
+      .upload-preview img {
+        max-width: 100%;
+        max-height: 200px;
+        height: auto;
+      }
+      .btn-upload {
+        background: #3b82f6;
+        color: white;
+        padding: 10px 24px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn-upload:hover {
+        background: #2563eb;
+      }
+
+      @media (max-width: 768px) {
+        .signature-modal-content {
+          max-width: 100%;
+          max-height: 100vh;
+          border-radius: 0;
+        }
+        #signatureCanvas {
+          width: 100%;
+          height: auto;
+        }
+        .type-preview-text {
+          font-size: 32px;
+        }
       }
     </style>
   </head>
@@ -169,8 +647,7 @@
       <!-- Sidebar -->
       <div class="navigation-sidebar">
         <div class="logo-section">
-          <div class="logo-emblem">
-          </div>
+          <div class="logo-emblem"></div>
           <div class="logo-text">D-TAKAH</div>
         </div>
 
@@ -218,131 +695,266 @@
       <!-- Main Content -->
       <div class="main-content">
         <div class="content-container" style="padding: 24px">
-          <div class="page-header">
-            <h1 style="font-size: 24px; font-weight: 700; margin: 0">
-              Surat Keluar - Perlu Tanda Tangan
-            </h1>
-            <div style="color: #6b7280">
-              <i class="bi bi-calendar3"></i>
-              <span id="currentDate"></span>
+          
+          <!-- Table View -->
+          <div id="tableView">
+            <div class="page-header">
+              <h1 style="font-size: 24px; font-weight: 700; margin: 0">
+                Surat Keluar - Perlu Tanda Tangan
+              </h1>
+              <div style="color: #6b7280">
+                <i class="bi bi-calendar3"></i>
+                <span id="currentDate"></span>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div
+              style="
+                background: white;
+                border-radius: 8px;
+                padding: 20px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+              "
+            >
+              <table class="surat-table">
+                <thead>
+                  <tr>
+                    <th style="width: 50px">No</th>
+                    <th>Nomor Surat</th>
+                    <th>Perihal</th>
+                    <th>Tujuan</th>
+                    <th style="width: 120px">Prioritas</th>
+                    <th style="width: 150px">Status</th>
+                    <th style="width: 230px; text-align: center">
+                      Aksi Diperlukan
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="suratKeluarTableBody">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="text-align: center; padding: 40px; color: #9ca3af"
+                    >
+                      Loading data...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
-          <!-- Table -->
-          <div
-            style="
-              background: white;
-              border-radius: 8px;
-              padding: 20px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            "
-          >
-            <table class="surat-table">
-              <thead>
-                <tr>
-                  <th style="width: 50px">No</th>
-                  <th>Nomor Surat</th>
-                  <th>Perihal</th>
-                  <th>Tujuan</th>
-                  <th style="width: 120px">Prioritas</th>
-                  <th style="width: 150px">Status</th>
-                  <th style="width: 230px; text-align: center">
-                    Aksi Diperlukan
-                  </th>
-                </tr>
-              </thead>
-              <tbody id="suratKeluarTableBody">
-                <tr>
-                  <td
-                    colspan="7"
-                    style="text-align: center; padding: 40px; color: #9ca3af"
-                  >
-                    Loading data...
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <!-- Preview View -->
+          <div id="previewView" class="preview-view">
+            <div class="breadcrumb-nav">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="backToTable()"
+                style="display: flex; align-items: center; gap: 8px;"
+              >
+                <i class="bi bi-arrow-left"></i> Kembali
+              </button>
+              <div class="breadcrumb-text">
+                <span style="color: #9ca3af;">Surat Keluar</span>
+                <span class="separator">/</span>
+                <span class="current">Preview & TTD</span>
+              </div>
+            </div>
+
+            <div class="preview-panel">
+              <div class="panel-header">
+                <i class="bi bi-file-earmark-text"></i> Detail Surat Keluar
+              </div>
+
+              <!-- File Preview Section -->
+              <div class="file-preview-section">
+                <div class="file-preview-header">
+                  <div class="file-preview-title">
+                    <span id="filePreviewTitle">Dokumen Surat</span>
+                  </div>
+                  <div class="file-preview-actions">
+                    <button type="button" onclick="zoomOut()" title="Zoom Out">
+                      <i class="bi bi-zoom-out"></i>
+                    </button>
+                    <button type="button" onclick="zoomIn()" title="Zoom In">
+                      <i class="bi bi-zoom-in"></i>
+                    </button>
+                    <button type="button" onclick="downloadFile()" title="Download">
+                      <i class="bi bi-download"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="file-preview-content" id="filePreviewContent">
+                  <div class="no-file">
+                    <i class="bi bi-file-earmark"></i>
+                    <p>Tidak ada file yang dilampirkan</p>
+                  </div>
+                </div>
+                <div class="file-preview-navigation">
+                  <button type="button" id="prevPage" disabled>
+                    <i class="bi bi-chevron-left"></i>
+                  </button>
+                  <button type="button" id="nextPage" disabled>
+                    <i class="bi bi-chevron-right"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="detail-item">
+                <div class="detail-label">Nomor Surat</div>
+                <div class="detail-value" id="previewNoSurat">-</div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-label">Perihal</div>
+                <div class="detail-value" id="previewPerihal">-</div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-label">Tujuan</div>
+                <div class="detail-value" id="previewTujuan">-</div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-label">Tanggal Surat</div>
+                <div class="detail-value" id="previewTanggalSurat">-</div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-label">Catatan</div>
+                <div class="detail-value" id="previewCatatan">-</div>
+              </div>
+
+              <!-- Signature Section -->
+              <div class="signature-section" id="signatureSection">
+                <div class="signature-label">
+                  <i class="bi bi-pen-fill"></i>
+                  Tanda Tangan Digital Kapus
+                </div>
+                
+                <!-- Button to open signature modal -->
+                <button class="btn-open-signature" id="btnOpenSignature" onclick="openSignatureModal()">
+                  <i class="bi bi-pen"></i> Buat Tanda Tangan
+                </button>
+
+                <!-- Display saved signature -->
+                <div id="signatureDisplay" class="signature-display" style="display: none;">
+                  <img id="signatureImage" src="" alt="Tanda Tangan">
+                  <div class="signature-info">
+                    <i class="bi bi-check-circle-fill"></i> 
+                    Ditandatangani oleh <span id="signerName"></span>
+                  </div>
+                  <button class="btn-change-signature" onclick="openSignatureModal()">
+                    <i class="bi bi-pencil"></i> Ubah Tanda Tangan
+                  </button>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 2px solid #e5e7eb;">
+                <button class="btn btn-primary flex-fill" onclick="submitApproval()" id="btnSubmitApproval" disabled>
+                  <i class="bi bi-check-circle"></i> Setujui & Kirim Surat
+                </button>
+              </div>
+            </div>
           </div>
+
         </div>
       </div>
     </div>
 
-    <!-- Preview Modal -->
-    <div class="preview-modal" id="previewModal">
-      <div class="preview-content">
-        <div class="preview-header">
-          <div class="preview-title">Detail Surat Keluar</div>
-          <button class="preview-close" onclick="closePreview()">
+    <!-- Signature Modal -->
+    <div class="signature-modal" id="signatureModal">
+      <div class="signature-modal-content">
+        <div class="signature-modal-header">
+          <h3><i class="bi bi-pen"></i> Buat Tanda Tangan Digital</h3>
+          <button class="btn-close-modal" onclick="closeSignatureModal()">
             <i class="bi bi-x"></i>
           </button>
         </div>
 
-        <div class="preview-section">
-          <div class="preview-label">Nomor Surat</div>
-          <div class="preview-value" id="previewNoSurat">-</div>
-        </div>
-
-        <div class="preview-section">
-          <div class="preview-label">Perihal</div>
-          <div class="preview-value" id="previewPerihal">-</div>
-        </div>
-
-        <div class="preview-section">
-          <div class="preview-label">Tujuan</div>
-          <div class="preview-value" id="previewTujuan">-</div>
-        </div>
-
-        <div class="preview-section">
-          <div class="preview-label">Tanggal Surat</div>
-          <div class="preview-value" id="previewTanggalSurat">-</div>
-        </div>
-
-        <div class="preview-section">
-          <div class="preview-label">Catatan</div>
-          <div class="preview-value" id="previewCatatan">-</div>
-        </div>
-
-        <div class="preview-actions">
-          <button class="btn-ttd" onclick="ttdFromPreview()">
-            <i class="bi bi-pen"></i> TTD Digital
+        <!-- Tabs -->
+        <div class="signature-tabs">
+          <button class="signature-tab active" data-tab="draw">
+            <i class="bi bi-pen"></i> Draw
+          </button>
+          <button class="signature-tab" data-tab="type">
+            <i class="bi bi-keyboard"></i> Type
+          </button>
+          <button class="signature-tab" data-tab="upload">
+            <i class="bi bi-upload"></i> Upload
           </button>
         </div>
-      </div>
-    </div>
 
-    <!-- Modal TTD Digital -->
-    <div class="modal fade" id="ttdModal" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Tanda Tangan Digital</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label"><strong>Perihal Surat:</strong></label>
-              <p id="ttdPerihal" style="color: #374151">-</p>
+        <!-- Tab Contents -->
+        <!-- Draw Tab -->
+        <div class="signature-tab-content active" id="drawTab">
+          <div class="draw-container">
+            <div class="draw-canvas-wrapper">
+              <canvas id="signatureCanvas" width="800" height="250"></canvas>
             </div>
-            <div class="alert alert-info">
-              <i class="bi bi-info-circle"></i>
-              Dengan memberikan tanda tangan digital, Anda menyetujui dan
-              mengesahkan surat ini.
+            <div class="draw-tools">
+              <button class="btn-clear" onclick="clearCanvas()">
+                <i class="bi bi-arrow-counterclockwise"></i> Clear
+              </button>
+              <button class="btn-save-sig" onclick="saveDrawSignature()">
+                <i class="bi bi-check-circle"></i> Save
+              </button>
             </div>
           </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Batal
+        </div>
+
+        <!-- Type Tab -->
+        <div class="signature-tab-content" id="typeTab">
+          <div class="type-container">
+            <div class="type-input-wrapper">
+              <input 
+                type="text" 
+                class="type-input" 
+                id="typeInput" 
+                placeholder="Type your signature..."
+                oninput="updateTypePreview()"
+              >
+            </div>
+            <div class="type-preview" id="typePreview">
+              <div class="type-preview-text" id="typePreviewText">Your signature will appear here</div>
+            </div>
+            <div class="font-options">
+              <button class="font-option active" data-font="'Brush Script MT', cursive" onclick="changeFontStyle(this)">
+                Brush Script
+              </button>
+              <button class="font-option" data-font="'Lucida Handwriting', cursive" onclick="changeFontStyle(this)">
+                Lucida Handwriting
+              </button>
+              <button class="font-option" data-font="'Segoe Script', cursive" onclick="changeFontStyle(this)">
+                Segoe Script
+              </button>
+            </div>
+            <button class="btn-save-sig" onclick="saveTypeSignature()">
+              <i class="bi bi-check-circle"></i> Save
             </button>
-            <button type="button" class="btn btn-primary" onclick="submitTTD()">
-              <i class="bi bi-check-circle"></i> Setujui & TTD
+          </div>
+        </div>
+
+        <!-- Upload Tab -->
+        <div class="signature-tab-content" id="uploadTab">
+          <div class="upload-container">
+            <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+              <div class="upload-icon">
+                <i class="bi bi-cloud-upload"></i>
+              </div>
+              <div class="upload-text">Drop your file or <strong>Upload</strong></div>
+              <div class="upload-hint">Supported formats: JPEG, GIF, BMP, and PNG</div>
+            </div>
+            <input type="file" id="fileInput" accept="image/jpeg,image/jpg,image/png,image/gif,image/bmp" style="display: none;" onchange="handleFileUpload(event)">
+            
+            <div class="upload-preview" id="uploadPreview">
+              <img id="uploadPreviewImage" src="" alt="Preview">
+            </div>
+            
+            <button class="btn-save-sig" id="btnSaveUpload" onclick="saveUploadSignature()" style="display: none;">
+              <i class="bi bi-check-circle"></i> Save
             </button>
           </div>
         </div>
@@ -355,278 +967,699 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     <script src="assets/js/firebase-config.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/database.js"></script>
     <script src="assets/js/main.js"></script>
 
     <script>
-      // ========================================
-      // SURAT KELUAR KAPUS - FIREBASE REAL-TIME
-      // (Replace script di surat-keluar-kapus.html)
-      // ========================================
+      // ==========================================
+// SURAT KELUAR KAPUS - PURE FIRESTORE SOLUTION
+// No Storage API needed - Works with FREE PLAN
+// Real-time updates for Admin & Kapus
+// ==========================================
 
-      let currentUserData = null;
-      let currentSuratId = null;
-      let unsubscribeSuratKeluar = null;
+let currentUserData = null;
+let currentSuratId = null;
+let unsubscribeSuratKeluar = null;
+let currentFileURL = null;
+let canvas = null;
+let ctx = null;
+let isDrawing = false;
+let signatureData = null;
+let currentFont = "'Brush Script MT', cursive";
 
-      // Protect page - only kapus
-      checkUserRole(["kapus"])
-        .then((userData) => {
-          currentUserData = userData;
-          document.getElementById("sidebarUserName").textContent =
-            userData.nama || "Kapus";
+// ==========================================
+// CANVAS INITIALIZATION
+// ==========================================
+function initSignatureCanvas() {
+  canvas = document.getElementById('signatureCanvas');
+  if (!canvas) return;
+  
+  ctx = canvas.getContext('2d');
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  
+  // Mouse events
+  canvas.addEventListener('mousedown', startDrawing);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', stopDrawing);
+  canvas.addEventListener('mouseout', stopDrawing);
+  
+  // Touch events for mobile
+  canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    startDrawing(touch);
+  });
+  canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    draw(touch);
+  });
+  canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    stopDrawing();
+  });
+  
+  console.log('✅ Canvas initialized');
+}
 
-          // Setup real-time listener
-          loadSuratKeluarRealtime();
-        })
-        .catch((error) => {
-          console.error("Access denied:", error);
-        });
+function startDrawing(e) {
+  isDrawing = true;
+  const rect = canvas.getBoundingClientRect();
+  ctx.beginPath();
+  ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+}
 
-      // Set current date
-      document.getElementById("currentDate").textContent =
-        new Date().toLocaleDateString("id-ID", {
-          day: "2-digit",
-          month: "long",
-          year: "numeric",
-        });
+function draw(e) {
+  if (!isDrawing) return;
+  const rect = canvas.getBoundingClientRect();
+  ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+  ctx.stroke();
+}
 
-      // ========================================
-      // LOAD SURAT KELUAR - REAL-TIME
-      // ========================================
-      function loadSuratKeluarRealtime() {
-        const tbody = document.getElementById("suratKeluarTableBody");
+function stopDrawing() {
+  isDrawing = false;
+}
 
-        // Cleanup previous listener
-        if (unsubscribeSuratKeluar) {
-          unsubscribeSuratKeluar();
-        }
+// ==========================================
+// MODAL FUNCTIONS
+// ==========================================
+window.openSignatureModal = function() {
+  document.getElementById('signatureModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  if (!canvas) setTimeout(initSignatureCanvas, 100);
+  resetAllTabs();
+};
 
-        tbody.innerHTML = `
+window.closeSignatureModal = function() {
+  document.getElementById('signatureModal').classList.remove('active');
+  document.body.style.overflow = 'auto';
+  resetAllTabs();
+};
+
+function resetAllTabs() {
+  // Clear canvas
+  if (ctx && canvas) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  
+  // Reset type input
+  const typeInput = document.getElementById('typeInput');
+  if (typeInput) {
+    typeInput.value = '';
+    updateTypePreview();
+  }
+  
+  // Reset upload preview
+  const uploadPreview = document.getElementById('uploadPreview');
+  if (uploadPreview) {
+    uploadPreview.classList.remove('active');
+    uploadPreview.style.display = 'none';
+  }
+  
+  const uploadPreviewImage = document.getElementById('uploadPreviewImage');
+  if (uploadPreviewImage) {
+    uploadPreviewImage.src = '';
+  }
+  
+  const btnSaveUpload = document.getElementById('btnSaveUpload');
+  if (btnSaveUpload) {
+    btnSaveUpload.style.display = 'none';
+  }
+  
+  // Reset file input
+  const fileInput = document.getElementById('fileInput');
+  if (fileInput) {
+    fileInput.value = '';
+  }
+}
+
+// ==========================================
+// TAB SWITCHING
+// ==========================================
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.signature-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      // Remove active from all tabs
+      document.querySelectorAll('.signature-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.signature-tab-content').forEach(c => c.classList.remove('active'));
+      
+      // Add active to clicked tab
+      this.classList.add('active');
+      const tabName = this.getAttribute('data-tab');
+      document.getElementById(tabName + 'Tab').classList.add('active');
+      
+      // Initialize canvas if draw tab
+      if (tabName === 'draw' && !canvas) {
+        setTimeout(initSignatureCanvas, 100);
+      }
+    });
+  });
+});
+
+// ==========================================
+// DRAW TAB
+// ==========================================
+window.clearCanvas = function() {
+  if (ctx && canvas) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+};
+
+window.saveDrawSignature = function() {
+  if (!canvas || !ctx) {
+    Swal.fire('Error', 'Canvas tidak tersedia', 'error');
+    return;
+  }
+  
+  // Check if canvas is empty
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  let isEmpty = true;
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    if (imageData.data[i + 3] !== 0) {
+      isEmpty = false;
+      break;
+    }
+  }
+  
+  if (isEmpty) {
+    Swal.fire('Peringatan', 'Silakan buat tanda tangan terlebih dahulu', 'warning');
+    return;
+  }
+  
+  // Convert to base64
+  signatureData = canvas.toDataURL('image/png');
+  displaySignature();
+  closeSignatureModal();
+};
+
+// ==========================================
+// TYPE TAB
+// ==========================================
+window.updateTypePreview = function() {
+  const input = document.getElementById('typeInput');
+  const preview = document.getElementById('typePreviewText');
+  if (!input || !preview) return;
+  
+  if (input.value.trim()) {
+    preview.textContent = input.value;
+    preview.style.fontFamily = currentFont;
+  } else {
+    preview.textContent = 'Your signature will appear here';
+  }
+};
+
+window.changeFontStyle = function(button) {
+  document.querySelectorAll('.font-option').forEach(b => b.classList.remove('active'));
+  button.classList.add('active');
+  currentFont = button.getAttribute('data-font');
+  updateTypePreview();
+};
+
+window.saveTypeSignature = function() {
+  const input = document.getElementById('typeInput');
+  if (!input || !input.value.trim()) {
+    Swal.fire('Peringatan', 'Silakan ketik nama Anda', 'warning');
+    return;
+  }
+  
+  // Create canvas from text
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = 800;
+  tempCanvas.height = 250;
+  const tempCtx = tempCanvas.getContext('2d');
+  
+  // White background
+  tempCtx.fillStyle = 'white';
+  tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+  
+  // Draw text
+  tempCtx.fillStyle = 'black';
+  tempCtx.font = `72px ${currentFont}`;
+  tempCtx.textAlign = 'center';
+  tempCtx.textBaseline = 'middle';
+  tempCtx.fillText(input.value, tempCanvas.width / 2, tempCanvas.height / 2);
+  
+  signatureData = tempCanvas.toDataURL('image/png');
+  displaySignature();
+  closeSignatureModal();
+};
+
+// ==========================================
+// UPLOAD TAB - FIXED
+// ==========================================
+window.handleFileUpload = function(event) {
+  const file = event.target.files[0];
+  if (!file) {
+    console.log('❌ No file selected');
+    return;
+  }
+  
+  console.log('📤 File selected:', {
+    name: file.name,
+    type: file.type,
+    size: file.size
+  });
+  
+  // Validate file type
+  if (!file.type.startsWith('image/')) {
+    Swal.fire('Error', 'Hanya file gambar yang diperbolehkan (JPEG, PNG, GIF, BMP)', 'error');
+    return;
+  }
+  
+  // Validate file size (max 5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    Swal.fire('Error', 'Ukuran file maksimal 5MB', 'error');
+    return;
+  }
+  
+  // Read file as base64
+  const reader = new FileReader();
+  
+  reader.onload = function(e) {
+    signatureData = e.target.result;
+    
+    console.log('✅ File loaded, updating preview...');
+    
+    // Update preview image
+    const previewImg = document.getElementById('uploadPreviewImage');
+    const previewDiv = document.getElementById('uploadPreview');
+    const saveBtn = document.getElementById('btnSaveUpload');
+    
+    if (previewImg && previewDiv && saveBtn) {
+      previewImg.src = signatureData;
+      previewDiv.classList.add('active');
+      previewDiv.style.display = 'block';
+      saveBtn.style.display = 'inline-block';
+      
+      console.log('✅ Preview displayed successfully');
+    } else {
+      console.error('❌ Preview elements not found:', {
+        previewImg: !!previewImg,
+        previewDiv: !!previewDiv,
+        saveBtn: !!saveBtn
+      });
+    }
+  };
+  
+  reader.onerror = function(error) {
+    console.error('❌ FileReader error:', error);
+    Swal.fire('Error', 'Gagal membaca file', 'error');
+  };
+  
+  reader.readAsDataURL(file);
+};
+
+window.saveUploadSignature = function() {
+  if (!signatureData) {
+    Swal.fire('Error', 'Silakan upload gambar terlebih dahulu', 'error');
+    return;
+  }
+  displaySignature();
+  closeSignatureModal();
+};
+
+// ==========================================
+// DISPLAY SIGNATURE
+// ==========================================
+function displaySignature() {
+  document.getElementById('btnOpenSignature').style.display = 'none';
+  document.getElementById('signatureDisplay').style.display = 'block';
+  document.getElementById('signatureImage').src = signatureData;
+  document.getElementById('signerName').textContent = currentUserData?.nama || 'Kapus';
+  document.getElementById('signatureSection').classList.add('signed');
+  document.getElementById('btnSubmitApproval').disabled = false;
+  
+  Swal.fire({
+    icon: 'success',
+    title: 'Tanda Tangan Tersimpan!',
+    text: 'Sekarang Anda dapat menyetujui surat',
+    timer: 2000,
+    showConfirmButton: false
+  });
+}
+
+// ==========================================
+// COMPRESS IMAGE (Optional - for large images)
+// ==========================================
+function compressImage(base64, maxWidth = 400, quality = 0.7) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ratio = maxWidth / img.width;
+      canvas.width = maxWidth;
+      canvas.height = img.height * ratio;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.src = base64;
+  });
+}
+
+// ==========================================
+// SUBMIT APPROVAL - PURE FIRESTORE
+// ==========================================
+window.submitApproval = async function() {
+  if (!currentSuratId) {
+    Swal.fire("Error", "Surat ID tidak ditemukan", "error");
+    return;
+  }
+  
+  if (!signatureData) {
+    Swal.fire("Error", "Silakan buat tanda tangan terlebih dahulu", "error");
+    return;
+  }
+  
+  Swal.fire({
+    title: 'Memproses...',
+    html: 'Menyimpan tanda tangan dan menyetujui surat...',
+    allowOutsideClick: false,
+    didOpen: () => Swal.showLoading()
+  });
+  
+  try {
+    console.log("📝 Starting approval for:", currentSuratId);
+    
+    // Optional: Compress image if too large
+    let finalSignature = signatureData;
+    const sizeInKB = (signatureData.length * 3) / 4 / 1024;
+    
+    if (sizeInKB > 500) {
+      console.log(`📦 Compressing signature (${sizeInKB.toFixed(0)}KB)...`);
+      finalSignature = await compressImage(signatureData, 400, 0.7);
+      console.log(`✅ Compressed to ${((finalSignature.length * 3) / 4 / 1024).toFixed(0)}KB`);
+    }
+    
+    // ✅ SAVE DIRECTLY TO FIRESTORE (No Storage needed)
+    const updateData = {
+      status: "Disetujui Kapus",
+      ttdDigitalKapus: finalSignature, // Base64 image saved directly
+      approvedBy: currentUserData?.nama || "Kapus",
+      approvedByEmail: currentUserData?.email || firebase.auth().currentUser?.email || "",
+      approvedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    console.log("💾 Updating Firestore...");
+    await db.collection("surat_keluar").doc(currentSuratId).update(updateData);
+    
+    console.log("✅ Approval complete - Real-time update sent!");
+    
+    Swal.fire({
+      icon: "success",
+      title: "Surat Berhasil Disetujui!",
+      html: "Perubahan akan langsung terlihat oleh Admin<br><small>Real-time updates active</small>",
+      timer: 2500,
+      showConfirmButton: false
+    });
+    
+    setTimeout(() => backToTable(), 2500);
+    
+  } catch (error) {
+    console.error("❌ Approval error:", error);
+    
+    // Better error messages
+    let errorMessage = error.message;
+    if (error.code === 'permission-denied') {
+      errorMessage = 'Anda tidak memiliki izin untuk melakukan aksi ini';
+    } else if (error.code === 'not-found') {
+      errorMessage = 'Surat tidak ditemukan di database';
+    }
+    
+    Swal.fire({
+      icon: "error",
+      title: "Gagal Menyetujui Surat",
+      html: `<div style="text-align: left;">
+        <p><strong>Error:</strong> ${errorMessage}</p>
+        <p style="font-size: 12px; color: #666; margin-top: 10px;">
+          ${error.code ? `Code: ${error.code}` : ''}
+        </p>
+      </div>`,
+      confirmButtonText: "OK"
+    });
+  }
+};
+
+// ==========================================
+// LOAD SURAT KELUAR - REAL-TIME
+// ==========================================
+function loadSuratKeluarRealtime() {
+  const tbody = document.getElementById("suratKeluarTableBody");
+  if (!tbody) return;
+  
+  // Wait for auth
+  if (!firebase.auth().currentUser) {
+    console.log("⏳ Waiting for authentication...");
+    setTimeout(loadSuratKeluarRealtime, 500);
+    return;
+  }
+  
+  console.log("🔑 User authenticated:", firebase.auth().currentUser.email);
+  
+  // Unsubscribe previous listener
+  if (unsubscribeSuratKeluar) unsubscribeSuratKeluar();
+  
+  tbody.innerHTML = `
     <tr>
       <td colspan="7" style="text-align: center; padding: 40px; color: #9ca3af;">
+        <i class="bi bi-hourglass-split" style="font-size: 32px; display: block; margin-bottom: 12px;"></i>
         Loading data...
       </td>
     </tr>
   `;
-
-        // Setup real-time listener
-        unsubscribeSuratKeluar = db
-          .collection("surat_keluar")
-          .where("isDeleted", "==", false)
-          .where("status", "==", "Menunggu Persetujuan Kapus")
-          .onSnapshot(
-            (snapshot) => {
-              const suratKapus = [];
-              snapshot.forEach((doc) => {
-                suratKapus.push({
-                  id: doc.id,
-                  ...doc.data(),
-                });
-              });
-
-              console.log("📤 Surat Keluar for Kapus:", suratKapus.length);
-
-              if (suratKapus.length === 0) {
-                tbody.innerHTML = `
+  
+  // Real-time listener
+  unsubscribeSuratKeluar = db
+    .collection("surat_keluar")
+    .where("isDeleted", "==", false)
+    .where("status", "==", "Menunggu Persetujuan Kapus")
+    .orderBy("createdAt", "desc")
+    .onSnapshot(
+      (snapshot) => {
+        const suratList = [];
+        snapshot.forEach((doc) => {
+          suratList.push({ id: doc.id, ...doc.data() });
+        });
+        
+        console.log("📤 Real-time update - Surat Keluar:", suratList.length);
+        
+        if (suratList.length === 0) {
+          tbody.innerHTML = `
             <tr>
               <td colspan="7" style="text-align: center; padding: 40px; color: #9ca3af;">
+                <i class="bi bi-inbox" style="font-size: 32px; display: block; margin-bottom: 12px;"></i>
                 Tidak ada surat yang perlu ditandatangani
               </td>
             </tr>
           `;
-                return;
-              }
-
-              tbody.innerHTML = suratKapus
-                .map(
-                  (surat, index) => `
+          return;
+        }
+        
+        tbody.innerHTML = suratList.map((surat, index) => `
           <tr>
             <td style="text-align: center;">${index + 1}</td>
             <td>${surat.noSurat || surat.noNaskah || "-"}</td>
             <td>${surat.perihal || "-"}</td>
             <td>${surat.kepada || surat.tujuan || "-"}</td>
-            <td>
-              <span class="badge-status badge-tinggi">Tinggi</span>
-            </td>
-            <td>
-              <span class="badge-status badge-menunggu">Menunggu TTD</span>
-            </td>
+            <td><span class="badge-status badge-tinggi">Tinggi</span></td>
+            <td><span class="badge-status badge-menunggu">Menunggu TTD</span></td>
             <td style="text-align: center;">
               <button class="btn-preview" onclick="previewSurat('${surat.id}')">
-                <i class="bi bi-eye"></i> Preview
-              </button>
-              <button class="btn-ttd" onclick="buatTTD('${surat.id}')">
-                <i class="bi bi-pen"></i> TTD
+                <i class="bi bi-eye"></i> Preview & TTD
               </button>
             </td>
           </tr>
-        `
-                )
-                .join("");
-            },
-            (error) => {
-              console.error("❌ Error loading surat keluar:", error);
-              tbody.innerHTML = `
+        `).join("");
+      },
+      (error) => {
+        console.error("❌ Firestore Error:", error);
+        tbody.innerHTML = `
           <tr>
-            <td colspan="7" style="text-align: center; padding: 40px; color: #dc2626;">
-              Error loading data: ${error.message}
+            <td colspan="7" style="text-align: center; padding: 40px;">
+              <i class="bi bi-exclamation-triangle" style="font-size: 32px; color: #dc2626; display: block; margin-bottom: 12px;"></i>
+              <div style="color: #dc2626; font-weight: 600;">Error Loading Data</div>
+              <div style="color: #6b7280; font-size: 13px; margin: 8px 0;">${error.message}</div>
+              <button class="btn btn-primary btn-sm" onclick="location.reload()">
+                <i class="bi bi-arrow-clockwise"></i> Reload Page
+              </button>
             </td>
           </tr>
         `;
-            }
-          );
       }
+    );
+}
 
-      // ========================================
-      // PREVIEW SURAT
-      // ========================================
-      window.previewSurat = function (id) {
-        console.log("👁️ Previewing surat:", id);
-        currentSuratId = id;
-
-        db.collection("surat_keluar")
-          .doc(id)
-          .get()
-          .then((doc) => {
-            if (!doc.exists) {
-              Swal.fire("Error", "Surat tidak ditemukan", "error");
-              return;
-            }
-
-            const surat = doc.data();
-
-            document.getElementById("previewNoSurat").textContent =
-              surat.noSurat || surat.noNaskah || "-";
-            document.getElementById("previewPerihal").textContent =
-              surat.perihal || "-";
-            document.getElementById("previewTujuan").textContent =
-              surat.kepada || surat.tujuan || "-";
-            document.getElementById("previewTanggalSurat").textContent =
-              surat.tanggalSurat ? Utils.formatDate(surat.tanggalSurat) : "-";
-            document.getElementById("previewCatatan").textContent =
-              surat.catatan || surat.deskripsi || "-";
-
-            document.getElementById("previewModal").classList.add("active");
-          })
-          .catch((error) => {
-            console.error("❌ Error fetching surat:", error);
-            Swal.fire("Error", "Gagal mengambil data surat", "error");
-          });
-      };
-
-      window.closePreview = function () {
-        document.getElementById("previewModal").classList.remove("active");
-      };
-
-      window.ttdFromPreview = function () {
-        closePreview();
-        if (currentSuratId) {
-          buatTTD(currentSuratId);
+// ==========================================
+// PREVIEW SURAT
+// ==========================================
+window.previewSurat = function(suratId) {
+  console.log("👁️ Previewing:", suratId);
+  
+  db.collection("surat_keluar").doc(suratId).get()
+    .then((doc) => {
+      if (!doc.exists) {
+        Swal.fire("Error", "Surat tidak ditemukan", "error");
+        return;
+      }
+      
+      const surat = doc.data();
+      currentSuratId = suratId;
+      currentFileURL = surat.fileURL || null;
+      
+      // Reset signature
+      signatureData = null;
+      document.getElementById('btnOpenSignature').style.display = 'inline-flex';
+      document.getElementById('signatureDisplay').style.display = 'none';
+      document.getElementById('signatureSection').classList.remove('signed');
+      document.getElementById('btnSubmitApproval').disabled = true;
+      
+      // Update fields
+      document.getElementById('previewNoSurat').textContent = surat.noSurat || surat.noNaskah || "-";
+      document.getElementById('previewPerihal').textContent = surat.perihal || "-";
+      document.getElementById('previewTujuan').textContent = surat.kepada || surat.tujuan || "-";
+      document.getElementById('previewTanggalSurat').textContent = surat.tanggalSurat || "-";
+      document.getElementById('previewCatatan').textContent = surat.catatan || surat.deskripsi || "-";
+      document.getElementById('filePreviewTitle').textContent = surat.perihal || "Dokumen Surat";
+      
+      // File preview
+      const filePreviewContent = document.getElementById('filePreviewContent');
+      if (surat.fileURL) {
+        const ext = (surat.fileName || '').split('.').pop().toLowerCase();
+        if (ext === 'pdf' || surat.fileURL.includes('.pdf')) {
+          filePreviewContent.innerHTML = `<iframe src="${surat.fileURL}" type="application/pdf"></iframe>`;
+        } else if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
+          filePreviewContent.innerHTML = `<img src="${surat.fileURL}" alt="Preview">`;
+        } else {
+          filePreviewContent.innerHTML = `
+            <div class="no-file">
+              <i class="bi bi-file-earmark"></i>
+              <p>File tidak dapat ditampilkan</p>
+              <a href="${surat.fileURL}" target="_blank" class="btn btn-sm btn-primary mt-2">
+                <i class="bi bi-download"></i> Download File
+              </a>
+            </div>
+          `;
         }
-      };
+      } else {
+        filePreviewContent.innerHTML = `
+          <div class="no-file">
+            <i class="bi bi-file-earmark"></i>
+            <p>Tidak ada file yang dilampirkan</p>
+          </div>
+        `;
+      }
+      
+      // Switch views
+      document.getElementById('tableView').style.display = 'none';
+      document.getElementById('previewView').classList.add('active');
+      
+      console.log("✅ Preview loaded");
+    })
+    .catch((error) => {
+      console.error("❌ Error loading preview:", error);
+      Swal.fire("Error", "Gagal memuat surat: " + error.message, "error");
+    });
+};
 
-      // ========================================
-      // BUAT TTD
-      // ========================================
-      window.buatTTD = function (suratId) {
-        currentSuratId = suratId;
+// ==========================================
+// BACK TO TABLE
+// ==========================================
+window.backToTable = function() {
+  document.getElementById('tableView').style.display = 'block';
+  document.getElementById('previewView').classList.remove('active');
+  currentSuratId = null;
+  signatureData = null;
+};
 
-        db.collection("surat_keluar")
-          .doc(suratId)
-          .get()
-          .then((doc) => {
-            if (!doc.exists) {
-              Swal.fire("Error", "Surat tidak ditemukan", "error");
-              return;
-            }
-
-            const surat = doc.data();
-            document.getElementById("ttdPerihal").textContent =
-              surat.perihal || "-";
-
-            const modal = new bootstrap.Modal(
-              document.getElementById("ttdModal")
-            );
-            modal.show();
-          })
-          .catch((error) => {
-            console.error("❌ Error fetching surat:", error);
-            Swal.fire("Error", "Gagal mengambil data surat", "error");
-          });
-      };
-
-      // ========================================
-      // SUBMIT TTD
-      // ========================================
-      window.submitTTD = function () {
-        if (!currentSuratId) {
-          Swal.fire("Error", "Surat ID tidak ditemukan", "error");
-          return;
-        }
-
-        db.collection("surat_keluar")
-          .doc(currentSuratId)
-          .update({
-            status: "Disetujui Kapus",
-            ttdDigital: `TTD_${currentUserData.nama}_${Date.now()}`,
-            approvedBy: currentUserData.nama,
-            approvedAt: firebase.firestore.FieldValue.serverTimestamp(),
-          })
-          .then(() => {
-            Swal.fire({
-              icon: "success",
-              title: "Surat Berhasil Ditandatangani!",
-              text: "TTD Digital telah diterapkan",
-              timer: 2000,
-            });
-
-            bootstrap.Modal.getInstance(
-              document.getElementById("ttdModal")
-            ).hide();
-          })
-          .catch((error) => {
-            console.error("❌ Error submitting TTD:", error);
-            Swal.fire(
-              "Error",
-              "Gagal menandatangani surat: " + error.message,
-              "error"
-            );
-          });
-      };
-
-      // ========================================
-      // LOGOUT HANDLER
-      // ========================================
-      document
-        .getElementById("logoutLink")
-        .addEventListener("click", function (e) {
-          e.preventDefault();
-          Swal.fire({
-            title: "Yakin ingin logout?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Ya, logout",
-            cancelButtonText: "Batal",
-            confirmButtonColor: "#d33",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              window.logoutUser();
-            }
-          });
+// ==========================================
+// AUTH & INIT
+// ==========================================
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    console.log("✅ Firebase Auth Ready:", user.email);
+    
+    // Check user role (adjust to your auth system)
+    if (typeof checkUserRole === 'function') {
+      checkUserRole(["kapus"])
+        .then((userData) => {
+          currentUserData = userData;
+          const displayName = userData.nama || "Kapus";
+          
+          const sidebarUserName = document.getElementById("sidebarUserName");
+          if (sidebarUserName) sidebarUserName.textContent = displayName;
+          
+          console.log("✅ Kapus authenticated:", displayName);
+          
+          // Load data after auth confirmed
+          loadSuratKeluarRealtime();
+        })
+        .catch((error) => {
+          console.error("❌ Access denied:", error);
+          window.location.href = "login.html";
         });
+    } else {
+      // Fallback if checkUserRole not available
+      currentUserData = { nama: "Kapus", email: user.email };
+      loadSuratKeluarRealtime();
+    }
+  } else {
+    console.log("❌ No user logged in");
+    window.location.href = "login.html";
+  }
+});
 
-      // ========================================
-      // CLEANUP ON PAGE UNLOAD
-      // ========================================
-      window.addEventListener("beforeunload", () => {
-        if (unsubscribeSuratKeluar) {
-          unsubscribeSuratKeluar();
+// Set current date
+const currentDateEl = document.getElementById("currentDate");
+if (currentDateEl) {
+  currentDateEl.textContent = new Date().toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+// Logout handler
+const logoutLink = document.getElementById("logoutLink");
+if (logoutLink) {
+  logoutLink.addEventListener("click", function(e) {
+    e.preventDefault();
+    Swal.fire({
+      title: "Yakin ingin logout?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Ya, logout",
+      cancelButtonText: "Batal",
+      confirmButtonColor: "#d33",
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (typeof window.logoutUser === 'function') {
+          window.logoutUser();
+        } else {
+          firebase.auth().signOut().then(() => {
+            window.location.href = "login.html";
+          });
         }
-      });
+      }
+    });
+  });
+}
 
-      console.log("✅ Surat Keluar Kapus - Firebase Integrated");
-    </script>
+// Cleanup on page unload
+window.addEventListener("beforeunload", () => {
+  if (unsubscribeSuratKeluar) unsubscribeSuratKeluar();
+});
+
+console.log("✅ Surat Keluar Kapus - Pure Firestore System Loaded");
+console.log("🔥 Real-time updates active for Admin & Kapus");
+console.log("💾 Signatures saved as base64 in Firestore (No Storage API needed)");
+     </script>
   </body>
 </html>
