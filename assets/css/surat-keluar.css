@@ -232,137 +232,324 @@
   text-align: center;
 }
 
-/* Status Detail Card */
-.status-detail-card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e0e0e0;
-  overflow: hidden;
-}
+/* ========================================
+   STATUS SURAT KELUAR - ENHANCED STYLES
+   ======================================== */
 
-.status-detail-header {
-  font-size: 18px;
-  font-weight: 700;
-  padding: 20px 24px;
-  color: #fff;
-  background: #8b0000;
-  margin: 0;
-}
-
-.status-detail-current {
-  padding: 24px 24px 20px 24px;
-}
-
-.status-detail-label {
-  font-size: 13px;
-  color: #666;
-  margin-bottom: 12px;
-}
-
-.status-detail-badge {
-  display: inline-block;
-  padding: 8px 20px;
-  background: #dbeafe;
-  color: #1e40af;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.status-detail-badge.pending {
-  background: #fff3c7;
-  color: #d97706;
-}
-
-.status-detail-badge.proses {
-  background: #dbeafe;
-  color: #2563eb;
-}
-
-.status-detail-badge.selesai {
-  background: #d1fae5;
-  color: #059669;
-}
-
-.status-detail-badge.ditolak {
-  background: #fee2e2;
-  color: #dc2626;
-}
-
-.progress-detail-section {
-  padding: 20px 24px;
-  border-top: 1px solid #f0f0f0;
-}
-
-.progress-detail-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.progress-detail-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  color: #666;
-  font-weight: 500;
-}
-
-.progress-detail-text {
-  font-size: 14px;
-  color: #202224;
-  font-weight: 700;
-}
-
-.progress-detail-bar-container {
-  background: #e9ecef;
-  height: 10px;
-  border-radius: 5px;
-  overflow: hidden;
-}
-
-.progress-detail-bar {
-  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
-  height: 100%;
-  transition: width 0.3s ease;
-  border-radius: 5px;
-}
-
-.update-detail-section {
-  padding: 20px 24px 24px 24px;
-  border-top: 1px solid #f0f0f0;
-}
-
-/* Status Badges */
+/* Status Badges dengan Warna Dinamis */
 .status {
   display: inline-block;
   padding: 6px 16px;
   border-radius: 20px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
 }
 
-.status.selesai {
-  background-color: #d1fae5;
+/* Status: Selesai / Disetujui Kapus */
+.status.selesai,
+.status.disetujui {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
   color: #065f46;
+  border: 1px solid #6ee7b7;
 }
 
-.status.proses {
-  background-color: #ddd6fe;
-  color: #5b21b6;
+.status.selesai:hover,
+.status.disetujui:hover {
+  background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(5, 150, 105, 0.25);
 }
 
-.status.ditolak {
-  background-color: #fecaca;
-  color: #991b1b;
-}
-
-.status.ditunda {
-  background-color: #fed7aa;
+/* Status: Menunggu Persetujuan Kapus */
+.status.menunggu,
+.status.pending {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
   color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+.status.menunggu:hover,
+.status.pending:hover {
+  background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(217, 119, 6, 0.25);
+}
+
+/* Status: Proses */
+.status.proses {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.status.proses:hover {
+  background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.25);
+}
+
+/* Status: Ditolak */
+.status.ditolak {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+.status.ditolak:hover {
+  background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(220, 38, 38, 0.25);
+}
+
+/* Status: Ditunda */
+.status.ditunda {
+  background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+  color: #92400e;
+  border: 1px solid #fb923c;
+}
+
+.status.ditunda:hover {
+  background: linear-gradient(135deg, #fdba74 0%, #fb923c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(249, 115, 22, 0.25);
+}
+
+/* Status Icons (Optional) */
+.status::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.status.selesai::before,
+.status.disetujui::before {
+  background-color: #059669;
+  box-shadow: 0 0 4px rgba(5, 150, 105, 0.5);
+}
+
+.status.menunggu::before,
+.status.pending::before {
+  background-color: #d97706;
+  box-shadow: 0 0 4px rgba(217, 119, 6, 0.5);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.status.proses::before {
+  background-color: #2563eb;
+  box-shadow: 0 0 4px rgba(37, 99, 235, 0.5);
+}
+
+.status.ditolak::before {
+  background-color: #dc2626;
+  box-shadow: 0 0 4px rgba(220, 38, 38, 0.5);
+}
+
+.status.ditunda::before {
+  background-color: #ea580c;
+  box-shadow: 0 0 4px rgba(234, 88, 12, 0.5);
+}
+
+/* Pulse Animation untuk Status Menunggu */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+/* ========================================
+   STATUS DETAIL CARD (Preview/Detail Page)
+   ======================================== */
+
+.status-detail-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 24px;
+  border-radius: 25px;
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: capitalize;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
+}
+
+.status-detail-badge.selesai,
+.status-detail-badge.disetujui {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  border: 2px solid #6ee7b7;
+}
+
+.status-detail-badge.menunggu,
+.status-detail-badge.pending {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  border: 2px solid #fcd34d;
+}
+
+.status-detail-badge.proses {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1e40af;
+  border: 2px solid #93c5fd;
+}
+
+.status-detail-badge.ditolak {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+  border: 2px solid #fca5a5;
+}
+
+.status-detail-badge.ditunda {
+  background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+  color: #92400e;
+  border: 2px solid #fb923c;
+}
+
+/* Status dengan Icon */
+.status-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-icon {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.status-icon.check {
+  color: #059669;
+}
+
+.status-icon.clock {
+  color: #d97706;
+}
+
+.status-icon.progress {
+  color: #2563eb;
+}
+
+.status-icon.close {
+  color: #dc2626;
+}
+
+/* ========================================
+   STATUS TIMELINE (Optional Enhancement)
+   ======================================== */
+
+.status-timeline {
+  margin-top: 20px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border-left: 4px solid #8b0000;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.timeline-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.timeline-dot.green {
+  background-color: #059669;
+  box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.2);
+}
+
+.timeline-dot.yellow {
+  background-color: #d97706;
+  box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.2);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.timeline-dot.blue {
+  background-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+}
+
+.timeline-content {
+  flex: 1;
+}
+
+.timeline-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 4px;
+}
+
+.timeline-time {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 768px) {
+  .status {
+    padding: 5px 12px;
+    font-size: 11px;
+  }
+
+  .status-detail-badge {
+    padding: 8px 18px;
+    font-size: 13px;
+  }
+
+  .status-timeline {
+    padding: 15px;
+  }
+
+  .timeline-item {
+    gap: 10px;
+  }
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+
+@media print {
+  .status {
+    border: 1px solid #000 !important;
+    background: none !important;
+    color: #000 !important;
+  }
+  
+  .status::before {
+    display: none !important;
+  }
 }
 
 /* Action Icons */

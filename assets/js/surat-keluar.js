@@ -1,5 +1,5 @@
 // ========================================
-// SURAT KELUAR - FIREBASE INTEGRATED (FIXED & COMBINED)
+// SURAT KELUAR - FIREBASE INTEGRATED (COMBINED WITH STATUS HANDLER)
 // ========================================
 (function () {
   "use strict";
@@ -21,10 +21,219 @@
   ];
 
   // ========================================
+  // STATUS HANDLER FUNCTIONS
+  // ========================================
+  
+  /**
+   * Fungsi untuk mendapatkan class CSS berdasarkan status
+   */
+  function getStatusClass(status) {
+    if (!status) return 'pending';
+    
+    const statusLower = status.toLowerCase();
+    
+    // Status Selesai / Disetujui
+    if (statusLower.includes('selesai') || 
+        statusLower.includes('disetujui') || 
+        statusLower === 'approved') {
+      return 'selesai';
+    }
+    
+    // Status Menunggu Persetujuan
+    if (statusLower.includes('menunggu') || 
+        statusLower.includes('pending') ||
+        statusLower.includes('persetujuan kapus')) {
+      return 'menunggu';
+    }
+    
+    // Status Proses
+    if (statusLower.includes('proses') || 
+        statusLower.includes('process')) {
+      return 'proses';
+    }
+    
+    // Status Ditolak
+    if (statusLower.includes('ditolak') || 
+        statusLower.includes('rejected')) {
+      return 'ditolak';
+    }
+    
+    // Status Ditunda
+    if (statusLower.includes('ditunda') || 
+        statusLower.includes('postponed')) {
+      return 'ditunda';
+    }
+    
+    return 'pending';
+  }
+
+  /**
+   * Fungsi untuk mendapatkan text status yang akan ditampilkan
+   */
+  function getStatusText(status) {
+    if (!status) return 'Pending';
+    
+    const statusLower = status.toLowerCase();
+    
+    if (statusLower.includes('menunggu') && statusLower.includes('kapus')) {
+      return 'Menunggu Persetujuan Kapus';
+    }
+    
+    if (statusLower.includes('disetujui') && statusLower.includes('kapus')) {
+      return 'Disetujui Kapus';
+    }
+    
+    // Capitalize first letter
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  }
+
+  /**
+   * Fungsi untuk update status surat di Firestore
+   */
+  async function updateStatusSurat(suratId, newStatus) {
+    try {
+      await db.collection("surat_keluar").doc(suratId).update({
+        status: newStatus,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      
+      console.log(`✅ Status updated to: ${newStatus}`);
+      
+      // Refresh table
+      renderTableKeluar();
+      
+      // Show notification
+      if (window.Notification) {
+        window.Notification.success(`Status berhasil diubah menjadi: ${newStatus}`);
+      }
+      
+      return true;
+    } catch (error) {
+      console.error("❌ Error updating status:", error);
+      
+      if (window.Notification) {
+        window.Notification.error("Gagal mengubah status surat");
+      }
+      
+      return false;
+    }
+  }
+
+  /**
+   * Fungsi untuk approve surat (Kapus)
+   */
+  window.approveSurat = async function(suratId) {
+    if (!window.Swal) {
+      if (confirm('Setujui surat ini?')) {
+        return await updateStatusSurat(suratId, 'Selesai');
+      }
+      return false;
+    }
+    
+    const result = await Swal.fire({
+      title: 'Setujui Surat?',
+      text: 'Surat akan disetujui dan statusnya berubah menjadi Selesai',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Setujui',
+      cancelButtonText: 'Batal',
+      confirmButtonColor: '#059669',
+      cancelButtonColor: '#6c757d',
+      reverseButtons: true,
+    });
+    
+    if (result.isConfirmed) {
+      const success = await updateStatusSurat(suratId, 'Selesai');
+      
+      if (success) {
+        await Swal.fire({
+          icon: 'success',
+          title: 'Berhasil!',
+          text: 'Surat telah disetujui',
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      }
+      
+      return success;
+    }
+    
+    return false;
+  };
+
+  /**
+   * Fungsi untuk reject surat (Kapus)
+   */
+  window.rejectSurat = async function(suratId) {
+    if (!window.Swal) {
+      const reason = prompt('Alasan penolakan:');
+      if (reason) {
+        return await updateStatusSurat(suratId, 'Ditolak');
+      }
+      return false;
+    }
+    
+    const { value: reason } = await Swal.fire({
+      title: 'Tolak Surat?',
+      input: 'textarea',
+      inputLabel: 'Alasan Penolakan',
+      inputPlaceholder: 'Masukkan alasan penolakan...',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Tolak',
+      cancelButtonText: 'Batal',
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6c757d',
+      reverseButtons: true,
+      inputValidator: (value) => {
+        if (!value) {
+          return 'Alasan penolakan harus diisi!';
+        }
+      }
+    });
+    
+    if (reason) {
+      try {
+        await db.collection("surat_keluar").doc(suratId).update({
+          status: 'Ditolak',
+          rejectionReason: reason,
+          rejectedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+        
+        console.log(`✅ Surat rejected with reason: ${reason}`);
+        
+        renderTableKeluar();
+        
+        await Swal.fire({
+          icon: 'success',
+          title: 'Surat Ditolak',
+          text: 'Surat telah ditolak',
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        
+        return true;
+      } catch (error) {
+        console.error("❌ Error rejecting surat:", error);
+        
+        await Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Gagal menolak surat',
+        });
+        
+        return false;
+      }
+    }
+    
+    return false;
+  };
+
+  // ========================================
   // INITIALIZATION
   // ========================================
   window.initializeSuratKeluarPage = function () {
-    console.log("🚀 Surat Keluar Page Initialized (FIXED & COMBINED)");
+    console.log("🚀 Surat Keluar Page Initialized (WITH STATUS HANDLER)");
 
     // Get current user from Firebase Auth
     firebase.auth().onAuthStateChanged((user) => {
@@ -55,7 +264,7 @@
   };
 
   // ========================================
-  // REAL-TIME LISTENER (SIMPLIFIED - NO WHERE CLAUSE)
+  // REAL-TIME LISTENER
   // ========================================
   function setupRealtimeListener() {
     console.log("🔄 Setting up real-time listener for surat_keluar...");
@@ -87,7 +296,6 @@
       },
       (error) => {
         console.error("❌ Real-time listener error:", error);
-        // Fallback to manual render
         renderTableKeluar();
       }
     );
@@ -147,7 +355,7 @@
 
       console.log("📊 Data after filters:", filteredData.length, "documents");
 
-      // Sort by createdAt (newest first) - CLIENT SIDE
+      // Sort by createdAt (newest first)
       filteredData.sort((a, b) => b._createdAt - a._createdAt);
 
       return filteredData;
@@ -181,7 +389,9 @@
     }
 
     tbody.innerHTML = paginatedData.map((surat, index) => {
-      const statusClass = Utils.getStatusClass(surat.status);
+      // Use new status handler
+      const statusClass = getStatusClass(surat.status);
+      const statusText = getStatusText(surat.status);
       const dari = surat.dari || surat.namaPengirim || "-";
       
       return `
@@ -192,7 +402,7 @@
           <td>${Utils.escapeHtml(surat.deskripsi || surat.catatan || surat.perihal || '-')}</td>
           <td>${Utils.escapeHtml(surat.sifatSurat || '-')}</td>
           <td style="text-align: center;">${Utils.escapeHtml(surat.noNaskah || surat.noSurat || '-')}</td>
-          <td style="text-align: center;"><span class="status ${statusClass}">${Utils.escapeHtml(surat.status || 'Pending')}</span></td>
+          <td style="text-align: center;"><span class="status ${statusClass}">${Utils.escapeHtml(statusText)}</span></td>
           <td class="action-icons">
             <i class="bi bi-eye" title="Preview" onclick="window.previewSuratKeluar('${surat.id}')"></i>
             <i class="bi bi-pencil-square" title="Edit" onclick="window.editSuratKeluar('${surat.id}')"></i>
@@ -294,7 +504,6 @@
     currentStep = 1;
     updateFormStepDisplay();
     
-    // Re-setup file upload handler
     setTimeout(() => setupFileUploadHandler(), 200);
   };
 
@@ -347,11 +556,9 @@
       return;
     }
 
-    // Clone to remove old event listeners
     const newFileInput = fileInput.cloneNode(true);
     fileInput.parentNode.replaceChild(newFileInput, fileInput);
 
-    // Click upload area to trigger file input
     if (uploadArea) {
       uploadArea.onclick = function (e) {
         e.preventDefault();
@@ -360,14 +567,12 @@
       };
     }
 
-    // Handle file selection
     newFileInput.addEventListener("change", function (e) {
       const file = e.target.files[0];
       if (!file) return;
 
       console.log("📎 File selected:", file.name, file.type, file.size);
 
-      // Validate file type
       const validTypes = [
         "application/pdf",
         "application/msword",
@@ -383,17 +588,14 @@
         return;
       }
 
-      // Validate file size (max 50MB)
       if (file.size > 50 * 1024 * 1024) {
         Notification.error("File terlalu besar! Maksimal 50MB");
         newFileInput.value = "";
         return;
       }
 
-      // Store file globally
       window.uploadedFile = file;
 
-      // Update UI
       if (uploadArea) uploadArea.classList.add("has-file");
 
       if (fileInfoDisplay) {
@@ -577,7 +779,6 @@
     console.log("💾 Submitting form...");
     console.log("👤 Current user:", currentUserData);
 
-    // VALIDATE: Ensure user is logged in
     if (!currentUserData || !currentUserData.uid) {
       console.error("❌ User data not available!");
       
@@ -600,7 +801,7 @@
     const kepadaValues = Array.from(checkedBoxes).map(cb => cb.value);
     const kepadaString = kepadaValues.join(", ");
 
-    // Determine status based on recipients
+    // Determine status based on recipients - ENHANCED LOGIC
     let status = "Selesai";
     if (kepadaString.toLowerCase().includes("kepala pusat") || 
         kepadaString.toLowerCase().includes("kapus")) {
@@ -671,7 +872,7 @@
           Swal.fire({
             icon: "success",
             title: "Berhasil Ditambahkan!",
-            html: `<p>Surat Keluar "<strong>${suratData.perihal}</strong>" berhasil ditambahkan dan dikirim!</p>`,
+            html: `<p>Surat Keluar "<strong>${suratData.perihal}</strong>" berhasil ditambahkan!<br><small>Status: <strong>${status}</strong></small></p>`,
             confirmButtonText: "OK",
             confirmButtonColor: "#8b0000",
             timer: 3000,
@@ -743,9 +944,11 @@
     document.getElementById("detailCatatan").textContent = 
       surat.catatan || surat.deskripsi || "-";
 
-    const statusClass = Utils.getStatusClass(surat.status);
+    // Use new status handler
+    const statusClass = getStatusClass(surat.status);
+    const statusText = getStatusText(surat.status);
     document.getElementById("detailStatus").innerHTML = 
-      `<span class="status ${statusClass}">${surat.status || 'Pending'}</span>`;
+      `<span class="status ${statusClass}">${statusText}</span>`;
 
     const createdAt = surat.createdAt?.toDate ? 
       surat.createdAt.toDate().toISOString() : surat.createdAt;
@@ -776,7 +979,6 @@
       document.getElementById("formTitle").textContent = "Edit Surat Keluar";
       document.getElementById("submitBtnText").textContent = "Update Surat";
 
-      // Fill form with existing data
       document.getElementById("jenisSurat").value = surat.jenisSurat || "";
       document.getElementById("sifatSurat").value = surat.sifatSurat || "";
       document.getElementById("noSurat").value = surat.noNaskah || surat.noSurat || "";
@@ -787,13 +989,11 @@
       document.getElementById("namaPengirim").value = surat.namaPengirim || surat.dari || "";
       document.getElementById("jabatanPengirim").value = surat.jabatanPengirim || "";
 
-      // Check appropriate kepada checkboxes
       const kepadaArray = surat.kepada ? surat.kepada.split(", ") : [];
       document.querySelectorAll('input[name="kepada"]').forEach(cb => {
         cb.checked = kepadaArray.includes(cb.value);
       });
 
-      // Display existing file
       if (surat.file) {
         displayExistingFile(surat.file);
       }
@@ -801,7 +1001,6 @@
       currentStep = 1;
       updateFormStepDisplay();
       
-      // Re-setup file upload
       setTimeout(() => setupFileUploadHandler(), 200);
     } catch (error) {
       console.error("❌ Error editing surat:", error);
@@ -885,7 +1084,6 @@
               showConfirmButton: false,
             });
 
-            // If in preview view, go back to table
             const previewView = document.getElementById("previewView");
             if (previewView && previewView.style.display !== "none") {
               backToTable();
@@ -973,7 +1171,6 @@
     document.getElementById("calendarMonth").textContent = 
       `${monthNames[month]} ${year}`;
 
-    // Empty days at start
     for (let i = 0; i < startingDayOfWeek; i++) {
       const emptyDay = document.createElement("button");
       emptyDay.className = "calendar-day empty";
@@ -982,20 +1179,17 @@
 
     const today = new Date();
     
-    // Actual days
     for (let day = 1; day <= daysInMonth; day++) {
       const dayButton = document.createElement("button");
       dayButton.className = "calendar-day";
       dayButton.textContent = day;
 
-      // Mark today
       if (year === today.getFullYear() && 
           month === today.getMonth() && 
           day === today.getDate()) {
         dayButton.classList.add("today");
       }
 
-      // Mark selected
       if (selectedDate && 
           selectedDate.getFullYear() === year && 
           selectedDate.getMonth() === month && 
@@ -1072,6 +1266,13 @@
     }
   });
 
+  // ========================================
+  // EXPORT STATUS FUNCTIONS TO GLOBAL
+  // ========================================
+  window.getStatusClass = getStatusClass;
+  window.getStatusText = getStatusText;
+  window.updateStatusSurat = updateStatusSurat;
+
 })();
 
-console.log("✅ Surat Keluar JS - Firebase Integrated (FIXED & COMBINED)");
+console.log("✅ Surat Keluar JS - Integrated with Status Handler");

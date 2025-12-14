@@ -131,6 +131,28 @@
         margin-top: 12px;
       }
 
+      .btn-preview {
+        background: #f59e0b;
+        color: white;
+        border: none;
+        padding: 6px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
+        transition: all 0.2s;
+      }
+
+      .btn-preview:hover {
+        background: #d97706;
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+      }
+
       .btn-disposisi {
         background: #10b981;
         color: white;
@@ -143,11 +165,14 @@
         align-items: center;
         gap: 6px;
         text-decoration: none;
+        transition: all 0.2s;
       }
 
       .btn-disposisi:hover {
         background: #059669;
         color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
       }
 
       .btn-approve {
@@ -161,10 +186,13 @@
         display: flex;
         align-items: center;
         gap: 6px;
+        transition: all 0.2s;
       }
 
       .btn-approve:hover {
         background: #1d4ed8;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
       }
 
       .btn-reject {
@@ -178,10 +206,13 @@
         display: flex;
         align-items: center;
         gap: 6px;
+        transition: all 0.2s;
       }
 
       .btn-reject:hover {
         background: #b91c1c;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
       }
 
       .empty-state {
@@ -408,460 +439,626 @@
     <script src="assets/js/main.js"></script>
 
     <script>
-      console.log("📄 Dashboard Kapus loaded - Updated with Link Disposisi");
+    // ========================================
+// DASHBOARD KAPUS - COMPLETE ACTIONS
+// Preview, Disposisi, Tolak untuk semua jenis surat
+// ========================================
 
-      let currentUserData = null;
-      let unsubscribeSuratMasuk = null;
-      let unsubscribeSuratKeluar = null;
-      let unsubscribeNotaDinas = null;
+console.log("📄 Dashboard Kapus loaded - Complete Actions");
 
-      // Initialize Dashboard Kapus
-      function initDashboardKapus() {
-        console.log("🚀 Initializing Dashboard Kapus...");
+let currentUserData = null;
+let unsubscribeSuratMasuk = null;
+let unsubscribeSuratKeluar = null;
+let unsubscribeNotaDinas = null;
 
-        checkUserRole(["kapus"])
-          .then((userData) => {
-            console.log("✅ Kapus access granted:", userData);
-            currentUserData = userData;
+// ========================================
+// INITIALIZE DASHBOARD KAPUS
+// ========================================
+function initDashboardKapus() {
+  console.log("🚀 Initializing Dashboard Kapus...");
 
-            const displayName = userData.nama || userData.email;
+  checkUserRole(["kapus"])
+    .then((userData) => {
+      console.log("✅ Kapus access granted:", userData);
+      currentUserData = userData;
 
-            document.getElementById("kapusName").textContent = displayName;
-            document.getElementById("userNameDisplay").textContent = displayName;
-            document.getElementById("sidebarUserName").textContent = displayName;
+      const displayName = userData.nama || userData.email;
 
-            loadKapusDashboard();
-          })
-          .catch((error) => {
-            console.error("❌ Access denied:", error);
+      document.getElementById("kapusName").textContent = displayName;
+      document.getElementById("userNameDisplay").textContent = displayName;
+      document.getElementById("sidebarUserName").textContent = displayName;
+
+      loadKapusDashboard();
+    })
+    .catch((error) => {
+      console.error("❌ Access denied:", error);
+    });
+}
+
+// ========================================
+// LOAD KAPUS DASHBOARD DATA
+// ========================================
+function loadKapusDashboard() {
+  console.log("📊 Loading Kapus dashboard with real-time listeners...");
+
+  setupSuratMasukListener();
+  setupSuratKeluarListener();
+  setupNotaDinasListener();
+}
+
+// ========================================
+// REAL-TIME LISTENER - SURAT MASUK
+// ========================================
+function setupSuratMasukListener() {
+  if (unsubscribeSuratMasuk) {
+    unsubscribeSuratMasuk();
+  }
+
+  unsubscribeSuratMasuk = db
+    .collection("surat_masuk")
+    .where("isDeleted", "==", false)
+    .where("status", "==", "Terkirim ke Kapus")
+    .onSnapshot(
+      (snapshot) => {
+        const suratMasuk = [];
+        snapshot.forEach((doc) => {
+          suratMasuk.push({
+            id: doc.id,
+            ...doc.data(),
           });
-      }
-
-      // Load Kapus Dashboard Data
-      function loadKapusDashboard() {
-        console.log("📊 Loading Kapus dashboard with real-time listeners...");
-
-        setupSuratMasukListener();
-        setupSuratKeluarListener();
-        setupNotaDinasListener();
-      }
-
-      // Real-time Listener - Surat Masuk
-      function setupSuratMasukListener() {
-        if (unsubscribeSuratMasuk) {
-          unsubscribeSuratMasuk();
-        }
-
-        unsubscribeSuratMasuk = db
-          .collection("surat_masuk")
-          .where("isDeleted", "==", false)
-          .where("status", "==", "Terkirim ke Kapus")
-          .onSnapshot(
-            (snapshot) => {
-              const suratMasuk = [];
-              snapshot.forEach((doc) => {
-                suratMasuk.push({
-                  id: doc.id,
-                  ...doc.data(),
-                });
-              });
-
-              console.log("📨 Surat Masuk for Kapus:", suratMasuk.length);
-
-              document.getElementById("statSuratMasuk").textContent = suratMasuk.length;
-              document.getElementById("badgeSuratMasuk").textContent = suratMasuk.length;
-
-              renderSuratMasukList(suratMasuk);
-              updateTotalNotif();
-            },
-            (error) => {
-              console.error("❌ Error loading Surat Masuk:", error);
-            }
-          );
-      }
-
-      // Real-time Listener - Surat Keluar
-      function setupSuratKeluarListener() {
-        if (unsubscribeSuratKeluar) {
-          unsubscribeSuratKeluar();
-        }
-
-        unsubscribeSuratKeluar = db
-          .collection("surat_keluar")
-          .where("isDeleted", "==", false)
-          .where("status", "==", "Menunggu Persetujuan Kapus")
-          .onSnapshot(
-            (snapshot) => {
-              const suratKeluar = [];
-              snapshot.forEach((doc) => {
-                suratKeluar.push({
-                  id: doc.id,
-                  ...doc.data(),
-                });
-              });
-
-              console.log("📤 Surat Keluar for Kapus:", suratKeluar.length);
-
-              document.getElementById("statSuratKeluar").textContent = suratKeluar.length;
-              document.getElementById("badgeSuratKeluar").textContent = suratKeluar.length;
-
-              renderSuratKeluarList(suratKeluar);
-              updateTotalNotif();
-            },
-            (error) => {
-              console.error("❌ Error loading Surat Keluar:", error);
-            }
-          );
-      }
-
-      // Real-time Listener - Nota Dinas
-      function setupNotaDinasListener() {
-        if (unsubscribeNotaDinas) {
-          unsubscribeNotaDinas();
-        }
-
-        unsubscribeNotaDinas = db
-          .collection("nota_dinas")
-          .where("isDeleted", "==", false)
-          .where("status", "==", "Menunggu Persetujuan Kapus")
-          .onSnapshot(
-            (snapshot) => {
-              const notaDinas = [];
-              snapshot.forEach((doc) => {
-                notaDinas.push({
-                  id: doc.id,
-                  ...doc.data(),
-                });
-              });
-
-              console.log("📝 Nota Dinas for Kapus:", notaDinas.length);
-
-              document.getElementById("statNotaDinas").textContent = notaDinas.length;
-              document.getElementById("badgeNotaDinas").textContent = notaDinas.length;
-
-              renderNotaDinasList(notaDinas);
-              updateTotalNotif();
-            },
-            (error) => {
-              console.error("❌ Error loading Nota Dinas:", error);
-            }
-          );
-      }
-
-      // Update Total Notification Badge
-      function updateTotalNotif() {
-        const totalMasuk = parseInt(document.getElementById("badgeSuratMasuk")?.textContent || 0);
-        const totalKeluar = parseInt(document.getElementById("badgeSuratKeluar")?.textContent || 0);
-        const totalNotaDinas = parseInt(document.getElementById("badgeNotaDinas")?.textContent || 0);
-
-        const totalNotif = totalMasuk + totalKeluar + totalNotaDinas;
-
-        const notifBadge = document.getElementById("notifBadge");
-        if (notifBadge) {
-          notifBadge.textContent = totalNotif;
-        }
-
-        countDisetujuiBulanIni();
-      }
-
-      // Count Disetujui Bulan Ini
-      function countDisetujuiBulanIni() {
-        const now = new Date();
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
-        Promise.all([
-          db.collection("surat_masuk").where("isDeleted", "==", false).where("status", "==", "Disetujui Kapus").where("approvedAt", ">=", startOfMonth).get(),
-          db.collection("surat_keluar").where("isDeleted", "==", false).where("status", "==", "Disetujui Kapus").where("approvedAt", ">=", startOfMonth).get(),
-          db.collection("nota_dinas").where("isDeleted", "==", false).where("status", "==", "Disetujui Kapus").where("approvedAt", ">=", startOfMonth).get(),
-        ])
-          .then((results) => {
-            const total = results[0].size + results[1].size + results[2].size;
-            document.getElementById("statDisetujui").textContent = total;
-            console.log("✅ Total disetujui bulan ini:", total);
-          })
-          .catch((error) => {
-            console.error("❌ Error counting disetujui:", error);
-            document.getElementById("statDisetujui").textContent = "0";
-          });
-      }
-
-      // Render Surat Masuk List - WITH LINK TO DISPOSISI PAGE
-      function renderSuratMasukList(data) {
-        const container = document.getElementById("suratMasukList");
-        if (!container) return;
-
-        if (data.length === 0) {
-          container.innerHTML = `
-            <div class="empty-state">
-              <i class="bi bi-inbox"></i>
-              <p>Tidak ada surat masuk yang perlu ditindaklanjuti</p>
-            </div>
-          `;
-          return;
-        }
-
-        container.innerHTML = data
-          .map(
-            (surat) => `
-            <div class="surat-item" onclick="window.location.href='surat-masuk-kapus.html?disposisi=${surat.id}'">
-              <strong>${surat.perihal || "Tanpa Perihal"}</strong>
-              <div class="surat-meta">
-                <span><i class="bi bi-calendar3"></i> ${surat.tanggalDiterima ? formatDate(surat.tanggalDiterima) : "-"}</span>
-                <span><i class="bi bi-building"></i> Dari: ${surat.dari || "N/A"}</span>
-                <span><i class="bi bi-hash"></i> ${surat.noSurat || "N/A"}</span>
-              </div>
-              <div class="surat-actions" onclick="event.stopPropagation()">
-                <a href="surat-masuk-kapus.html?disposisi=${surat.id}" class="btn-disposisi">
-                  <i class="bi bi-send"></i> Buat Disposisi
-                </a>
-                <button class="btn-approve" onclick="event.stopPropagation(); approveSurat('${surat.id}', 'masuk')">
-                  <i class="bi bi-check-circle"></i> Setujui
-                </button>
-              </div>
-            </div>
-          `
-          )
-          .join("");
-      }
-
-      // Render Surat Keluar List
-      function renderSuratKeluarList(data) {
-        const container = document.getElementById("suratKeluarList");
-        if (!container) return;
-
-        if (data.length === 0) {
-          container.innerHTML = `
-            <div class="empty-state">
-              <i class="bi bi-send"></i>
-              <p>Tidak ada surat keluar yang perlu disetujui</p>
-            </div>
-          `;
-          return;
-        }
-
-        container.innerHTML = data
-          .map(
-            (surat) => `
-            <div class="surat-item">
-              <strong>${surat.perihal || "Tanpa Perihal"}</strong>
-              <div class="surat-meta">
-                <span><i class="bi bi-calendar3"></i> ${surat.tanggalSurat ? formatDate(surat.tanggalSurat) : "-"}</span>
-                <span><i class="bi bi-building"></i> Tujuan: ${surat.kepada || surat.tujuan || "N/A"}</span>
-                <span><i class="bi bi-hash"></i> ${surat.noNaskah || surat.noSurat || "N/A"}</span>
-              </div>
-              <div class="surat-actions">
-                <button class="btn-approve" onclick="approveSurat('${surat.id}', 'keluar')">
-                  <i class="bi bi-check-circle"></i> Setujui & TTD Digital
-                </button>
-                <button class="btn-reject" onclick="rejectSurat('${surat.id}', 'keluar')">
-                  <i class="bi bi-x-circle"></i> Tolak
-                </button>
-              </div>
-            </div>
-          `
-          )
-          .join("");
-      }
-
-      // Render Nota Dinas List
-      function renderNotaDinasList(data) {
-        const container = document.getElementById("notaDinasList");
-        if (!container) return;
-
-        if (data.length === 0) {
-          container.innerHTML = `
-            <div class="empty-state">
-              <i class="bi bi-file-text"></i>
-              <p>Tidak ada nota dinas yang perlu disetujui</p>
-            </div>
-          `;
-          return;
-        }
-
-        container.innerHTML = data
-          .map(
-            (nota) => `
-            <div class="surat-item">
-              <strong>${nota.perihal || "Tanpa Perihal"}</strong>
-              <div class="surat-meta">
-                <span><i class="bi bi-calendar3"></i> ${nota.tanggalSurat ? formatDate(nota.tanggalSurat) : "-"}</span>
-                <span><i class="bi bi-person"></i> Dari: ${nota.dari || nota.namaPengirim || "N/A"}</span>
-                <span><i class="bi bi-hash"></i> ${nota.noSurat || nota.noNaskah || "N/A"}</span>
-              </div>
-              <div class="surat-actions">
-                <button class="btn-approve" onclick="approveSurat('${nota.id}', 'nota-dinas')">
-                  <i class="bi bi-check-circle"></i> Setujui & TTD Digital
-                </button>
-                <button class="btn-reject" onclick="rejectSurat('${nota.id}', 'nota-dinas')">
-                  <i class="bi bi-x-circle"></i> Tolak
-                </button>
-              </div>
-            </div>
-          `
-          )
-          .join("");
-      }
-
-      // Format Date Helper
-      function formatDate(dateString) {
-        if (!dateString) return "-";
-
-        try {
-          const date = new Date(dateString);
-          if (isNaN(date.getTime())) return dateString;
-
-          return date.toLocaleDateString("id-ID", {
-            day: "2-digit",
-            month: "long",
-            year: "numeric",
-          });
-        } catch (e) {
-          return dateString;
-        }
-      }
-
-      // Approve Surat
-      window.approveSurat = function (suratId, type) {
-        Swal.fire({
-          title: "Setujui Surat?",
-          text: "Surat akan disetujui dengan TTD Digital Anda",
-          icon: "question",
-          showCancelButton: true,
-          confirmButtonText: "Ya, Setujui",
-          confirmButtonColor: "#10b981",
-          cancelButtonText: "Batal",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            const collection = type === "masuk" ? "surat_masuk" : type === "keluar" ? "surat_keluar" : "nota_dinas";
-            db.collection(collection)
-              .doc(suratId)
-              .update({
-                status: "Disetujui Kapus",
-                approvedBy: currentUserData.nama,
-                approvedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                ttdDigital: `TTD_${currentUserData.nama}_${Date.now()}`,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-              })
-              .then(() => {
-                Swal.fire({
-                  icon: "success",
-                  title: "Surat Disetujui!",
-                  text: "Surat telah disetujui dengan TTD Digital",
-                  timer: 2000,
-                });
-              })
-              .catch((error) => {
-                console.error("Error:", error);
-                Swal.fire("Error", "Gagal menyetujui surat", "error");
-              });
-          }
         });
-      };
 
-      // Reject Surat
-      window.rejectSurat = function (suratId, type) {
-        Swal.fire({
-          title: "Tolak Surat?",
-          input: "textarea",
-          inputLabel: "Alasan Penolakan",
-          inputPlaceholder: "Masukkan alasan penolakan...",
-          showCancelButton: true,
-          confirmButtonText: "Ya, Tolak",
-          confirmButtonColor: "#dc2626",
-          cancelButtonText: "Batal",
-          inputValidator: (value) => {
-            if (!value) {
-              return "Alasan penolakan wajib diisi!";
-            }
-          },
-        }).then((result) => {
-          if (result.isConfirmed) {
-            const collection = type === "masuk" ? "surat_masuk" : type === "keluar" ? "surat_keluar" : "nota_dinas";
+        console.log("📨 Surat Masuk for Kapus:", suratMasuk.length);
 
-            db.collection(collection)
-              .doc(suratId)
-              .update({
-                status: "Ditolak Kapus",
-                rejectedBy: currentUserData.nama,
-                rejectedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                rejectionReason: result.value,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-              })
-              .then(() => {
-                Swal.fire({
-                  icon: "info",
-                  title: "Surat Ditolak",
-                  text: "Surat telah ditolak",
-                  timer: 2000,
-                });
-              })
-              .catch((error) => {
-                console.error("Error:", error);
-                Swal.fire("Error", "Gagal menolak surat", "error");
-              });
-          }
+        document.getElementById("statSuratMasuk").textContent = suratMasuk.length;
+        document.getElementById("badgeSuratMasuk").textContent = suratMasuk.length;
+
+        renderSuratMasukList(suratMasuk);
+        updateTotalNotif();
+      },
+      (error) => {
+        console.error("❌ Error loading Surat Masuk:", error);
+      }
+    );
+}
+
+// ========================================
+// REAL-TIME LISTENER - SURAT KELUAR
+// ========================================
+function setupSuratKeluarListener() {
+  if (unsubscribeSuratKeluar) {
+    unsubscribeSuratKeluar();
+  }
+
+  unsubscribeSuratKeluar = db
+    .collection("surat_keluar")
+    .where("isDeleted", "==", false)
+    .where("status", "==", "Menunggu Persetujuan Kapus")
+    .onSnapshot(
+      (snapshot) => {
+        const suratKeluar = [];
+        snapshot.forEach((doc) => {
+          suratKeluar.push({
+            id: doc.id,
+            ...doc.data(),
+          });
         });
-      };
 
-      // Logout Handler
-      const logoutLink = document.getElementById("logoutLink");
-      if (logoutLink) {
-        const newLogoutLink = logoutLink.cloneNode(true);
-        logoutLink.parentNode.replaceChild(newLogoutLink, logoutLink);
+        console.log("📤 Surat Keluar for Kapus:", suratKeluar.length);
 
-        newLogoutLink.addEventListener("click", function (e) {
-          e.preventDefault();
-          e.stopPropagation();
+        document.getElementById("statSuratKeluar").textContent = suratKeluar.length;
+        document.getElementById("badgeSuratKeluar").textContent = suratKeluar.length;
 
-          console.log("🚪 Logout clicked");
+        renderSuratKeluarList(suratKeluar);
+        updateTotalNotif();
+      },
+      (error) => {
+        console.error("❌ Error loading Surat Keluar:", error);
+      }
+    );
+}
 
+// ========================================
+// REAL-TIME LISTENER - NOTA DINAS
+// ========================================
+function setupNotaDinasListener() {
+  if (unsubscribeNotaDinas) {
+    unsubscribeNotaDinas();
+  }
+
+  unsubscribeNotaDinas = db
+    .collection("nota_dinas")
+    .where("isDeleted", "==", false)
+    .where("status", "==", "Menunggu Persetujuan Kapus")
+    .onSnapshot(
+      (snapshot) => {
+        const notaDinas = [];
+        snapshot.forEach((doc) => {
+          notaDinas.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+
+        console.log("📝 Nota Dinas for Kapus:", notaDinas.length);
+
+        document.getElementById("statNotaDinas").textContent = notaDinas.length;
+        document.getElementById("badgeNotaDinas").textContent = notaDinas.length;
+
+        renderNotaDinasList(notaDinas);
+        updateTotalNotif();
+      },
+      (error) => {
+        console.error("❌ Error loading Nota Dinas:", error);
+      }
+    );
+}
+
+// ========================================
+// UPDATE TOTAL NOTIFICATION BADGE
+// ========================================
+function updateTotalNotif() {
+  const totalMasuk = parseInt(document.getElementById("badgeSuratMasuk")?.textContent || 0);
+  const totalKeluar = parseInt(document.getElementById("badgeSuratKeluar")?.textContent || 0);
+  const totalNotaDinas = parseInt(document.getElementById("badgeNotaDinas")?.textContent || 0);
+
+  const totalNotif = totalMasuk + totalKeluar + totalNotaDinas;
+
+  const notifBadge = document.getElementById("notifBadge");
+  if (notifBadge) {
+    notifBadge.textContent = totalNotif;
+  }
+
+  countDisetujuiBulanIni();
+}
+
+// ========================================
+// COUNT DISETUJUI BULAN INI
+// ========================================
+function countDisetujuiBulanIni() {
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  Promise.all([
+    db.collection("surat_masuk").where("isDeleted", "==", false).where("status", "==", "Disetujui Kapus").where("approvedAt", ">=", startOfMonth).get(),
+    db.collection("surat_keluar").where("isDeleted", "==", false).where("status", "==", "Disetujui Kapus").where("approvedAt", ">=", startOfMonth).get(),
+    db.collection("nota_dinas").where("isDeleted", "==", false).where("status", "==", "Disetujui Kapus").where("approvedAt", ">=", startOfMonth).get(),
+  ])
+    .then((results) => {
+      const total = results[0].size + results[1].size + results[2].size;
+      document.getElementById("statDisetujui").textContent = total;
+      console.log("✅ Total disetujui bulan ini:", total);
+    })
+    .catch((error) => {
+      console.error("❌ Error counting disetujui:", error);
+      document.getElementById("statDisetujui").textContent = "0";
+    });
+}
+
+// ========================================
+// RENDER SURAT MASUK LIST - COMPLETE ACTIONS
+// ========================================
+function renderSuratMasukList(data) {
+  const container = document.getElementById("suratMasukList");
+  if (!container) return;
+
+  if (data.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="bi bi-inbox"></i>
+        <p>Tidak ada surat masuk yang perlu ditindaklanjuti</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = data
+    .map(
+      (surat) => `
+      <div class="surat-item">
+        <strong>${surat.perihal || "Tanpa Perihal"}</strong>
+        <div class="surat-meta">
+          <span><i class="bi bi-calendar3"></i> ${surat.tanggalDiterima ? formatDate(surat.tanggalDiterima) : "-"}</span>
+          <span><i class="bi bi-building"></i> Dari: ${surat.dari || "N/A"}</span>
+          <span><i class="bi bi-hash"></i> ${surat.noSurat || "N/A"}</span>
+        </div>
+        <div class="surat-actions">
+          <button class="btn-preview" onclick="previewSuratMasuk('${surat.id}')">
+            <i class="bi bi-eye"></i> Preview
+          </button>
+          <a href="surat-masuk-kapus.html?disposisi=${surat.id}" class="btn-disposisi">
+            <i class="bi bi-send"></i> Disposisi
+          </a>
+          <button class="btn-reject" onclick="tolakSuratMasuk('${surat.id}')">
+            <i class="bi bi-x-circle"></i> Tolak
+          </button>
+        </div>
+      </div>
+    `
+    )
+    .join("");
+}
+
+// ========================================
+// RENDER SURAT KELUAR LIST - COMPLETE ACTIONS
+// ========================================
+function renderSuratKeluarList(data) {
+  const container = document.getElementById("suratKeluarList");
+  if (!container) return;
+
+  if (data.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="bi bi-send"></i>
+        <p>Tidak ada surat keluar yang perlu disetujui</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = data
+    .map(
+      (surat) => `
+      <div class="surat-item">
+        <strong>${surat.perihal || "Tanpa Perihal"}</strong>
+        <div class="surat-meta">
+          <span><i class="bi bi-calendar3"></i> ${surat.tanggalSurat ? formatDate(surat.tanggalSurat) : "-"}</span>
+          <span><i class="bi bi-building"></i> Tujuan: ${surat.kepada || surat.tujuan || "N/A"}</span>
+          <span><i class="bi bi-hash"></i> ${surat.noNaskah || surat.noSurat || "N/A"}</span>
+        </div>
+        <div class="surat-actions">
+          <button class="btn-preview" onclick="previewSuratKeluar('${surat.id}')">
+            <i class="bi bi-eye"></i> Preview
+          </button>
+          <button class="btn-approve" onclick="goToTTDSuratKeluar('${surat.id}')">
+            <i class="bi bi-check-circle"></i> Setujui & TTD
+          </button>
+          <button class="btn-reject" onclick="tolakSuratKeluar('${surat.id}')">
+            <i class="bi bi-x-circle"></i> Tolak
+          </button>
+        </div>
+      </div>
+    `
+    )
+    .join("");
+}
+
+// ========================================
+// RENDER NOTA DINAS LIST - COMPLETE ACTIONS
+// ========================================
+function renderNotaDinasList(data) {
+  const container = document.getElementById("notaDinasList");
+  if (!container) return;
+
+  if (data.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="bi bi-file-text"></i>
+        <p>Tidak ada nota dinas yang perlu disetujui</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = data
+    .map(
+      (nota) => `
+      <div class="surat-item">
+        <strong>${nota.perihal || "Tanpa Perihal"}</strong>
+        <div class="surat-meta">
+          <span><i class="bi bi-calendar3"></i> ${nota.tanggalSurat ? formatDate(nota.tanggalSurat) : "-"}</span>
+          <span><i class="bi bi-person"></i> Dari: ${nota.dari || nota.namaPengirim || "N/A"}</span>
+          <span><i class="bi bi-hash"></i> ${nota.noSurat || nota.noNaskah || "N/A"}</span>
+        </div>
+        <div class="surat-actions">
+          <button class="btn-preview" onclick="previewNotaDinas('${nota.id}')">
+            <i class="bi bi-eye"></i> Preview
+          </button>
+          <button class="btn-approve" onclick="goToTTDNotaDinas('${nota.id}')">
+            <i class="bi bi-check-circle"></i> Setujui & TTD
+          </button>
+          <button class="btn-reject" onclick="tolakNotaDinas('${nota.id}')">
+            <i class="bi bi-x-circle"></i> Tolak
+          </button>
+        </div>
+      </div>
+    `
+    )
+    .join("");
+}
+
+// ========================================
+// PREVIEW FUNCTIONS
+// ========================================
+
+// Preview Surat Masuk (Read-only, tanpa action)
+window.previewSuratMasuk = function(suratId) {
+  console.log("👁️ Preview Surat Masuk:", suratId);
+  window.location.href = `surat-masuk-kapus.html?preview=${suratId}`;
+};
+
+// Preview Surat Keluar
+window.previewSuratKeluar = function(suratId) {
+  console.log("👁️ Preview Surat Keluar:", suratId);
+  window.location.href = `surat-keluar-kapus.html?preview=${suratId}`;
+};
+
+// Preview Nota Dinas
+window.previewNotaDinas = function(notaDinasId) {
+  console.log("👁️ Preview Nota Dinas:", notaDinasId);
+  window.location.href = `nota-dinas-kapus.html?preview=${notaDinasId}`;
+};
+
+// ========================================
+// TOLAK FUNCTIONS
+// ========================================
+
+// Tolak Surat Masuk
+window.tolakSuratMasuk = function(suratId) {
+  Swal.fire({
+    title: "Tolak Surat Masuk?",
+    html: `
+      <textarea id="alasanPenolakan" class="swal2-textarea" 
+        placeholder="Masukkan alasan penolakan..." 
+        style="width: 100%; min-height: 100px; resize: vertical;"></textarea>
+    `,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Ya, Tolak",
+    cancelButtonText: "Batal",
+    confirmButtonColor: "#dc2626",
+    cancelButtonColor: "#6b7280",
+    reverseButtons: true,
+    preConfirm: () => {
+      const alasan = document.getElementById('alasanPenolakan').value;
+      if (!alasan || alasan.trim() === '') {
+        Swal.showValidationMessage('Alasan penolakan wajib diisi!');
+        return false;
+      }
+      return alasan;
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const alasan = result.value;
+      
+      db.collection("surat_masuk")
+        .doc(suratId)
+        .update({
+          status: "Ditolak Kapus",
+          rejectedBy: currentUserData.nama,
+          rejectedByEmail: currentUserData.email,
+          rejectedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          rejectionReason: alasan,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        })
+        .then(() => {
           Swal.fire({
-            title: "Yakin ingin logout?",
-            text: "Anda akan keluar dari sesi saat ini",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Ya, logout",
-            cancelButtonText: "Batal",
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
-            reverseButtons: true,
-          }).then((result) => {
-            if (result.isConfirmed) {
-              console.log("✅ User confirmed logout");
-
-              if (window.logoutUser) {
-                logoutUser();
-              } else {
-                console.error("❌ logoutUser function not found");
-                sessionStorage.clear();
-                localStorage.clear();
-                window.location.replace("login.html?logout=true");
-              }
-            }
+            icon: "success",
+            title: "Surat Ditolak",
+            text: "Surat telah ditolak dan dikembalikan ke Admin",
+            timer: 2000,
+            showConfirmButton: false
           });
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          Swal.fire("Error", "Gagal menolak surat", "error");
         });
+    }
+  });
+};
 
-        console.log("✅ Logout handler attached");
-      } else {
-        console.error("❌ Logout link not found");
+// Tolak Surat Keluar
+window.tolakSuratKeluar = function(suratId) {
+  Swal.fire({
+    title: "Tolak Surat Keluar?",
+    html: `
+      <textarea id="alasanPenolakan" class="swal2-textarea" 
+        placeholder="Masukkan alasan penolakan..." 
+        style="width: 100%; min-height: 100px; resize: vertical;"></textarea>
+    `,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Ya, Tolak",
+    cancelButtonText: "Batal",
+    confirmButtonColor: "#dc2626",
+    cancelButtonColor: "#6b7280",
+    reverseButtons: true,
+    preConfirm: () => {
+      const alasan = document.getElementById('alasanPenolakan').value;
+      if (!alasan || alasan.trim() === '') {
+        Swal.showValidationMessage('Alasan penolakan wajib diisi!');
+        return false;
       }
+      return alasan;
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const alasan = result.value;
+      
+      db.collection("surat_keluar")
+        .doc(suratId)
+        .update({
+          status: "Ditolak Kapus",
+          rejectedBy: currentUserData.nama,
+          rejectedByEmail: currentUserData.email,
+          rejectedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          rejectionReason: alasan,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        })
+        .then(() => {
+          Swal.fire({
+            icon: "success",
+            title: "Surat Ditolak",
+            text: "Surat telah ditolak dan dikembalikan ke Admin",
+            timer: 2000,
+            showConfirmButton: false
+          });
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          Swal.fire("Error", "Gagal menolak surat", "error");
+        });
+    }
+  });
+};
 
-      // Cleanup Listeners on Page Unload
-      window.addEventListener("beforeunload", () => {
-        if (unsubscribeSuratMasuk) unsubscribeSuratMasuk();
-        if (unsubscribeSuratKeluar) unsubscribeSuratKeluar();
-        if (unsubscribeNotaDinas) unsubscribeNotaDinas();
-        console.log("🧹 Cleaned up real-time listeners");
-      });
-
-      // Start Initialization
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initDashboardKapus);
-      } else {
-        initDashboardKapus();
+// Tolak Nota Dinas
+window.tolakNotaDinas = function(notaDinasId) {
+  Swal.fire({
+    title: "Tolak Nota Dinas?",
+    html: `
+      <textarea id="alasanPenolakan" class="swal2-textarea" 
+        placeholder="Masukkan alasan penolakan..." 
+        style="width: 100%; min-height: 100px; resize: vertical;"></textarea>
+    `,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Ya, Tolak",
+    cancelButtonText: "Batal",
+    confirmButtonColor: "#dc2626",
+    cancelButtonColor: "#6b7280",
+    reverseButtons: true,
+    preConfirm: () => {
+      const alasan = document.getElementById('alasanPenolakan').value;
+      if (!alasan || alasan.trim() === '') {
+        Swal.showValidationMessage('Alasan penolakan wajib diisi!');
+        return false;
       }
+      return alasan;
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const alasan = result.value;
+      
+      db.collection("nota_dinas")
+        .doc(notaDinasId)
+        .update({
+          status: "Ditolak Kapus",
+          rejectedBy: currentUserData.nama,
+          rejectedByEmail: currentUserData.email,
+          rejectedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          rejectionReason: alasan,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        })
+        .then(() => {
+          Swal.fire({
+            icon: "success",
+            title: "Nota Dinas Ditolak",
+            text: "Nota dinas telah ditolak dan dikembalikan ke Admin",
+            timer: 2000,
+            showConfirmButton: false
+          });
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          Swal.fire("Error", "Gagal menolak nota dinas", "error");
+        });
+    }
+  });
+};
 
-      console.log("✅ Dashboard Kapus scripts loaded - Updated with Link Disposisi");
-    </script>
+// ========================================
+// NAVIGATION FUNCTIONS - DIRECT TO TTD
+// ========================================
+
+// Go to TTD Surat Keluar - Auto open preview
+window.goToTTDSuratKeluar = function(suratId) {
+  console.log("📤 Navigating to Surat Keluar TTD:", suratId);
+  window.location.href = `surat-keluar-kapus.html?preview=${suratId}`;
+};
+
+// Go to TTD Nota Dinas - Auto open preview
+window.goToTTDNotaDinas = function(notaDinasId) {
+  console.log("📝 Navigating to Nota Dinas TTD:", notaDinasId);
+  window.location.href = `nota-dinas-kapus.html?preview=${notaDinasId}`;
+};
+
+// ========================================
+// FORMAT DATE HELPER
+// ========================================
+function formatDate(dateString) {
+  if (!dateString) return "-";
+
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString;
+
+    return date.toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+  } catch (e) {
+    return dateString;
+  }
+}
+
+// ========================================
+// LOGOUT HANDLER
+// ========================================
+const logoutLink = document.getElementById("logoutLink");
+if (logoutLink) {
+  const newLogoutLink = logoutLink.cloneNode(true);
+  logoutLink.parentNode.replaceChild(newLogoutLink, logoutLink);
+
+  newLogoutLink.addEventListener("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    console.log("🚪 Logout clicked");
+
+    Swal.fire({
+      title: "Yakin ingin logout?",
+      text: "Anda akan keluar dari sesi saat ini",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Ya, logout",
+      cancelButtonText: "Batal",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("✅ User confirmed logout");
+
+        if (window.logoutUser) {
+          logoutUser();
+        } else {
+          console.error("❌ logoutUser function not found");
+          sessionStorage.clear();
+          localStorage.clear();
+          window.location.replace("login.html?logout=true");
+        }
+      }
+    });
+  });
+
+  console.log("✅ Logout handler attached");
+} else {
+  console.error("❌ Logout link not found");
+}
+
+// ========================================
+// CLEANUP LISTENERS ON PAGE UNLOAD
+// ========================================
+window.addEventListener("beforeunload", () => {
+  if (unsubscribeSuratMasuk) unsubscribeSuratMasuk();
+  if (unsubscribeSuratKeluar) unsubscribeSuratKeluar();
+  if (unsubscribeNotaDinas) unsubscribeNotaDinas();
+  console.log("🧹 Cleaned up real-time listeners");
+});
+
+// ========================================
+// START INITIALIZATION
+// ========================================
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initDashboardKapus);
+} else {
+  initDashboardKapus();
+}
+
+console.log("✅ Dashboard Kapus scripts loaded - Complete Actions (Preview, Disposisi, Tolak)");
+</script>
   </body>
 </html>

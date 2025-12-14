@@ -73,7 +73,7 @@
         background: #059669;
       }
       .btn-preview {
-        background: #3b82f6;
+        background: #f59e0b;
         color: white;
         border: none;
         padding: 6px 12px;
@@ -86,7 +86,7 @@
         margin-right: 8px;
       }
       .btn-preview:hover {
-        background: #2563eb;
+        background: #d97706;
       }
       .page-header {
         display: flex;
@@ -1047,6 +1047,68 @@
           unsubscribeSuratMasuk();
         }
       });
+      (function() {
+  console.log("🔍 Checking for auto-open parameters...");
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const disposisiId = urlParams.get('disposisi');
+  
+  if (disposisiId) {
+    console.log("✅ Auto-opening disposisi for:", disposisiId);
+    
+    // Wait for page to fully load
+    window.addEventListener('load', function() {
+      setTimeout(() => {
+        // Auto-trigger disposisi view
+        if (typeof buatDisposisiCepat === 'function') {
+          buatDisposisiCepat(disposisiId);
+          console.log("✅ Disposisi view opened automatically");
+        } else {
+          console.error("❌ buatDisposisiCepat function not found");
+        }
+      }, 500);
+    });
+  }
+})();
+(function() {
+  console.log("🔍 Checking for auto-open parameters...");
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const previewId = urlParams.get('preview');
+  const disposisiId = urlParams.get('disposisi');
+  
+  if (previewId) {
+    console.log("✅ Auto-opening PREVIEW for:", previewId);
+    
+    // Wait for page to fully load
+    window.addEventListener('load', function() {
+      setTimeout(() => {
+        // Auto-trigger preview (read-only mode)
+        if (typeof previewSurat === 'function') {
+          previewSurat(previewId);
+          console.log("✅ Preview opened automatically");
+        } else {
+          console.error("❌ previewSurat function not found");
+        }
+      }, 500);
+    });
+  } else if (disposisiId) {
+    console.log("✅ Auto-opening DISPOSISI for:", disposisiId);
+    
+    // Wait for page to fully load
+    window.addEventListener('load', function() {
+      setTimeout(() => {
+        // Auto-trigger disposisi view
+        if (typeof buatDisposisiCepat === 'function') {
+          buatDisposisiCepat(disposisiId);
+          console.log("✅ Disposisi view opened automatically");
+        } else {
+          console.error("❌ buatDisposisiCepat function not found");
+        }
+      }, 500);
+    });
+  }
+})();
     </script>
   </body>
 </html>

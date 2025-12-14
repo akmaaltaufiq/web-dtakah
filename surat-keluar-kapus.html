@@ -1660,6 +1660,53 @@ window.addEventListener("beforeunload", () => {
 console.log("✅ Surat Keluar Kapus - Pure Firestore System Loaded");
 console.log("🔥 Real-time updates active for Admin & Kapus");
 console.log("💾 Signatures saved as base64 in Firestore (No Storage API needed)");
+(function() {
+  console.log("🔍 Checking for auto-preview parameters...");
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const previewId = urlParams.get('preview');
+  
+  if (previewId) {
+    console.log("✅ Auto-opening preview for:", previewId);
+    
+    // Wait for page to fully load
+    window.addEventListener('load', function() {
+      setTimeout(() => {
+        // Auto-trigger preview
+        if (typeof previewSurat === 'function') {
+          previewSurat(previewId);
+          console.log("✅ Preview opened automatically");
+        } else {
+          console.error("❌ previewSurat function not found");
+        }
+      }, 500);
+    });
+  }
+})();
+(function() {
+  console.log("🔍 Checking for auto-preview parameters...");
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const previewId = urlParams.get('preview');
+  
+  if (previewId) {
+    console.log("✅ Auto-opening preview for:", previewId);
+    
+    // Wait for page to fully load
+    window.addEventListener('load', function() {
+      setTimeout(() => {
+        // Auto-trigger preview with TTD section
+        if (typeof previewSurat === 'function') {
+          previewSurat(previewId);
+          console.log("✅ Preview with TTD section opened automatically");
+        } else {
+          console.error("❌ previewSurat function not found");
+        }
+      }, 500);
+    });
+  }
+})();
+
      </script>
   </body>
 </html>
