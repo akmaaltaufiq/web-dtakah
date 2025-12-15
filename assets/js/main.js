@@ -1,5 +1,5 @@
 // ========================================
-// MAIN.JS - GLOBAL FUNCTIONS & UTILITIES
+// MAIN.JS - COMPLETE WITH ROLE-BASED SIDEBAR
 // ========================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -217,6 +217,147 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // =============================
+  // SIDEBAR TOGGLE FUNCTIONALITY
+  // =============================
+  window.toggleSidebar = function () {
+    console.log("🔄 Toggling sidebar...");
+
+    const sidebar = document.querySelector(".navigation-sidebar");
+    const mainContent = document.querySelector(".main-content");
+    const overlay = document.querySelector(".sidebar-overlay");
+
+    if (!sidebar || !mainContent) {
+      console.warn("⚠️ Sidebar or main content not found");
+      return;
+    }
+
+    // Detect mobile or desktop
+    const isMobile = window.innerWidth <= 768;
+
+    if (isMobile) {
+      // Mobile behavior: overlay sidebar
+      sidebar.classList.toggle("active");
+
+      if (overlay) {
+        overlay.classList.toggle("active");
+      } else {
+        // Create overlay if doesn't exist
+        const newOverlay = document.createElement("div");
+        newOverlay.className = "sidebar-overlay active";
+        newOverlay.addEventListener("click", toggleSidebar);
+        document.body.appendChild(newOverlay);
+      }
+    } else {
+      // Desktop behavior: push content
+      sidebar.classList.toggle("hidden");
+      mainContent.classList.toggle("expanded");
+
+      // Save state to localStorage (desktop only)
+      const isHidden = sidebar.classList.contains("hidden");
+      localStorage.setItem("sidebarHidden", isHidden);
+      console.log(`💾 Sidebar state saved: ${isHidden ? "hidden" : "visible"}`);
+    }
+
+    console.log(`📱 Sidebar toggled successfully`);
+  };
+
+  window.initSidebarToggle = function () {
+    console.log("🔧 Initializing sidebar toggle...");
+
+    const sidebar = document.querySelector(".navigation-sidebar");
+    const mainContent = document.querySelector(".main-content");
+    const isMobile = window.innerWidth <= 768;
+
+    // Create overlay for mobile if needed
+    if (isMobile && !document.querySelector(".sidebar-overlay")) {
+      const overlay = document.createElement("div");
+      overlay.className = "sidebar-overlay";
+      overlay.addEventListener("click", toggleSidebar);
+      document.body.appendChild(overlay);
+      console.log("✅ Mobile overlay created");
+    }
+
+    // Restore sidebar state from localStorage (desktop only)
+    if (!isMobile) {
+      const wasHidden = localStorage.getItem("sidebarHidden") === "true";
+
+      if (wasHidden && sidebar && mainContent) {
+        sidebar.classList.add("hidden");
+        mainContent.classList.add("expanded");
+        console.log("✅ Sidebar state restored: hidden");
+      } else {
+        console.log("✅ Sidebar state restored: visible");
+      }
+    }
+
+    // Attach click handler to toggle button
+    const toggleBtn = document.getElementById("sidebarToggleBtn");
+    if (toggleBtn) {
+      // Remove existing listeners by cloning
+      const newToggleBtn = toggleBtn.cloneNode(true);
+      toggleBtn.parentNode.replaceChild(newToggleBtn, toggleBtn);
+
+      // Add new listener
+      newToggleBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleSidebar();
+      });
+      console.log("✅ Sidebar toggle button attached");
+    } else {
+      console.warn("⚠️ Sidebar toggle button (#sidebarToggleBtn) not found");
+    }
+
+    console.log("✅ Sidebar toggle initialized");
+  };
+
+  // Handle Window Resize
+  window.addEventListener("resize", () => {
+    const sidebar = document.querySelector(".navigation-sidebar");
+    const mainContent = document.querySelector(".main-content");
+    const overlay = document.querySelector(".sidebar-overlay");
+    const isMobile = window.innerWidth <= 768;
+
+    if (!isMobile) {
+      // Desktop mode
+      console.log("🖥️ Switched to desktop mode");
+
+      // Remove mobile overlay
+      if (overlay) {
+        overlay.remove();
+      }
+
+      // Remove mobile classes
+      sidebar?.classList.remove("active");
+
+      // Restore saved state for desktop
+      const wasHidden = localStorage.getItem("sidebarHidden") === "true";
+      if (wasHidden) {
+        sidebar?.classList.add("hidden");
+        mainContent?.classList.add("expanded");
+      } else {
+        sidebar?.classList.remove("hidden");
+        mainContent?.classList.remove("expanded");
+      }
+    } else {
+      // Mobile mode
+      console.log("📱 Switched to mobile mode");
+
+      // Ensure overlay exists
+      if (!document.querySelector(".sidebar-overlay")) {
+        const newOverlay = document.createElement("div");
+        newOverlay.className = "sidebar-overlay";
+        newOverlay.addEventListener("click", toggleSidebar);
+        document.body.appendChild(newOverlay);
+      }
+
+      // Reset desktop classes
+      sidebar?.classList.remove("hidden");
+      mainContent?.classList.remove("expanded");
+    }
+  });
+
+  // =============================
   // HEADER & NOTIFICATION LOGIC
   // =============================
   window.createNotifItem = (data) => {
@@ -225,7 +366,6 @@ document.addEventListener("DOMContentLoaded", () => {
         ? "bi-send-check-fill"
         : "bi-file-earmark-check-fill";
     const isReadClass = data.isRead ? "read" : "unread";
-
     return `
       <a href="#" class="notif-item ${isReadClass}" 
          data-surat-id="${data.suratId}" 
@@ -246,7 +386,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const list = document.getElementById("notifList");
     const countBadge = document.getElementById("notificationCount");
     const unreadCountEl = document.getElementById("notifUnreadCount");
-
     if (!list) return;
 
     const notifications = KemhanDatabase.getNotifications();
@@ -289,7 +428,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.handleNotifClick = function (event) {
     event.preventDefault();
-
     const item = event.currentTarget;
     const suratId = item.dataset.suratId;
     const type = item.dataset.type;
@@ -315,7 +453,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const notifDropdown = document.getElementById("notificationDropdown");
 
     if (notifBtn && notifDropdown) {
-      // Remove existing listeners
       const newNotifBtn = notifBtn.cloneNode(true);
       notifBtn.parentNode.replaceChild(newNotifBtn, notifBtn);
 
@@ -323,13 +460,11 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         e.stopPropagation();
 
-        // Close language dropdown if open
         const langDropdown = document.getElementById("languageDropdown");
         if (langDropdown) {
           langDropdown.classList.remove("active");
         }
 
-        // Toggle notification dropdown
         notifDropdown.classList.toggle("active");
         console.log("🔔 Notification dropdown toggled");
       });
@@ -350,7 +485,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const langDropdown = document.getElementById("languageDropdown");
 
     if (langSelector && langDropdown) {
-      // Remove existing listeners
       const newLangSelector = langSelector.cloneNode(true);
       langSelector.parentNode.replaceChild(newLangSelector, langSelector);
 
@@ -358,30 +492,23 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         e.stopPropagation();
 
-        // Close notification dropdown if open
         const notifDropdown = document.getElementById("notificationDropdown");
         if (notifDropdown) {
           notifDropdown.classList.remove("active");
         }
 
-        // Toggle language dropdown
         langDropdown.classList.toggle("active");
         console.log("🌐 Language dropdown toggled");
       });
 
-      // Language item clicks
       const langItems = langDropdown.querySelectorAll(".lang-item");
       langItems.forEach((item) => {
         item.addEventListener("click", (e) => {
           e.preventDefault();
 
-          // Remove active from all
           langItems.forEach((i) => i.classList.remove("active"));
-
-          // Add active to clicked
           item.classList.add("active");
 
-          // Update selector text and flag
           const flag = item.querySelector("img").src;
           const text = item.querySelector("span").textContent;
 
@@ -391,7 +518,6 @@ document.addEventListener("DOMContentLoaded", () => {
           if (selectorFlag) selectorFlag.src = flag;
           if (selectorText) selectorText.textContent = text;
 
-          // Close dropdown
           langDropdown.classList.remove("active");
 
           console.log("🌐 Language changed to:", text);
@@ -417,7 +543,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const langDropdown = document.getElementById("languageDropdown");
       const langSelector = document.getElementById("languageSelector");
 
-      // Close notification dropdown
       if (
         notifDropdown &&
         !notifDropdown.contains(e.target) &&
@@ -427,7 +552,6 @@ document.addEventListener("DOMContentLoaded", () => {
         notifDropdown.classList.remove("active");
       }
 
-      // Close language dropdown
       if (
         langDropdown &&
         !langDropdown.contains(e.target) &&
@@ -438,139 +562,16 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Load notifications
     loadNotifications();
 
     console.log("✅ Header events attached");
   };
 
   // =============================
-  // SIDEBAR TOGGLE FUNCTIONALITY
-  // =============================
-  window.toggleSidebar = function () {
-    console.log("🔄 Toggling sidebar...");
-
-    const sidebar = document.querySelector(".navigation-sidebar");
-    const mainContent = document.querySelector(".main-content");
-    const overlay = document.querySelector(".sidebar-overlay");
-
-    if (!sidebar || !mainContent) {
-      console.warn("⚠️ Sidebar or main content not found");
-      return;
-    }
-
-    // Toggle classes
-    sidebar.classList.toggle("hidden");
-    mainContent.classList.toggle("expanded");
-
-    // Mobile overlay
-    if (overlay) {
-      overlay.classList.toggle("active");
-    } else if (window.innerWidth <= 768) {
-      // Create overlay if mobile and doesn't exist
-      const newOverlay = document.createElement("div");
-      newOverlay.className = "sidebar-overlay active";
-      newOverlay.addEventListener("click", toggleSidebar);
-      document.body.appendChild(newOverlay);
-    }
-
-    // Save state to localStorage
-    const isHidden = sidebar.classList.contains("hidden");
-    localStorage.setItem("sidebarHidden", isHidden);
-
-    console.log(`📱 Sidebar ${isHidden ? "hidden" : "visible"}`);
-  };
-
-  window.initSidebarToggle = function () {
-    console.log("🔧 Initializing sidebar toggle...");
-
-    // Create overlay for mobile if needed
-    if (
-      window.innerWidth <= 768 &&
-      !document.querySelector(".sidebar-overlay")
-    ) {
-      const overlay = document.createElement("div");
-      overlay.className = "sidebar-overlay";
-      overlay.addEventListener("click", toggleSidebar);
-      document.body.appendChild(overlay);
-      console.log("✅ Mobile overlay created");
-    }
-
-    // Restore sidebar state from localStorage
-    const wasHidden = localStorage.getItem("sidebarHidden") === "true";
-    const sidebar = document.querySelector(".navigation-sidebar");
-    const mainContent = document.querySelector(".main-content");
-
-    if (wasHidden && sidebar && mainContent && window.innerWidth > 768) {
-      sidebar.classList.add("hidden");
-      mainContent.classList.add("expanded");
-      console.log("✅ Sidebar state restored: hidden");
-    }
-
-    // Attach click handler to toggle button
-    const toggleBtn = document.getElementById("sidebarToggleBtn");
-    if (toggleBtn) {
-      // Remove existing listeners
-      const newToggleBtn = toggleBtn.cloneNode(true);
-      toggleBtn.parentNode.replaceChild(newToggleBtn, toggleBtn);
-
-      // Add new listener
-      newToggleBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        toggleSidebar();
-      });
-      console.log("✅ Sidebar toggle button attached");
-    } else {
-      console.warn("⚠️ Sidebar toggle button not found");
-    }
-
-    console.log("✅ Sidebar toggle initialized");
-  };
-
-  // Handle window resize
-  window.addEventListener("resize", () => {
-    const sidebar = document.querySelector(".navigation-sidebar");
-    const mainContent = document.querySelector(".main-content");
-    const overlay = document.querySelector(".sidebar-overlay");
-
-    // Reset pada desktop
-    if (window.innerWidth > 768) {
-      // Remove mobile overlay
-      if (overlay) {
-        overlay.remove();
-      }
-
-      // Restore saved state on desktop
-      const wasHidden = localStorage.getItem("sidebarHidden") === "true";
-      if (wasHidden) {
-        sidebar?.classList.add("hidden");
-        mainContent?.classList.add("expanded");
-      } else {
-        sidebar?.classList.remove("hidden");
-        mainContent?.classList.remove("expanded");
-      }
-    } else {
-      // Mobile: ensure overlay exists
-      if (!document.querySelector(".sidebar-overlay")) {
-        const newOverlay = document.createElement("div");
-        newOverlay.className = "sidebar-overlay";
-        newOverlay.addEventListener("click", toggleSidebar);
-        document.body.appendChild(newOverlay);
-      }
-
-      // Mobile: sidebar default hidden
-      if (sidebar && !sidebar.classList.contains("active")) {
-        mainContent?.classList.remove("expanded");
-      }
-    }
-  });
-
-  // =============================
   // SIDEBAR & MENU HIGHLIGHTING
   // =============================
   window.highlightActiveMenu = function () {
     console.log("🎯 Highlighting active menu...");
-
     let currentPage = window.location.pathname.split("/").pop() || "index.html";
 
     if (currentPage === "" || currentPage === "/") {
@@ -579,7 +580,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log("📄 Current page:", currentPage);
 
-    // Clear all active classes
     document.querySelectorAll(".menu-item").forEach((item) => {
       item.classList.remove("active");
     });
@@ -592,7 +592,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let isSubmenuActive = false;
 
-    // Check submenu first
     const submenuLinks = document.querySelectorAll(".submenu-link");
     submenuLinks.forEach((link) => {
       const href = link.getAttribute("href");
@@ -613,7 +612,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // If not submenu, check main menu
     if (!isSubmenuActive) {
       const menuLinks = document.querySelectorAll(
         ".menu-item:not(.menu-dropdown) > .menu-link"
@@ -651,21 +649,17 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         const menuItem = this.closest(".menu-dropdown");
 
-        // Close other dropdowns
         document.querySelectorAll(".menu-dropdown").forEach((item) => {
           if (item !== menuItem && !item.classList.contains("active")) {
             item.classList.remove("open");
           }
         });
 
-        // Toggle current dropdown
         menuItem.classList.toggle("open");
       });
     });
 
-    // =============================
-    // LOGOUT HANDLER
-    // =============================
+    // Logout Handler
     let logoutLink =
       document.getElementById("logoutLink") ||
       document.getElementById("logoutBtn") ||
@@ -698,11 +692,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (result.isConfirmed) {
               console.log("✅ User confirmed logout");
 
-              // Clear storage
               sessionStorage.clear();
               localStorage.clear();
 
-              // SignOut Firebase
               if (window.auth) {
                 auth
                   .signOut()
@@ -740,20 +732,41 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // =============================
-  // LOAD INCLUDES
+  // ✅ ROLE-BASED SIDEBAR LOADING
   // =============================
+  window.getUserRole = function () {
+    // Check current page to determine role
+    const currentPage = window.location.pathname;
+
+    if (currentPage.includes("kapus")) {
+      return "kapus";
+    }
+
+    // Default to admin
+    return "admin";
+  };
+
   window.loadIncludes = async function () {
     console.log("🔄 Loading includes...");
 
-    // Load sidebar - ALWAYS
+    // ✅ Detect user role
+    const userRole = getUserRole();
+    console.log("👤 Detected role:", userRole);
+
+    // ✅ Load appropriate sidebar based on role
+    const sidebarFile =
+      userRole === "kapus"
+        ? "assets/includes/sidebar-kapus.html"
+        : "assets/includes/sidebar-admin.html";
+
     try {
-      const sidebarResponse = await fetch("assets/includes/sidebar.html");
+      const sidebarResponse = await fetch(sidebarFile);
       const sidebarHtml = await sidebarResponse.text();
       const sidebarPlaceholder = document.getElementById("sidebar-placeholder");
 
       if (sidebarPlaceholder) {
         sidebarPlaceholder.innerHTML = sidebarHtml;
-        console.log("✅ Sidebar loaded");
+        console.log(`✅ Sidebar loaded: ${sidebarFile}`);
 
         setTimeout(() => {
           window.attachSidebarEvents();
@@ -764,7 +777,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("❌ Error loading sidebar:", err);
     }
 
-    // Load header - UNTUK SEMUA HALAMAN
+    // Load header (same for all roles)
     try {
       const headerResponse = await fetch("assets/includes/header.html");
       const headerHtml = await headerResponse.text();
@@ -775,7 +788,7 @@ document.addEventListener("DOMContentLoaded", () => {
         attachHeaderEvents();
         console.log("✅ Header loaded");
 
-        // Initialize sidebar toggle after header loaded
+        // ✅ Initialize sidebar toggle after header loaded
         setTimeout(() => {
           initSidebarToggle();
         }, 100);
@@ -784,7 +797,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("❌ Error loading header:", err);
     }
 
-    // Load footer - UNTUK SEMUA HALAMAN
+    // Load footer (same for all roles)
     try {
       const footerResponse = await fetch("assets/includes/footer.html");
       const footerHtml = await footerResponse.text();
@@ -829,17 +842,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // =============================
   window.handleFileUpload = function (event) {
     console.log("=== FILE UPLOAD STARTED ===");
-
     const file = event.target.files[0];
     console.log("File object:", file);
 
     const uploadArea = document.getElementById("uploadArea");
     const uploadContent = document.getElementById("uploadContent");
     const fileInfoDisplay = document.getElementById("fileInfoDisplay");
-
-    console.log("Upload Area found:", uploadArea);
-    console.log("Upload Content found:", uploadContent);
-    console.log("File Info Display found:", fileInfoDisplay);
 
     if (!file) {
       console.log("No file selected, resetting...");
@@ -852,10 +860,6 @@ document.addEventListener("DOMContentLoaded", () => {
       window.uploadedFile = null;
       return;
     }
-
-    console.log("File name:", file.name);
-    console.log("File type:", file.type);
-    console.log("File size:", file.size);
 
     const allowedTypes = [
       "application/pdf",
@@ -882,7 +886,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     window.uploadedFile = file;
-    console.log("File saved to window.uploadedFile");
 
     let iconClass = "bi-file-earmark-text-fill";
     let iconColor = "#6b7280";
@@ -899,7 +902,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-
     const safeName = file.name
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
@@ -907,45 +909,36 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;");
 
-    console.log("Creating file display card...");
-
     const fileCardHTML = `
-    <div class="file-display-card">
-      <div class="file-display-icon" style="background-color: ${iconColor}20;">
-        <i class="bi ${iconClass}" style="color: ${iconColor}; font-size: 28px;"></i>
+      <div class="file-display-card">
+        <div class="file-display-icon" style="background-color: ${iconColor}20;">
+          <i class="bi ${iconClass}" style="color: ${iconColor}; font-size: 28px;"></i>
+        </div>
+        <div class="file-display-info">
+          <div class="file-display-label">FILE NASKAH</div>
+          <div class="file-display-name" title="${safeName}">${safeName}</div>
+          <div class="file-display-size">${fileSizeMB} MB</div>
+        </div>
+        <button type="button" class="file-remove-btn" onclick="window.removeUploadedFile(event)" title="Hapus file">
+          <i class="bi bi-x-lg"></i>
+        </button>
       </div>
-      <div class="file-display-info">
-        <div class="file-display-label">FILE NASKAH</div>
-        <div class="file-display-name" title="${safeName}">${safeName}</div>
-        <div class="file-display-size">${fileSizeMB} MB</div>
-      </div>
-      <button type="button" class="file-remove-btn" onclick="window.removeUploadedFile(event)" title="Hapus file">
-        <i class="bi bi-x-lg"></i>
-      </button>
-    </div>
-  `;
+    `;
 
-    console.log("Step 1: Hide upload content");
     if (uploadContent) {
       uploadContent.style.display = "none";
-      console.log("✓ Upload content hidden");
     }
 
-    console.log("Step 2: Show file info display");
     if (fileInfoDisplay) {
       fileInfoDisplay.innerHTML = fileCardHTML;
       fileInfoDisplay.style.display = "block";
-      console.log("✓ File info display shown");
     }
 
-    console.log("Step 3: Add has-file class");
     if (uploadArea) {
       uploadArea.classList.add("has-file");
-      console.log("✓ has-file class added");
     }
 
     console.log("=== FILE UPLOAD COMPLETED ===");
-    console.log("✅ File successfully uploaded:", file.name);
   };
 
   window.removeUploadedFile = function (event) {
@@ -959,28 +952,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (fileInput) {
       fileInput.value = "";
-      console.log("✓ Input cleared");
     }
 
     if (fileInfoDisplay) {
       fileInfoDisplay.innerHTML = "";
       fileInfoDisplay.style.display = "none";
-      console.log("✓ File display hidden");
     }
 
     if (uploadContent) {
       uploadContent.style.display = "flex";
-      console.log("✓ Upload content shown");
     }
 
     if (uploadArea) {
       uploadArea.classList.remove("has-file");
-      console.log("✓ has-file class removed");
     }
 
     window.uploadedFile = null;
-    console.log("✓ Global variable cleared");
-
     console.log("=== FILE REMOVED ===");
   };
 
@@ -988,6 +975,5 @@ document.addEventListener("DOMContentLoaded", () => {
   // START INITIALIZATION
   // =============================
   loadIncludes();
-
   console.log("✅ Main.js initialization complete");
 });
