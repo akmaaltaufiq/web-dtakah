@@ -12,6 +12,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
     />
+    <link rel="stylesheet" href="assets/css/globals.css" />
     <link rel="stylesheet" href="assets/css/style.css" />
     <link rel="stylesheet" href="assets/css/dashboard-kapus.css" />
     <style>
@@ -333,56 +334,12 @@
   </head>
   <body>
     <div class="dashboard-overview">
-      <!-- Sidebar -->
-      <div class="navigation-sidebar">
-        <div class="logo-section">
-          <div class="logo-emblem"></div>
-          <div class="logo-text">D-TAKAH</div>
-        </div>
-
-        <ul class="sidebar-menu">
-          <li class="menu-item">
-            <a href="dashboard-kapus.html" class="menu-link">
-              <i class="bi bi-house-door"></i>
-              <span>Dashboard</span>
-            </a>
-          </li>
-          <li class="menu-item active">
-            <a href="surat-masuk-kapus.html" class="menu-link">
-              <i class="bi bi-envelope"></i>
-              <span>Surat Masuk</span>
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="surat-keluar-kapus.html" class="menu-link">
-              <i class="bi bi-send"></i>
-              <span>Surat Keluar</span>
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="nota-dinas-kapus.html" class="menu-link">
-              <i class="bi bi-file-earmark-text"></i>
-              <span>Nota Dinas</span>
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="#" id="logoutLink" class="menu-link">
-              <i class="bi bi-box-arrow-right"></i>
-              <span>Logout</span>
-            </a>
-          </li>
-        </ul>
-
-        <div class="user-profile">
-          <div class="user-avatar">
-            <i class="bi bi-person-fill"></i>
-          </div>
-          <div class="user-name" id="sidebarUserName">Kapus</div>
-        </div>
-      </div>
+      <!-- ✅ FIXED: Dynamic Sidebar -->
+      <div id="sidebar-placeholder"></div>
 
       <!-- Main Content -->
       <div class="main-content">
+        <div id="header-placeholder"></div>
         <div class="content-container" style="padding: 24px">
           <!-- Table View -->
           <div id="tableView">
@@ -811,41 +768,136 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="assets/js/firebase-config.js"></script>
     <script src="assets/js/auth.js"></script>
+    <script src="assets/js/database.js"></script>
     <script src="assets/js/main.js"></script>
 
     <script>
       // ==========================================
-      // FIXED DISPOSISI SUBMISSION
-      // Surat Masuk Kapus → Submit Disposisi
+      // ✅ SURAT MASUK KAPUS - FIXED VERSION WITH DYNAMIC SIDEBAR
       // ==========================================
 
       let currentUserData = null;
       let currentSuratId = null;
       let unsubscribeSuratMasuk = null;
 
-      // Protect page - only kapus
+      console.log("📄 Surat Masuk Kapus page loading...");
+
+      // ✅ STEP 1: Check Auth First
       checkUserRole(["kapus"])
         .then((userData) => {
           currentUserData = userData;
-          document.getElementById("sidebarUserName").textContent =
-            userData.nama || "Kapus";
-          setupRealtimeListener();
+          console.log("✅ Kapus authenticated:", userData.nama);
+
+          // ✅ STEP 2: Load Sidebar & Header
+          if (window.loadIncludes) {
+            window.loadIncludes();
+          }
+
+          // ✅ STEP 3: Wait for sidebar to load, THEN initialize
+          setTimeout(() => {
+            initializePage();
+          }, 500);
         })
         .catch((error) => {
-          console.error("Access denied:", error);
+          console.error("❌ Access denied:", error);
         });
 
-      // Set current date
-      document.getElementById("currentDate").textContent =
-        new Date().toLocaleDateString("id-ID", {
-          day: "2-digit",
-          month: "long",
-          year: "numeric",
+      // ==========================================
+      // ✅ INITIALIZE PAGE DATA
+      // ==========================================
+      function initializePage() {
+        console.log("🚀 Initializing page data...");
+
+        // Update sidebar username
+        const sidebarUserName = document.getElementById("sidebarUserName");
+        if (sidebarUserName) {
+          sidebarUserName.textContent = currentUserData.nama || "Kapus";
+        }
+
+        // Update header user info
+        const userNameDisplay = document.getElementById("userNameDisplay");
+        const userRoleDisplay = document.getElementById("userRoleDisplay");
+        const dropdownUserName = document.getElementById("dropdownUserName");
+        const dropdownUserRole = document.getElementById("dropdownUserRole");
+
+        if (userNameDisplay) {
+          userNameDisplay.textContent = currentUserData.nama || "Kapus";
+        }
+        if (userRoleDisplay) {
+          userRoleDisplay.textContent = "Kepala Pusat";
+        }
+        if (dropdownUserName) {
+          dropdownUserName.textContent = currentUserData.nama || "Kapus";
+        }
+        if (dropdownUserRole) {
+          dropdownUserRole.textContent = "Kepala Pusat";
+        }
+
+        // Set current date
+        const currentDateEl = document.getElementById("currentDate");
+        if (currentDateEl) {
+          currentDateEl.textContent = new Date().toLocaleDateString("id-ID", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          });
+        }
+
+        // Setup checkbox counters
+        setupCheckboxCounters();
+
+        // Setup real-time listener
+        setupRealtimeListener();
+
+        // Setup logout handler
+        setupLogoutHandler();
+
+        console.log("✅ Page initialized successfully");
+      }
+
+      // ==========================================
+      // SETUP CHECKBOX COUNTERS
+      // ==========================================
+      function setupCheckboxCounters() {
+        const penerimaCheckboxes = document.querySelectorAll(
+          'input[name="penerima"]'
+        );
+        const petunjukCheckboxes = document.querySelectorAll(
+          'input[name="petunjuk"]'
+        );
+
+        penerimaCheckboxes.forEach((checkbox) => {
+          checkbox.addEventListener("change", updatePenerimaCount);
         });
 
-      // Setup Real-time Listener
+        petunjukCheckboxes.forEach((checkbox) => {
+          checkbox.addEventListener("change", updatePetunjukCount);
+        });
+
+        console.log("✅ Checkbox counters setup");
+      }
+
+      function updatePenerimaCount() {
+        const checked = document.querySelectorAll(
+          'input[name="penerima"]:checked'
+        ).length;
+        const countEl = document.getElementById("penerimaCount");
+        if (countEl) countEl.textContent = checked + " dipilih";
+      }
+
+      function updatePetunjukCount() {
+        const checked = document.querySelectorAll(
+          'input[name="petunjuk"]:checked'
+        ).length;
+        const countEl = document.getElementById("petunjukCount");
+        if (countEl) countEl.textContent = checked + " dipilih";
+      }
+
+      // ==========================================
+      // SETUP REAL-TIME LISTENER
+      // ==========================================
       function setupRealtimeListener() {
-        console.log("🔄 Setting up real-time listener for Kapus...");
+        console.log("🔄 Setting up real-time listener...");
 
         if (unsubscribeSuratMasuk) {
           unsubscribeSuratMasuk();
@@ -858,7 +910,7 @@
           .orderBy("createdAt", "desc")
           .onSnapshot(
             (snapshot) => {
-              console.log("📨 Surat Masuk updated for Kapus:", snapshot.size);
+              console.log("📨 Surat Masuk updated:", snapshot.size);
               loadSuratMasuk(snapshot);
             },
             (error) => {
@@ -867,9 +919,12 @@
           );
       }
 
-      // Load Surat Masuk untuk Kapus
+      // ==========================================
+      // LOAD SURAT MASUK
+      // ==========================================
       function loadSuratMasuk(snapshot) {
         const tbody = document.getElementById("suratMasukTableBody");
+        if (!tbody) return;
 
         const suratKapus = [];
         snapshot.forEach((doc) => {
@@ -881,46 +936,44 @@
 
         if (suratKapus.length === 0) {
           tbody.innerHTML = `
-      <tr>
-        <td colspan="7" style="text-align: center; padding: 40px; color: #9ca3af;">
-          Tidak ada surat yang perlu ditindaklanjuti
-        </td>
-      </tr>
-    `;
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 40px; color: #9ca3af;">
+                Tidak ada surat yang perlu ditindaklanjuti
+              </td>
+            </tr>
+          `;
           return;
         }
 
         tbody.innerHTML = suratKapus
           .map(
             (surat, index) => `
-    <tr>
-      <td style="text-align: center;">${index + 1}</td>
-      <td>${surat.noSurat || "-"}</td>
-      <td>${surat.perihal || "-"}</td>
-      <td>${surat.dari || surat.namaPengirim || "-"}</td>
-      <td>
-        <span class="badge-status badge-tinggi">Tinggi</span>
-      </td>
-      <td>
-        <span class="badge-status badge-menunggu">Menunggu</span>
-      </td>
-      <td style="text-align: center;">
-        <button class="btn-preview" onclick="previewSurat('${surat.id}')">
-          <i class="bi bi-eye"></i> Preview
-        </button>
-        <button class="btn-disposisi-cepat" onclick="buatDisposisiCepat('${
-          surat.id
-        }')">
-          <i class="bi bi-send"></i> Disposisi
-        </button>
-      </td>
-    </tr>
-  `
+          <tr>
+            <td style="text-align: center;">${index + 1}</td>
+            <td>${surat.noSurat || "-"}</td>
+            <td>${surat.perihal || "-"}</td>
+            <td>${surat.dari || surat.namaPengirim || "-"}</td>
+            <td><span class="badge-status badge-tinggi">Tinggi</span></td>
+            <td><span class="badge-status badge-menunggu">Menunggu</span></td>
+            <td style="text-align: center;">
+              <button class="btn-preview" onclick="previewSurat('${surat.id}')">
+                <i class="bi bi-eye"></i> Preview
+              </button>
+              <button class="btn-disposisi-cepat" onclick="buatDisposisiCepat('${
+                surat.id
+              }')">
+                <i class="bi bi-send"></i> Disposisi
+              </button>
+            </td>
+          </tr>
+        `
           )
           .join("");
       }
 
-      // Preview Surat
+      // ==========================================
+      // PREVIEW & DISPOSISI FUNCTIONS
+      // ==========================================
       window.previewSurat = function (suratId) {
         db.collection("surat_masuk")
           .doc(suratId)
@@ -953,7 +1006,6 @@
           });
       };
 
-      // Show Disposisi View
       window.buatDisposisiCepat = function (suratId) {
         currentSuratId = suratId;
 
@@ -987,7 +1039,6 @@
           });
       };
 
-      // Back to table
       window.backToTable = function () {
         document.getElementById("tableView").style.display = "block";
         document.getElementById("disposisiView").classList.remove("active");
@@ -995,44 +1046,17 @@
         currentSuratId = null;
       };
 
-      // Update checkbox counters
-      document.addEventListener("DOMContentLoaded", function () {
-        document
-          .querySelectorAll('input[name="penerima"]')
-          .forEach((checkbox) => {
-            checkbox.addEventListener("change", updatePenerimaCount);
-          });
-
-        document
-          .querySelectorAll('input[name="petunjuk"]')
-          .forEach((checkbox) => {
-            checkbox.addEventListener("change", updatePetunjukCount);
-          });
-      });
-
-      function updatePenerimaCount() {
-        const checked = document.querySelectorAll(
-          'input[name="penerima"]:checked'
-        ).length;
-        document.getElementById("penerimaCount").textContent =
-          checked + " dipilih";
-      }
-
-      function updatePetunjukCount() {
-        const checked = document.querySelectorAll(
-          'input[name="petunjuk"]:checked'
-        ).length;
-        document.getElementById("petunjukCount").textContent =
-          checked + " dipilih";
-      }
+      window.disposisiFromPreview = function () {
+        if (currentSuratId) {
+          document.getElementById("previewView").classList.remove("active");
+          buatDisposisiCepat(currentSuratId);
+        }
+      };
 
       // ==========================================
-      // FIXED: Submit Disposisi
+      // SUBMIT DISPOSISI
       // ==========================================
       window.submitDisposisiCepat = function () {
-        console.log("📤 Submit Disposisi clicked");
-
-        // Get form data
         const penerima = Array.from(
           document.querySelectorAll('input[name="penerima"]:checked')
         ).map((cb) => cb.value);
@@ -1043,13 +1067,6 @@
           .getElementById("disposisiInstruksi")
           .value.trim();
         const prioritas = document.getElementById("disposisiPrioritas").value;
-
-        console.log("📋 Form data:", {
-          penerima,
-          petunjuk,
-          instruksi,
-          prioritas,
-        });
 
         // Validation
         if (penerima.length === 0) {
@@ -1067,19 +1084,13 @@
           return;
         }
 
-        console.log("✅ Validation passed, submitting to Firebase...");
-
-        // Show loading
         Swal.fire({
           title: "Mengirim Disposisi...",
           html: "Mohon tunggu sebentar",
           allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading();
-          },
+          didOpen: () => Swal.showLoading(),
         });
 
-        // FIX: Create disposisi object with ISO timestamp
         const now = new Date();
         const disposisi = {
           kepada: penerima.join(", "),
@@ -1088,14 +1099,11 @@
           prioritas: prioritas,
           dari: currentUserData.nama,
           jabatanDari: "Kepala Pusat",
-          tanggal: now.toISOString(), // ISO string instead of serverTimestamp
+          tanggal: now.toISOString(),
           status: "Proses",
           createdAt: now.toISOString(),
         };
 
-        console.log("📦 Disposisi object:", disposisi);
-
-        // Update di Firestore
         db.collection("surat_masuk")
           .doc(currentSuratId)
           .update({
@@ -1107,23 +1115,12 @@
             updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
           })
           .then(() => {
-            console.log("✅ Disposisi saved successfully");
-
             Swal.fire({
               icon: "success",
               title: "Disposisi Berhasil Dikirim!",
-              html: `
-          <div style="text-align: left; padding: 0 20px;">
-            <p style="margin-bottom: 12px;">Disposisi telah dikirim ke:</p>
-            <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
-              <strong style="color: #1f2937;">${penerima.join(", ")}</strong>
-            </div>
-            <p style="font-size: 14px; color: #6b7280; margin: 0;">
-              <i class="bi bi-check-circle"></i> 
-              Surat akan muncul di Monitoring dengan status "Selesai - Sudah Didisposisi"
-            </p>
-          </div>
-        `,
+              html: `Disposisi telah dikirim ke: <strong>${penerima.join(
+                ", "
+              )}</strong>`,
               confirmButtonText: "OK",
               confirmButtonColor: "#10b981",
               timer: 3000,
@@ -1133,95 +1130,76 @@
             });
           })
           .catch((error) => {
-            console.error("❌ Error saving disposisi:", error);
+            console.error("❌ Error:", error);
+            Swal.fire(
+              "Error",
+              "Gagal mengirim disposisi: " + error.message,
+              "error"
+            );
+          });
+      };
 
+      // ==========================================
+      // SETUP LOGOUT HANDLER
+      // ==========================================
+      function setupLogoutHandler() {
+        const logoutLink = document.getElementById("logoutLink");
+        if (logoutLink) {
+          logoutLink.addEventListener("click", function (e) {
+            e.preventDefault();
             Swal.fire({
-              icon: "error",
-              title: "Gagal Mengirim Disposisi",
-              html: `
-          <p style="margin-bottom: 12px;">Terjadi kesalahan saat menyimpan disposisi</p>
-          <div style="background: #fef2f2; padding: 12px; border-radius: 8px;">
-            <code style="font-size: 13px; color: #991b1b;">${error.message}</code>
-          </div>
-        `,
-              confirmButtonText: "Tutup",
-              confirmButtonColor: "#dc2626",
+              title: "Yakin ingin logout?",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonText: "Ya, logout",
+              cancelButtonText: "Batal",
+              confirmButtonColor: "#d33",
+            }).then((result) => {
+              if (result.isConfirmed && window.logoutUser) {
+                window.logoutUser();
+              }
             });
           });
-      };
-
-      // Disposisi from Preview
-      window.disposisiFromPreview = function () {
-        if (currentSuratId) {
-          document.getElementById("previewView").classList.remove("active");
-          buatDisposisiCepat(currentSuratId);
+          console.log("✅ Logout handler attached");
         }
-      };
+      }
 
-      // Logout handler
-      document
-        .getElementById("logoutLink")
-        .addEventListener("click", function (e) {
-          e.preventDefault();
-          Swal.fire({
-            title: "Yakin ingin logout?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Ya, logout",
-            cancelButtonText: "Batal",
-            confirmButtonColor: "#d33",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              window.logoutUser();
-            }
-          });
-        });
-
-      // Cleanup
+      // ==========================================
+      // CLEANUP
+      // ==========================================
       window.addEventListener("beforeunload", () => {
         if (unsubscribeSuratMasuk) {
           unsubscribeSuratMasuk();
         }
       });
 
-      // Auto-open disposisi from URL parameter
+      // ==========================================
+      // AUTO-OPEN FROM URL PARAMS
+      // ==========================================
       (function () {
-        console.log("🔍 Checking for auto-open parameters...");
-
         const urlParams = new URLSearchParams(window.location.search);
         const previewId = urlParams.get("preview");
         const disposisiId = urlParams.get("disposisi");
 
-        if (previewId) {
-          console.log("✅ Auto-opening PREVIEW for:", previewId);
-
+        if (previewId || disposisiId) {
           window.addEventListener("load", function () {
             setTimeout(() => {
-              if (typeof previewSurat === "function") {
+              if (previewId && typeof previewSurat === "function") {
                 previewSurat(previewId);
-                console.log("✅ Preview opened automatically");
-              } else {
-                console.error("❌ previewSurat function not found");
-              }
-            }, 500);
-          });
-        } else if (disposisiId) {
-          console.log("✅ Auto-opening DISPOSISI for:", disposisiId);
-
-          window.addEventListener("load", function () {
-            setTimeout(() => {
-              if (typeof buatDisposisiCepat === "function") {
+              } else if (
+                disposisiId &&
+                typeof buatDisposisiCepat === "function"
+              ) {
                 buatDisposisiCepat(disposisiId);
-                console.log("✅ Disposisi view opened automatically");
-              } else {
-                console.error("❌ buatDisposisiCepat function not found");
               }
-            }, 500);
+            }, 800);
           });
         }
       })();
 
-      console.log("✅ Surat Masuk Kapus script loaded - FIXED VERSION");
+      console.log(
+        "✅ Surat Masuk Kapus loaded - FIXED VERSION WITH DYNAMIC SIDEBAR"
+      );
     </script>
   </body>
 </html>

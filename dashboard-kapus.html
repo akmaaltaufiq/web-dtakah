@@ -16,23 +16,25 @@
     <link rel="stylesheet" href="assets/css/styleguide.css" />
     <link rel="stylesheet" href="assets/css/dashboard.css" />
     <style>
-      .kapus-header {
-        background: linear-gradient(135deg, #8b0000 0%, #b91c1c 100%);
-        color: white;
-        padding: 30px;
+      .kapus-welcome-header {
+        background: white;
         border-radius: 10px;
+        padding: 24px;
         margin-bottom: 30px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       }
 
-      .kapus-header h1 {
+      .kapus-welcome-header h1 {
         margin: 0;
         font-size: 28px;
         font-weight: 700;
+        color: #1f2937;
       }
 
-      .kapus-header p {
-        margin: 5px 0 0 0;
-        opacity: 0.9;
+      .kapus-welcome-header p {
+        margin: 8px 0 0 0;
+        color: #6b7280;
+        font-size: 15px;
       }
 
       .action-card {
@@ -231,83 +233,18 @@
   <body>
     <div class="dashboard-overview">
       <!-- Sidebar -->
-      <div class="navigation-sidebar">
-        <div class="logo-section">
-          <div class="logo-emblem"></div>
-          <div class="logo-text">D-TAKAH</div>
-        </div>
-
-        <ul class="sidebar-menu">
-          <li class="menu-item active">
-            <a href="dashboard-kapus.html" class="menu-link">
-              <i class="bi bi-house-door"></i>
-              <span>Dashboard</span>
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="surat-masuk-kapus.html" class="menu-link">
-              <i class="bi bi-envelope"></i>
-              <span>Surat Masuk</span>
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="surat-keluar-kapus.html" class="menu-link">
-              <i class="bi bi-send"></i>
-              <span>Surat Keluar</span>
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="nota-dinas-kapus.html" class="menu-link">
-              <i class="bi bi-file-earmark-text"></i>
-              <span>Nota Dinas</span>
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="#" id="logoutLink" class="menu-link">
-              <i class="bi bi-box-arrow-right"></i>
-              <span>Logout</span>
-            </a>
-          </li>
-        </ul>
-
-        <div class="user-profile">
-          <div class="user-avatar">
-            <i class="bi bi-person-fill"></i>
-          </div>
-          <div class="user-name" id="sidebarUserName">Loading...</div>
-        </div>
-      </div>
+      <div id="sidebar-placeholder"></div>
 
       <!-- Main Content -->
       <div class="main-content">
-        <!-- Header -->
-        <div class="content-header">
-          <div class="header-left">
-            <i class="bi bi-list"></i>
-            <nav aria-label="breadcrumb">
-              <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-                <li class="breadcrumb-item active">Kepala Pusat</li>
-              </ol>
-            </nav>
-          </div>
-          <div class="header-right">
-            <button class="header-btn notification">
-              <i class="bi bi-bell-fill"></i>
-              <span class="notification-badge" id="notifBadge">0</span>
-            </button>
-            <div class="user-info" id="userInfoHeader">
-              <i class="bi bi-person-circle"></i>
-              <span id="userNameDisplay">Loading...</span>
-            </div>
-          </div>
-        </div>
+        <!-- ✅ FIXED: Consistent Header -->
+        <div id="header-placeholder"></div>
 
         <!-- Content Container -->
-        <div class="content-container">
-          <!-- Welcome Header -->
-          <div class="kapus-header">
-            <h1>Selamat Datang <span id="kapusName">Kepala Pusat</span></h1>
+        <div class="content-container" style="padding: 24px">
+          <!-- ✅ FIXED: Welcome Header (Consistent with other pages) -->
+          <div class="kapus-welcome-header">
+            <h1>Selamat Datang, <span id="kapusName">Kepala Pusat</span></h1>
             <p>Dashboard Persetujuan & Disposisi Surat</p>
           </div>
 
@@ -440,23 +377,21 @@
 
     <script>
       // ========================================
-      // DASHBOARD KAPUS - COMPLETE ACTIONS
-      // Preview, Disposisi, Tolak untuk semua jenis surat
+      // ✅ DASHBOARD KAPUS - FIXED HEADER VERSION
       // ========================================
 
-      console.log("📄 Dashboard Kapus loaded - Complete Actions");
+      console.log("📄 Dashboard Kapus page loading...");
 
       let currentUserData = null;
       let unsubscribeSuratMasuk = null;
       let unsubscribeSuratKeluar = null;
       let unsubscribeNotaDinas = null;
 
-      // ========================================
-      // INITIALIZE DASHBOARD KAPUS
-      // ========================================
-      function initDashboardKapus() {
-        console.log("🚀 Initializing Dashboard Kapus...");
+      // ✅ CRITICAL: Define initializePage BEFORE main.js tries to call it
+      window.initializePage = function () {
+        console.log("🚀 Dashboard Kapus initializePage() called");
 
+        // Check auth first
         checkUserRole(["kapus"])
           .then((userData) => {
             console.log("✅ Kapus access granted:", userData);
@@ -464,18 +399,25 @@
 
             const displayName = userData.nama || userData.email;
 
-            document.getElementById("kapusName").textContent = displayName;
-            document.getElementById("userNameDisplay").textContent =
-              displayName;
-            document.getElementById("sidebarUserName").textContent =
-              displayName;
+            // Update all name displays
+            const kapusNameEl = document.getElementById("kapusName");
+            const userNameDisplayEl =
+              document.getElementById("userNameDisplay");
+            const sidebarUserNameEl =
+              document.getElementById("sidebarUserName");
 
+            if (kapusNameEl) kapusNameEl.textContent = displayName;
+            if (userNameDisplayEl) userNameDisplayEl.textContent = displayName;
+            if (sidebarUserNameEl) sidebarUserNameEl.textContent = displayName;
+
+            // Start loading data
             loadKapusDashboard();
           })
           .catch((error) => {
             console.error("❌ Access denied:", error);
+            // Auth.js will handle redirect
           });
-      }
+      };
 
       // ========================================
       // LOAD KAPUS DASHBOARD DATA
@@ -512,10 +454,11 @@
 
               console.log("📨 Surat Masuk for Kapus:", suratMasuk.length);
 
-              document.getElementById("statSuratMasuk").textContent =
-                suratMasuk.length;
-              document.getElementById("badgeSuratMasuk").textContent =
-                suratMasuk.length;
+              const statEl = document.getElementById("statSuratMasuk");
+              const badgeEl = document.getElementById("badgeSuratMasuk");
+
+              if (statEl) statEl.textContent = suratMasuk.length;
+              if (badgeEl) badgeEl.textContent = suratMasuk.length;
 
               renderSuratMasukList(suratMasuk);
               updateTotalNotif();
@@ -550,10 +493,11 @@
 
               console.log("📤 Surat Keluar for Kapus:", suratKeluar.length);
 
-              document.getElementById("statSuratKeluar").textContent =
-                suratKeluar.length;
-              document.getElementById("badgeSuratKeluar").textContent =
-                suratKeluar.length;
+              const statEl = document.getElementById("statSuratKeluar");
+              const badgeEl = document.getElementById("badgeSuratKeluar");
+
+              if (statEl) statEl.textContent = suratKeluar.length;
+              if (badgeEl) badgeEl.textContent = suratKeluar.length;
 
               renderSuratKeluarList(suratKeluar);
               updateTotalNotif();
@@ -588,10 +532,11 @@
 
               console.log("📝 Nota Dinas for Kapus:", notaDinas.length);
 
-              document.getElementById("statNotaDinas").textContent =
-                notaDinas.length;
-              document.getElementById("badgeNotaDinas").textContent =
-                notaDinas.length;
+              const statEl = document.getElementById("statNotaDinas");
+              const badgeEl = document.getElementById("badgeNotaDinas");
+
+              if (statEl) statEl.textContent = notaDinas.length;
+              if (badgeEl) badgeEl.textContent = notaDinas.length;
 
               renderNotaDinasList(notaDinas);
               updateTotalNotif();
@@ -655,17 +600,19 @@
         ])
           .then((results) => {
             const total = results[0].size + results[1].size + results[2].size;
-            document.getElementById("statDisetujui").textContent = total;
+            const statEl = document.getElementById("statDisetujui");
+            if (statEl) statEl.textContent = total;
             console.log("✅ Total disetujui bulan ini:", total);
           })
           .catch((error) => {
             console.error("❌ Error counting disetujui:", error);
-            document.getElementById("statDisetujui").textContent = "0";
+            const statEl = document.getElementById("statDisetujui");
+            if (statEl) statEl.textContent = "0";
           });
       }
 
       // ========================================
-      // RENDER SURAT MASUK LIST - COMPLETE ACTIONS
+      // RENDER SURAT MASUK LIST
       // ========================================
       function renderSuratMasukList(data) {
         const container = document.getElementById("suratMasukList");
@@ -717,7 +664,7 @@
       }
 
       // ========================================
-      // RENDER SURAT KELUAR LIST - COMPLETE ACTIONS
+      // RENDER SURAT KELUAR LIST
       // ========================================
       function renderSuratKeluarList(data) {
         const container = document.getElementById("suratKeluarList");
@@ -771,7 +718,7 @@
       }
 
       // ========================================
-      // RENDER NOTA DINAS LIST - COMPLETE ACTIONS
+      // RENDER NOTA DINAS LIST
       // ========================================
       function renderNotaDinasList(data) {
         const container = document.getElementById("notaDinasList");
@@ -824,19 +771,16 @@
       // PREVIEW FUNCTIONS
       // ========================================
 
-      // Preview Surat Masuk (Read-only, tanpa action)
       window.previewSuratMasuk = function (suratId) {
         console.log("👁️ Preview Surat Masuk:", suratId);
         window.location.href = `surat-masuk-kapus.html?preview=${suratId}`;
       };
 
-      // Preview Surat Keluar
       window.previewSuratKeluar = function (suratId) {
         console.log("👁️ Preview Surat Keluar:", suratId);
         window.location.href = `surat-keluar-kapus.html?preview=${suratId}`;
       };
 
-      // Preview Nota Dinas
       window.previewNotaDinas = function (notaDinasId) {
         console.log("👁️ Preview Nota Dinas:", notaDinasId);
         window.location.href = `nota-dinas-kapus.html?preview=${notaDinasId}`;
@@ -846,7 +790,6 @@
       // TOLAK FUNCTIONS
       // ========================================
 
-      // Tolak Surat Masuk
       window.tolakSuratMasuk = function (suratId) {
         Swal.fire({
           title: "Tolak Surat Masuk?",
@@ -901,7 +844,6 @@
         });
       };
 
-      // Tolak Surat Keluar
       window.tolakSuratKeluar = function (suratId) {
         Swal.fire({
           title: "Tolak Surat Keluar?",
@@ -956,7 +898,6 @@
         });
       };
 
-      // Tolak Nota Dinas
       window.tolakNotaDinas = function (notaDinasId) {
         Swal.fire({
           title: "Tolak Nota Dinas?",
@@ -1012,16 +953,14 @@
       };
 
       // ========================================
-      // NAVIGATION FUNCTIONS - DIRECT TO TTD
+      // NAVIGATION FUNCTIONS
       // ========================================
 
-      // Go to TTD Surat Keluar - Auto open preview
       window.goToTTDSuratKeluar = function (suratId) {
         console.log("📤 Navigating to Surat Keluar TTD:", suratId);
         window.location.href = `surat-keluar-kapus.html?preview=${suratId}`;
       };
 
-      // Go to TTD Nota Dinas - Auto open preview
       window.goToTTDNotaDinas = function (notaDinasId) {
         console.log("📝 Navigating to Nota Dinas TTD:", notaDinasId);
         window.location.href = `nota-dinas-kapus.html?preview=${notaDinasId}`;
@@ -1048,51 +987,6 @@
       }
 
       // ========================================
-      // LOGOUT HANDLER
-      // ========================================
-      const logoutLink = document.getElementById("logoutLink");
-      if (logoutLink) {
-        const newLogoutLink = logoutLink.cloneNode(true);
-        logoutLink.parentNode.replaceChild(newLogoutLink, logoutLink);
-
-        newLogoutLink.addEventListener("click", function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-
-          console.log("🚪 Logout clicked");
-
-          Swal.fire({
-            title: "Yakin ingin logout?",
-            text: "Anda akan keluar dari sesi saat ini",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Ya, logout",
-            cancelButtonText: "Batal",
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
-            reverseButtons: true,
-          }).then((result) => {
-            if (result.isConfirmed) {
-              console.log("✅ User confirmed logout");
-
-              if (window.logoutUser) {
-                logoutUser();
-              } else {
-                console.error("❌ logoutUser function not found");
-                sessionStorage.clear();
-                localStorage.clear();
-                window.location.replace("login.html?logout=true");
-              }
-            }
-          });
-        });
-
-        console.log("✅ Logout handler attached");
-      } else {
-        console.error("❌ Logout link not found");
-      }
-
-      // ========================================
       // CLEANUP LISTENERS ON PAGE UNLOAD
       // ========================================
       window.addEventListener("beforeunload", () => {
@@ -1102,18 +996,8 @@
         console.log("🧹 Cleaned up real-time listeners");
       });
 
-      // ========================================
-      // START INITIALIZATION
-      // ========================================
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initDashboardKapus);
-      } else {
-        initDashboardKapus();
-      }
-
-      console.log(
-        "✅ Dashboard Kapus scripts loaded - Complete Actions (Preview, Disposisi, Tolak)"
-      );
+      console.log("✅ Dashboard Kapus scripts loaded - FIXED HEADER VERSION");
+      console.log("⏳ Waiting for main.js to call initializePage()...");
     </script>
   </body>
 </html>
