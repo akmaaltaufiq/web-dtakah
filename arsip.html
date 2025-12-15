@@ -29,7 +29,9 @@
         <div class="arsip-container">
           <div class="arsip-header">
             <h1 class="arsip-title">Arsip Surat</h1>
-            <p class="arsip-subtitle">Kumpulan Surat yang telah Selesai Diproses</p>
+            <p class="arsip-subtitle">
+              Kumpulan surat yang telah selesai diproses (disetujui/disposisi)
+            </p>
           </div>
 
           <div class="arsip-controls-wrapper">
@@ -44,12 +46,25 @@
               </div>
 
               <div class="arsip-filter-group">
-                <span class="filter-label">Filter Jenis:</span>
+                <span class="filter-label">
+                  <i class="bi bi-funnel"></i> Filter Jenis:
+                </span>
                 <select class="arsip-select" id="jenisArsipFilter">
                   <option value="">Semua Jenis</option>
                   <option value="surat_masuk">Surat Masuk</option>
                   <option value="surat_keluar">Surat Keluar</option>
                   <option value="nota_dinas">Nota Dinas</option>
+                </select>
+              </div>
+
+              <div class="arsip-filter-group">
+                <span class="filter-label">
+                  <i class="bi bi-tag"></i> Filter Status:
+                </span>
+                <select class="arsip-select" id="statusArsipFilter">
+                  <option value="">Semua Status</option>
+                  <option value="disposisi">Dengan Disposisi</option>
+                  <option value="disetujui">Disetujui Saja</option>
                 </select>
               </div>
             </div>
@@ -64,32 +79,137 @@
             </div>
           </div>
 
+          <!-- Enhanced Stats Cards (Optional) -->
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+              gap: 16px;
+              margin-bottom: 24px;
+            "
+          >
+            <div
+              style="
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                padding: 20px;
+                border-radius: 12px;
+                color: white;
+              "
+            >
+              <div style="font-size: 13px; opacity: 0.9; margin-bottom: 8px">
+                Total Arsip
+              </div>
+              <div
+                style="font-size: 32px; font-weight: 700"
+                id="totalArsipCount"
+              >
+                0
+              </div>
+            </div>
+
+            <div
+              style="
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                padding: 20px;
+                border-radius: 12px;
+                color: white;
+              "
+            >
+              <div style="font-size: 13px; opacity: 0.9; margin-bottom: 8px">
+                Dengan Disposisi
+              </div>
+              <div
+                style="font-size: 32px; font-weight: 700"
+                id="disposisiCount"
+              >
+                0
+              </div>
+            </div>
+
+            <div
+              style="
+                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                padding: 20px;
+                border-radius: 12px;
+                color: white;
+              "
+            >
+              <div style="font-size: 13px; opacity: 0.9; margin-bottom: 8px">
+                Disetujui Kapus
+              </div>
+              <div
+                style="font-size: 32px; font-weight: 700"
+                id="disetujuiCount"
+              >
+                0
+              </div>
+            </div>
+
+            <div
+              style="
+                background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+                padding: 20px;
+                border-radius: 12px;
+                color: white;
+              "
+            >
+              <div style="font-size: 13px; opacity: 0.9; margin-bottom: 8px">
+                Bulan Ini
+              </div>
+              <div
+                style="font-size: 32px; font-weight: 700"
+                id="thisMonthCount"
+              >
+                0
+              </div>
+            </div>
+          </div>
+
           <table class="arsip-table">
             <thead>
               <tr>
-                <th style="width: 140px;">Nomor Naskah</th>
-                <th style="width: 30%;">Judul & Jenis</th>
-                <th style="width: 35%;">Perihal</th>
-                <th style="width: 120px;">Sifat</th>
-                <th style="width: 100px;">Aksi</th>
+                <th style="width: 140px">Nomor Naskah</th>
+                <th style="width: 30%">Judul & Jenis</th>
+                <th style="width: 30%">Perihal</th>
+                <th style="width: 120px">Sifat</th>
+                <th style="width: 150px">Status</th>
+                <th style="width: 130px">Aksi</th>
               </tr>
             </thead>
             <tbody id="arsipTableBody">
               <tr>
-                <td colspan="5" style="text-align: center; padding: 60px 20px; color: #9ca3af;">
-                  <div style="font-size: 14px;">Memuat data arsip...</div>
+                <td
+                  colspan="6"
+                  style="text-align: center; padding: 60px 20px; color: #9ca3af"
+                >
+                  <div
+                    class="spinner-border"
+                    role="status"
+                    style="
+                      width: 3rem;
+                      height: 3rem;
+                      color: #8b0000;
+                      margin-bottom: 16px;
+                    "
+                  >
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                  <div style="font-size: 14px">Memuat data arsip...</div>
                 </td>
               </tr>
             </tbody>
           </table>
 
           <div class="arsip-footer">
-            <div class="showing-info">Showing 0-0 of 0</div>
+            <div class="showing-info">
+              <i class="bi bi-info-circle"></i>
+              <span>Showing 0-0 of 0</span>
+            </div>
             <div class="pagination">
-              <button class="pagination-btn" disabled>
+              <button class="pagination-btn" disabled title="Previous Page">
                 <i class="bi bi-chevron-left"></i>
               </button>
-              <button class="pagination-btn">
+              <button class="pagination-btn" title="Next Page">
                 <i class="bi bi-chevron-right"></i>
               </button>
             </div>
@@ -105,12 +225,128 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="assets/js/firebase-config.js"></script>
     <script src="assets/js/database.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/arsip.js"></script>
+
+    <!-- Update Stats Cards -->
+    <script>
+      // Update stats after data loads
+      document.addEventListener("DOMContentLoaded", function () {
+        // Listen for custom event when arsip data changes
+        window.addEventListener("arsipDataUpdated", function (e) {
+          const data = e.detail || [];
+
+          // Total arsip
+          document.getElementById("totalArsipCount").textContent = data.length;
+
+          // With disposisi
+          const withDisposisi = data.filter(
+            (item) => item.disposisiCount > 0
+          ).length;
+          document.getElementById("disposisiCount").textContent = withDisposisi;
+
+          // Disetujui
+          const disetujui = data.filter(
+            (item) =>
+              item.status && item.status.toLowerCase().includes("disetujui")
+          ).length;
+          document.getElementById("disetujuiCount").textContent = disetujui;
+
+          // This month
+          const now = new Date();
+          const thisMonth = data.filter((item) => {
+            if (!item._createdAt) return false;
+            const itemDate = new Date(item._createdAt);
+            return (
+              itemDate.getMonth() === now.getMonth() &&
+              itemDate.getFullYear() === now.getFullYear()
+            );
+          }).length;
+          document.getElementById("thisMonthCount").textContent = thisMonth;
+        });
+      });
+    </script>
+
+    <style>
+      /* Additional styles for stats cards */
+      .spinner-border {
+        display: inline-block;
+        width: 3rem;
+        height: 3rem;
+        border: 0.25em solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: spinner-border 0.75s linear infinite;
+      }
+
+      @keyframes spinner-border {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+      }
+
+      /* Enhanced action buttons */
+      .action-buttons {
+        display: flex;
+        gap: 6px;
+        justify-content: center;
+      }
+
+      .action-btn {
+        padding: 8px 10px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: #eff6ff;
+        color: #1e40af;
+        font-size: 14px;
+      }
+
+      .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .action-btn:active {
+        transform: translateY(0);
+      }
+
+      /* Scrollbar for modal */
+      .monitoring-detail-content::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .monitoring-detail-content::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      .monitoring-detail-content::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+      }
+
+      .monitoring-detail-content::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+    </style>
   </body>
 </html>

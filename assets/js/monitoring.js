@@ -1,48 +1,35 @@
-// ========================================
-// MONITORING REAL-TIME - FIREBASE INTEGRATED
-// Version: 3.0 COMPLETE REWRITE
-// Support: Admin & Kapus Roles
-// ========================================
+// ==========================================
+// MONITORING REAL-TIME - COMPLETE FIXED VERSION
+// File: assets/js/monitoring.js
+// Support: Admin & Kapus with Disposisi Details
+// ==========================================
 (function () {
   "use strict";
 
-  console.log("🚀 Initializing Monitoring Real-Time v3.0...");
+  console.log("🚀 Initializing Monitoring Real-Time v4.0 - Complete...");
 
   // ========================================
   // STATE MANAGEMENT
   // ========================================
   const MonitoringState = {
-    // User
     currentUser: null,
     userRole: null,
     userEmail: null,
-    
-    // Data Collections
     suratMasuk: [],
     suratKeluar: [],
     notaDinas: [],
     allData: [],
     filteredData: [],
-    
-    // Filters
     currentTab: "masuk",
     searchQuery: "",
     statusFilter: "",
     dateFilter: null,
-    
-    // Pagination
     currentPage: 1,
     itemsPerPage: 10,
-    
-    // Real-time Listeners
     unsubscribers: [],
-    
-    // Calendar
     selectedDate: null,
     currentMonth: new Date().getMonth(),
     currentYear: new Date().getFullYear(),
-    
-    // UI State
     isLoading: false,
     lastUpdate: null,
   };
@@ -51,96 +38,93 @@
   // ROLE-BASED ACCESS CONTROL
   // ========================================
   const RoleManager = {
-    /**
-     * Check if user has permission to view surat
-     */
     canViewSurat(surat, userRole, userEmail) {
       if (userRole === "admin") {
-        return true; // Admin sees everything
+        return true;
       }
-      
+
       if (userRole === "kapus") {
-        // Kapus sees:
-        // 1. Surat addressed to them (kepada/tujuan contains "kapus")
-        // 2. Surat with specific statuses
-        
         const kepada = (surat.kepada || "").toLowerCase();
         const tujuan = (surat.tujuan || "").toLowerCase();
         const status = (surat.status || "").toLowerCase();
-        
-        const isAddressedToKapus = 
-          kepada.includes("kapus") || 
+
+        const isAddressedToKapus =
+          kepada.includes("kapus") ||
           kepada.includes("kepala pusat") ||
           tujuan.includes("kapus") ||
           tujuan.includes("kepala pusat");
-        
-        const isRelevantStatus = 
+
+        const isRelevantStatus =
           status.includes("menunggu persetujuan kapus") ||
           status.includes("disetujui kapus") ||
           status.includes("ditolak kapus") ||
           status.includes("proses") ||
-          status.includes("selesai");
-        
+          status.includes("selesai") ||
+          status.includes("sudah didisposisi");
+
         return isAddressedToKapus || isRelevantStatus;
       }
-      
+
       return false;
     },
-    
-    /**
-     * Get status badge info based on status
-     */
+
     getStatusInfo(status) {
       const statusLower = (status || "pending").toLowerCase();
-      
+
       const statusMap = {
-        // PROSES (BLUE)
-        "pending": { bg: "#DBEAFE", text: "#1E40AF", icon: "clock" },
-        "proses": { bg: "#DBEAFE", text: "#1E40AF", icon: "arrow-repeat" },
+        pending: { bg: "#DBEAFE", text: "#1E40AF", icon: "clock" },
+        proses: { bg: "#DBEAFE", text: "#1E40AF", icon: "arrow-repeat" },
         "terkirim ke kapus": { bg: "#DBEAFE", text: "#1E40AF", icon: "send" },
-        
-        // MENUNGGU APPROVAL (YELLOW)
-        "menunggu persetujuan kapus": { bg: "#FEF3C7", text: "#D97706", icon: "hourglass-split" },
+        "menunggu persetujuan kapus": {
+          bg: "#FEF3C7",
+          text: "#D97706",
+          icon: "hourglass-split",
+        },
         "menunggu ttd": { bg: "#FEF3C7", text: "#D97706", icon: "pen" },
-        
-        // SELESAI (GREEN)
-        "selesai": { bg: "#D1FAE5", text: "#059669", icon: "check-circle" },
-        "disetujui kapus": { bg: "#D1FAE5", text: "#059669", icon: "check-circle-fill" },
+        selesai: { bg: "#D1FAE5", text: "#059669", icon: "check-circle" },
+        "selesai - sudah didisposisi": {
+          bg: "#D1FAE5",
+          text: "#059669",
+          icon: "check-circle-fill",
+        },
+        "disetujui kapus": {
+          bg: "#D1FAE5",
+          text: "#059669",
+          icon: "check-circle-fill",
+        },
         "siap kirim": { bg: "#D1FAE5", text: "#059669", icon: "send-check" },
-        "diterima": { bg: "#D1FAE5", text: "#059669", icon: "check2-all" },
-        
-        // DITOLAK (RED)
-        "ditolak": { bg: "#FEE2E2", text: "#DC2626", icon: "x-circle" },
-        "ditolak kapus": { bg: "#FEE2E2", text: "#DC2626", icon: "x-circle-fill" },
-        "revisi": { bg: "#FEE2E2", text: "#DC2626", icon: "arrow-clockwise" },
+        diterima: { bg: "#D1FAE5", text: "#059669", icon: "check2-all" },
+        ditolak: { bg: "#FEE2E2", text: "#DC2626", icon: "x-circle" },
+        "ditolak kapus": {
+          bg: "#FEE2E2",
+          text: "#DC2626",
+          icon: "x-circle-fill",
+        },
+        revisi: { bg: "#FEE2E2", text: "#DC2626", icon: "arrow-clockwise" },
       };
-      
-      return statusMap[statusLower] || { bg: "#F3F4F6", text: "#6B7280", icon: "question-circle" };
-    }
+
+      return (
+        statusMap[statusLower] || {
+          bg: "#F3F4F6",
+          text: "#6B7280",
+          icon: "question-circle",
+        }
+      );
+    },
   };
 
   // ========================================
   // FIREBASE REAL-TIME LISTENERS
   // ========================================
   const FirebaseMonitoring = {
-    /**
-     * Setup all real-time listeners
-     */
     setupListeners() {
       console.log("🔌 Setting up Firebase real-time listeners...");
-      
-      // Clear existing listeners
       this.cleanupListeners();
-      
-      // Setup listeners for each collection
       this.listenToSuratMasuk();
       this.listenToSuratKeluar();
       this.listenToNotaDinas();
     },
-    
-    /**
-     * Listen to Surat Masuk changes
-     */
+
     listenToSuratMasuk() {
       const unsubscribe = db
         .collection("surat_masuk")
@@ -148,9 +132,9 @@
         .onSnapshot(
           (snapshot) => {
             console.log("📨 Surat Masuk snapshot:", snapshot.size);
-            
+
             const data = [];
-            snapshot.forEach(doc => {
+            snapshot.forEach((doc) => {
               const docData = doc.data();
               data.push({
                 id: doc.id,
@@ -160,31 +144,19 @@
                 _createdAt: docData.createdAt?.toDate?.() || new Date(),
               });
             });
-            
-            // Filter based on role
-            MonitoringState.suratMasuk = data.filter(surat => 
-              RoleManager.canViewSurat(surat, MonitoringState.userRole, MonitoringState.userEmail)
+
+            MonitoringState.suratMasuk = data.filter((surat) =>
+              RoleManager.canViewSurat(
+                surat,
+                MonitoringState.userRole,
+                MonitoringState.userEmail
+              )
             );
-            
-            console.log(`✅ Surat Masuk: ${data.length} total, ${MonitoringState.suratMasuk.length} visible to ${MonitoringState.userRole}`);
-            
-            // Check for new documents (notifications)
-            snapshot.docChanges().forEach(change => {
-              if (change.type === "added" && MonitoringState.lastUpdate) {
-                const surat = change.doc.data();
-                if (RoleManager.canViewSurat({ ...surat, type: "masuk" }, MonitoringState.userRole, MonitoringState.userEmail)) {
-                  NotificationManager.show("Surat Masuk Baru", surat.perihal || "Tanpa Judul", "info");
-                }
-              }
-              
-              if (change.type === "modified") {
-                const surat = change.doc.data();
-                if (RoleManager.canViewSurat({ ...surat, type: "masuk" }, MonitoringState.userRole, MonitoringState.userEmail)) {
-                  NotificationManager.show("Status Diperbarui", `${surat.perihal} - ${surat.status}`, "success");
-                }
-              }
-            });
-            
+
+            console.log(
+              `✅ Surat Masuk: ${data.length} total, ${MonitoringState.suratMasuk.length} visible to ${MonitoringState.userRole}`
+            );
+
             this.updateCombinedData();
           },
           (error) => {
@@ -192,13 +164,10 @@
             UIManager.showError("Error loading Surat Masuk");
           }
         );
-      
+
       MonitoringState.unsubscribers.push(unsubscribe);
     },
-    
-    /**
-     * Listen to Surat Keluar changes
-     */
+
     listenToSuratKeluar() {
       const unsubscribe = db
         .collection("surat_keluar")
@@ -206,9 +175,9 @@
         .onSnapshot(
           (snapshot) => {
             console.log("📤 Surat Keluar snapshot:", snapshot.size);
-            
+
             const data = [];
-            snapshot.forEach(doc => {
+            snapshot.forEach((doc) => {
               const docData = doc.data();
               data.push({
                 id: doc.id,
@@ -218,31 +187,19 @@
                 _createdAt: docData.createdAt?.toDate?.() || new Date(),
               });
             });
-            
-            // Filter based on role
-            MonitoringState.suratKeluar = data.filter(surat => 
-              RoleManager.canViewSurat(surat, MonitoringState.userRole, MonitoringState.userEmail)
+
+            MonitoringState.suratKeluar = data.filter((surat) =>
+              RoleManager.canViewSurat(
+                surat,
+                MonitoringState.userRole,
+                MonitoringState.userEmail
+              )
             );
-            
-            console.log(`✅ Surat Keluar: ${data.length} total, ${MonitoringState.suratKeluar.length} visible to ${MonitoringState.userRole}`);
-            
-            // Check for new documents (notifications)
-            snapshot.docChanges().forEach(change => {
-              if (change.type === "added" && MonitoringState.lastUpdate) {
-                const surat = change.doc.data();
-                if (RoleManager.canViewSurat({ ...surat, type: "keluar" }, MonitoringState.userRole, MonitoringState.userEmail)) {
-                  NotificationManager.show("Surat Keluar Baru", surat.perihal || "Tanpa Judul", "info");
-                }
-              }
-              
-              if (change.type === "modified") {
-                const surat = change.doc.data();
-                if (RoleManager.canViewSurat({ ...surat, type: "keluar" }, MonitoringState.userRole, MonitoringState.userEmail)) {
-                  NotificationManager.show("Status Diperbarui", `${surat.perihal} - ${surat.status}`, "success");
-                }
-              }
-            });
-            
+
+            console.log(
+              `✅ Surat Keluar: ${data.length} total, ${MonitoringState.suratKeluar.length} visible to ${MonitoringState.userRole}`
+            );
+
             this.updateCombinedData();
           },
           (error) => {
@@ -250,13 +207,10 @@
             UIManager.showError("Error loading Surat Keluar");
           }
         );
-      
+
       MonitoringState.unsubscribers.push(unsubscribe);
     },
-    
-    /**
-     * Listen to Nota Dinas changes
-     */
+
     listenToNotaDinas() {
       const unsubscribe = db
         .collection("nota_dinas")
@@ -264,9 +218,9 @@
         .onSnapshot(
           (snapshot) => {
             console.log("📝 Nota Dinas snapshot:", snapshot.size);
-            
+
             const data = [];
-            snapshot.forEach(doc => {
+            snapshot.forEach((doc) => {
               const docData = doc.data();
               data.push({
                 id: doc.id,
@@ -276,31 +230,19 @@
                 _createdAt: docData.createdAt?.toDate?.() || new Date(),
               });
             });
-            
-            // Filter based on role
-            MonitoringState.notaDinas = data.filter(nota => 
-              RoleManager.canViewSurat(nota, MonitoringState.userRole, MonitoringState.userEmail)
+
+            MonitoringState.notaDinas = data.filter((nota) =>
+              RoleManager.canViewSurat(
+                nota,
+                MonitoringState.userRole,
+                MonitoringState.userEmail
+              )
             );
-            
-            console.log(`✅ Nota Dinas: ${data.length} total, ${MonitoringState.notaDinas.length} visible to ${MonitoringState.userRole}`);
-            
-            // Check for new documents (notifications)
-            snapshot.docChanges().forEach(change => {
-              if (change.type === "added" && MonitoringState.lastUpdate) {
-                const nota = change.doc.data();
-                if (RoleManager.canViewSurat({ ...nota, type: "nota-dinas" }, MonitoringState.userRole, MonitoringState.userEmail)) {
-                  NotificationManager.show("Nota Dinas Baru", nota.perihal || "Tanpa Judul", "info");
-                }
-              }
-              
-              if (change.type === "modified") {
-                const nota = change.doc.data();
-                if (RoleManager.canViewSurat({ ...nota, type: "nota-dinas" }, MonitoringState.userRole, MonitoringState.userEmail)) {
-                  NotificationManager.show("Status Diperbarui", `${nota.perihal} - ${nota.status}`, "success");
-                }
-              }
-            });
-            
+
+            console.log(
+              `✅ Nota Dinas: ${data.length} total, ${MonitoringState.notaDinas.length} visible to ${MonitoringState.userRole}`
+            );
+
             this.updateCombinedData();
           },
           (error) => {
@@ -308,271 +250,158 @@
             UIManager.showError("Error loading Nota Dinas");
           }
         );
-      
+
       MonitoringState.unsubscribers.push(unsubscribe);
     },
-    
-    /**
-     * Combine and update all data
-     */
+
     updateCombinedData() {
-      // Combine all data
       MonitoringState.allData = [
         ...MonitoringState.suratMasuk,
         ...MonitoringState.suratKeluar,
         ...MonitoringState.notaDinas,
       ];
-      
-      // Sort by creation date (newest first)
+
       MonitoringState.allData.sort((a, b) => b._createdAt - a._createdAt);
-      
+
       console.log("📊 Combined data:", MonitoringState.allData.length);
-      
-      // Update status filter options based on available data
+
       UIManager.updateStatusFilterOptions();
-      
-      // Apply filters and render
       FilterManager.applyFilters();
-      
-      // Mark initial load complete
+
       if (!MonitoringState.lastUpdate) {
         MonitoringState.lastUpdate = new Date();
-        console.log("✅ Initial data load complete at", MonitoringState.lastUpdate);
+        console.log(
+          "✅ Initial data load complete at",
+          MonitoringState.lastUpdate
+        );
       }
     },
-    
-    /**
-     * Cleanup all listeners
-     */
+
     cleanupListeners() {
-      MonitoringState.unsubscribers.forEach(unsub => unsub());
+      MonitoringState.unsubscribers.forEach((unsub) => unsub());
       MonitoringState.unsubscribers = [];
-    }
+    },
   };
 
   // ========================================
   // FILTER MANAGER
   // ========================================
   const FilterManager = {
-    /**
-     * Apply all active filters
-     */
     applyFilters() {
-      console.log("🔍 ==================== APPLYING FILTERS ====================");
-      console.log("📊 Active Filters:", {
-        tab: MonitoringState.currentTab,
-        search: MonitoringState.searchQuery,
-        status: MonitoringState.statusFilter,
-        date: MonitoringState.dateFilter ? MonitoringState.dateFilter.toLocaleDateString() : "none"
-      });
-      
+      console.log("🔍 Applying filters...");
+
       let filtered = [...MonitoringState.allData];
-      console.log("📦 Starting with", filtered.length, "items");
-      
-      // Filter by tab (type)
+
       if (MonitoringState.currentTab !== "all") {
-        filtered = filtered.filter(item => item.type === MonitoringState.currentTab);
-        console.log("📑 After tab filter (" + MonitoringState.currentTab + "):", filtered.length, "items");
-      }
-      
-      // Filter by search query
-      if (MonitoringState.searchQuery && MonitoringState.searchQuery.trim() !== "") {
-        const query = MonitoringState.searchQuery.toLowerCase().trim();
-        const beforeLength = filtered.length;
-        
-        filtered = filtered.filter(item => 
-          (item.perihal && item.perihal.toLowerCase().includes(query)) ||
-          (item.noSurat && item.noSurat.toLowerCase().includes(query)) ||
-          (item.noNaskah && item.noNaskah.toLowerCase().includes(query)) ||
-          (item.dari && item.dari.toLowerCase().includes(query)) ||
-          (item.namaPengirim && item.namaPengirim.toLowerCase().includes(query)) ||
-          (item.kepada && item.kepada.toLowerCase().includes(query))
+        filtered = filtered.filter(
+          (item) => item.type === MonitoringState.currentTab
         );
-        
-        console.log("🔎 After search filter ('" + query + "'):", filtered.length, "items (removed", beforeLength - filtered.length, ")");
       }
-      
-      // Filter by status
-      if (MonitoringState.statusFilter && MonitoringState.statusFilter.trim() !== "") {
+
+      if (
+        MonitoringState.searchQuery &&
+        MonitoringState.searchQuery.trim() !== ""
+      ) {
+        const query = MonitoringState.searchQuery.toLowerCase().trim();
+
+        filtered = filtered.filter(
+          (item) =>
+            (item.perihal && item.perihal.toLowerCase().includes(query)) ||
+            (item.noSurat && item.noSurat.toLowerCase().includes(query)) ||
+            (item.noNaskah && item.noNaskah.toLowerCase().includes(query)) ||
+            (item.dari && item.dari.toLowerCase().includes(query)) ||
+            (item.namaPengirim &&
+              item.namaPengirim.toLowerCase().includes(query)) ||
+            (item.kepada && item.kepada.toLowerCase().includes(query))
+        );
+      }
+
+      if (
+        MonitoringState.statusFilter &&
+        MonitoringState.statusFilter.trim() !== ""
+      ) {
         const statusQuery = MonitoringState.statusFilter.toLowerCase().trim();
-        const beforeLength = filtered.length;
-        
-        console.log("📊 Filtering by status:", statusQuery);
-        console.log("📊 Sample of statuses in data:", filtered.slice(0, 5).map(item => ({
-          perihal: item.perihal,
-          status: item.status,
-          statusLower: (item.status || "").toLowerCase()
-        })));
-        
-        filtered = filtered.filter(item => {
+        filtered = filtered.filter((item) => {
           const itemStatus = (item.status || "pending").toLowerCase().trim();
-          const matches = itemStatus === statusQuery;
-          
-          if (matches) {
-            console.log("✅ Status match:", item.perihal, "- status:", item.status);
-          }
-          
-          return matches;
+          return itemStatus === statusQuery;
         });
-        
-        console.log("📊 After status filter ('" + statusQuery + "'):", filtered.length, "items (removed", beforeLength - filtered.length, ")");
-        
-        if (filtered.length === 0 && beforeLength > 0) {
-          console.warn("⚠️ No items match status filter. Available statuses:", 
-            [...new Set(MonitoringState.allData.map(i => i.status || "pending"))]);
-        }
       }
-      
-      // Filter by date
+
       if (MonitoringState.dateFilter) {
-        const beforeLength = filtered.length;
-        const filterDateStr = MonitoringState.dateFilter.toLocaleDateString();
-        
-        console.log("📅 Filtering by date:", filterDateStr);
-        
-        filtered = filtered.filter(item => {
-          // Try multiple date fields
+        filtered = filtered.filter((item) => {
           let itemDate = null;
-          let dateSource = "";
-          
+
           if (item.tanggalSurat) {
             itemDate = this.parseDate(item.tanggalSurat);
-            dateSource = "tanggalSurat";
           } else if (item.tanggalDiterima) {
             itemDate = this.parseDate(item.tanggalDiterima);
-            dateSource = "tanggalDiterima";
           } else if (item.tanggalTerima) {
             itemDate = this.parseDate(item.tanggalTerima);
-            dateSource = "tanggalTerima";
           } else if (item._createdAt) {
             itemDate = item._createdAt;
-            dateSource = "_createdAt";
           }
-          
-          if (!itemDate) {
-            console.warn("⚠️ No valid date found for:", item.perihal);
-            return false;
-          }
-          
-          const matches = this.isSameDate(itemDate, MonitoringState.dateFilter);
-          
-          if (matches) {
-            console.log("✅ Date match:", {
-              perihal: item.perihal,
-              dateSource: dateSource,
-              itemDate: itemDate.toLocaleDateString(),
-              filterDate: filterDateStr
-            });
-          }
-          
-          return matches;
+
+          if (!itemDate) return false;
+
+          return this.isSameDate(itemDate, MonitoringState.dateFilter);
         });
-        
-        console.log("📅 After date filter (" + filterDateStr + "):", filtered.length, "items (removed", beforeLength - filtered.length, ")");
-        
-        if (filtered.length === 0 && beforeLength > 0) {
-          console.warn("⚠️ No items match date filter. Sample dates:", 
-            MonitoringState.allData.slice(0, 3).map(i => ({
-              perihal: i.perihal,
-              tanggalSurat: i.tanggalSurat,
-              tanggalDiterima: i.tanggalDiterima
-            })));
-        }
       }
-      
-      console.log(`✅ ==================== FILTER COMPLETE: ${filtered.length} items ====================`);
-      
+
+      console.log(`✅ Filter complete: ${filtered.length} items`);
+
       MonitoringState.filteredData = filtered;
-      MonitoringState.currentPage = 1; // Reset to first page
-      
+      MonitoringState.currentPage = 1;
+
       TableRenderer.render();
     },
-    
-    /**
-     * Parse date from various formats
-     */
+
     parseDate(dateInput) {
       if (!dateInput) return null;
-      
+
       try {
-        // If already a Date object
         if (dateInput instanceof Date) {
           return isNaN(dateInput.getTime()) ? null : dateInput;
         }
-        
-        // If Firebase Timestamp
-        if (dateInput.toDate && typeof dateInput.toDate === 'function') {
+
+        if (dateInput.toDate && typeof dateInput.toDate === "function") {
           return dateInput.toDate();
         }
-        
-        // If string (ISO format or other)
-        if (typeof dateInput === 'string') {
+
+        if (typeof dateInput === "string") {
           const parsed = new Date(dateInput);
           return isNaN(parsed.getTime()) ? null : parsed;
         }
-        
+
         return null;
       } catch (e) {
         console.warn("⚠️ Error parsing date:", dateInput, e);
         return null;
       }
     },
-    
-    /**
-     * Reset all filters
-     */
+
     resetFilters() {
-      console.log("🔄 ==================== RESETTING FILTERS ====================");
-      
+      console.log("🔄 Resetting filters...");
+
       MonitoringState.searchQuery = "";
       MonitoringState.statusFilter = "";
       MonitoringState.dateFilter = null;
       MonitoringState.selectedDate = null;
       MonitoringState.currentPage = 1;
-      
-      // Reset UI
+
       const searchInput = document.getElementById("searchPerihal");
       const statusFilter = document.getElementById("statusFilter");
       const dateText = document.getElementById("selectedDateText");
-      
-      if (searchInput) {
-        searchInput.value = "";
-        console.log("✅ Search input cleared");
-      }
-      
-      if (statusFilter) {
-        statusFilter.selectedIndex = 0;
-        console.log("✅ Status filter reset to:", statusFilter.value);
-      }
-      
-      if (dateText) {
-        dateText.textContent = "Tanggal";
-        console.log("✅ Date text reset");
-      }
-      
-      // Reset active tab to first tab
-      const tabBtns = document.querySelectorAll(".tab-btn");
-      tabBtns.forEach((btn, index) => {
-        if (index === 0) {
-          btn.classList.add("active");
-          MonitoringState.currentTab = btn.getAttribute("data-tab");
-        } else {
-          btn.classList.remove("active");
-        }
-      });
-      
-      console.log("✅ Reset complete, tab:", MonitoringState.currentTab);
-      console.log("🔄 Applying filters after reset...");
-      
+
+      if (searchInput) searchInput.value = "";
+      if (statusFilter) statusFilter.selectedIndex = 0;
+      if (dateText) dateText.textContent = "Tanggal";
+
       this.applyFilters();
     },
-    
-    /**
-     * Check if two dates are the same day
-     */
+
     isSameDate(date1, date2) {
       if (!date1 || !date2) return false;
-      
+
       try {
         return (
           date1.getDate() === date2.getDate() &&
@@ -580,104 +409,102 @@
           date1.getFullYear() === date2.getFullYear()
         );
       } catch (e) {
-        console.warn("⚠️ Error comparing dates:", e);
         return false;
       }
-    }
+    },
   };
 
   // ========================================
   // TABLE RENDERER
   // ========================================
   const TableRenderer = {
-    /**
-     * Render the monitoring table
-     */
     render() {
       const tbody = document.getElementById("monitoringTableBody");
-      if (!tbody) {
-        console.error("❌ Table body not found!");
-        return;
-      }
-      
+      if (!tbody) return;
+
       const data = MonitoringState.filteredData;
-      
-      // Calculate pagination
-      const startIndex = (MonitoringState.currentPage - 1) * MonitoringState.itemsPerPage;
+      const startIndex =
+        (MonitoringState.currentPage - 1) * MonitoringState.itemsPerPage;
       const endIndex = startIndex + MonitoringState.itemsPerPage;
       const pageData = data.slice(startIndex, endIndex);
-      
-      console.log(`📄 Rendering page ${MonitoringState.currentPage}: ${pageData.length} items`);
-      
-      // Empty state
+
       if (pageData.length === 0) {
         tbody.innerHTML = this.renderEmptyState();
         this.updatePagination(0);
         return;
       }
-      
-      // Render rows
-      tbody.innerHTML = pageData.map(item => this.renderRow(item)).join("");
-      
-      // Update pagination
+
+      tbody.innerHTML = pageData.map((item) => this.renderRow(item)).join("");
       this.updatePagination(data.length);
     },
-    
-    /**
-     * Render empty state
-     */
+
     renderEmptyState() {
-      const tabText = MonitoringState.currentTab === "masuk" ? "surat masuk" :
-                      MonitoringState.currentTab === "keluar" ? "surat keluar" :
-                      MonitoringState.currentTab === "nota-dinas" ? "nota dinas" : "data";
-      
       return `
         <tr>
           <td colspan="7" style="text-align: center; padding: 60px 20px;">
             <i class="bi bi-inbox" style="font-size: 64px; color: #d1d5db; margin-bottom: 16px;"></i>
             <div style="font-size: 18px; font-weight: 600; color: #374151; margin-bottom: 8px;">
-              Tidak ada ${tabText}
+              Tidak ada data
             </div>
             <div style="font-size: 14px; color: #6b7280;">
-              ${MonitoringState.searchQuery ? "Coba gunakan kata kunci yang berbeda" : "Belum ada data untuk ditampilkan"}
+              ${
+                MonitoringState.searchQuery
+                  ? "Coba gunakan kata kunci yang berbeda"
+                  : "Belum ada data untuk ditampilkan"
+              }
             </div>
           </td>
         </tr>
       `;
     },
-    
-    /**
-     * Render a single row
-     */
+
     renderRow(item) {
       const dari = item.dari || item.namaPengirim || "-";
       const noSurat = item.noSurat || item.noNaskah || "-";
-      const tanggalSurat = this.formatDate(item.tanggalSurat || item._createdAt);
+      const tanggalSurat = this.formatDate(
+        item.tanggalSurat || item._createdAt
+      );
       const kepada = item.kepada || item.tujuan || item.ditujukanKepada || "-";
       const perihal = item.perihal || "-";
       const status = item.status || "Pending";
-      
+
       const statusInfo = RoleManager.getStatusInfo(status);
-      
-      // Type icon
-      const typeIcon = item.type === "masuk" ? "envelope-fill" :
-                       item.type === "keluar" ? "send-fill" : "file-earmark-text-fill";
-      
-      const typeLabel = item.type === "masuk" ? "Masuk" :
-                        item.type === "keluar" ? "Keluar" : "Nota Dinas";
-      
-      // Action buttons - View untuk semua, Delete hanya untuk Admin
+
+      const typeIcon =
+        item.type === "masuk"
+          ? "envelope-fill"
+          : item.type === "keluar"
+          ? "send-fill"
+          : "file-earmark-text-fill";
+
+      const typeLabel =
+        item.type === "masuk"
+          ? "Masuk"
+          : item.type === "keluar"
+          ? "Keluar"
+          : "Nota Dinas";
+
       const actionButtons = `
-        <button class="action-btn view-btn" onclick="MonitoringActions.viewDetail('${item.firestoreId}', '${item.type}')" title="Lihat Detail">
+        <button class="action-btn view-btn" onclick="MonitoringActions.viewDetail('${
+          item.firestoreId
+        }', '${item.type}')" title="Lihat Detail">
           <i class="bi bi-eye"></i>
         </button>
-        ${MonitoringState.userRole === "admin" ? `
-        <button class="action-btn delete-btn" onclick="MonitoringActions.deleteSurat('${item.firestoreId}', '${item.type}', '${Utils.escapeHtml(item.perihal || 'surat ini')}')" title="Hapus">
+        ${
+          MonitoringState.userRole === "admin"
+            ? `
+        <button class="action-btn delete-btn" onclick="MonitoringActions.deleteSurat('${
+          item.firestoreId
+        }', '${item.type}', '${Utils.escapeHtml(
+                item.perihal || "surat ini"
+              )}')" title="Hapus">
           <i class="bi bi-trash"></i>
         </button>
-        ` : ''}
+        `
+            : ""
+        }
       `;
-      
+
       return `
         <tr>
           <td style="padding: 16px 12px;">
@@ -731,90 +558,71 @@
         </tr>
       `;
     },
-    
-    /**
-     * Format date
-     */
+
     formatDate(dateInput) {
       if (!dateInput) return "-";
-      
+
       try {
-        const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
-        
+        const date =
+          dateInput instanceof Date ? dateInput : new Date(dateInput);
         if (isNaN(date.getTime())) return "-";
-        
+
         const day = String(date.getDate()).padStart(2, "0");
         const month = String(date.getMonth() + 1).padStart(2, "0");
         const year = date.getFullYear();
-        
+
         return `${day}/${month}/${year}`;
       } catch (e) {
         return "-";
       }
     },
-    
-    /**
-     * Update pagination UI
-     */
+
     updatePagination(totalItems) {
-      const startIndex = totalItems > 0 ? (MonitoringState.currentPage - 1) * MonitoringState.itemsPerPage + 1 : 0;
-      const endIndex = Math.min(MonitoringState.currentPage * MonitoringState.itemsPerPage, totalItems);
-      
+      const startIndex =
+        totalItems > 0
+          ? (MonitoringState.currentPage - 1) * MonitoringState.itemsPerPage + 1
+          : 0;
+      const endIndex = Math.min(
+        MonitoringState.currentPage * MonitoringState.itemsPerPage,
+        totalItems
+      );
+
       const infoElement = document.getElementById("monitoringPaginationInfo");
       if (infoElement) {
         infoElement.textContent = `Showing ${startIndex}-${endIndex} of ${totalItems}`;
       }
-      
+
       const maxPage = Math.ceil(totalItems / MonitoringState.itemsPerPage);
       const prevBtn = document.getElementById("prevBtnMonitoring");
       const nextBtn = document.getElementById("nextBtnMonitoring");
-      
+
       if (prevBtn) prevBtn.disabled = MonitoringState.currentPage === 1;
-      if (nextBtn) nextBtn.disabled = MonitoringState.currentPage >= maxPage || totalItems === 0;
-    }
+      if (nextBtn)
+        nextBtn.disabled =
+          MonitoringState.currentPage >= maxPage || totalItems === 0;
+    },
   };
 
   // ========================================
-  // NOTIFICATION MANAGER
+  // UTILITIES
   // ========================================
-  const NotificationManager = {
-    /**
-     * Show toast notification
-     */
-    show(title, message, type = "info") {
-      if (!window.Swal) return;
-      
-      const iconMap = {
-        info: "info",
-        success: "success",
-        warning: "warning",
-        error: "error"
+  const Utils = {
+    escapeHtml(text) {
+      const map = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;",
       };
-      
-      Swal.fire({
-        icon: iconMap[type] || "info",
-        title: title,
-        text: message,
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 3500,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-          toast.addEventListener('mouseenter', Swal.stopTimer);
-          toast.addEventListener('mouseleave', Swal.resumeTimer);
-        }
-      });
-    }
+      return text.replace(/[&<>"']/g, (m) => map[m]);
+    },
   };
 
   // ========================================
   // UI MANAGER
   // ========================================
   const UIManager = {
-    /**
-     * Show loading state
-     */
     showLoading() {
       const tbody = document.getElementById("monitoringTableBody");
       if (tbody) {
@@ -832,10 +640,7 @@
         `;
       }
     },
-    
-    /**
-     * Show error state
-     */
+
     showError(message) {
       const tbody = document.getElementById("monitoringTableBody");
       if (tbody) {
@@ -846,254 +651,372 @@
               <div style="font-size: 16px; font-weight: 600; color: #dc2626; margin-bottom: 8px;">
                 ${message}
               </div>
-              <div style="font-size: 14px; color: #6b7280;">
-                Silakan refresh halaman atau hubungi administrator
-              </div>
             </td>
           </tr>
         `;
       }
     },
-    
-    /**
-     * Show role indicator - DISABLED (no display)
-     */
-    showRoleIndicator() {
-      // Role indicator display is disabled
-      console.log("👤 User role:", MonitoringState.userRole, "(indicator hidden)");
-    },
-    
-    /**
-     * Update status filter options dynamically based on available data
-     */
+
     updateStatusFilterOptions() {
       const statusFilter = document.getElementById("statusFilter");
       if (!statusFilter) return;
-      
-      // Get unique statuses from data
-      const uniqueStatuses = [...new Set(
-        MonitoringState.allData
-          .map(item => item.status)
-          .filter(status => status && status.trim() !== "")
-      )].sort();
-      
-      console.log("📊 Unique statuses found:", uniqueStatuses);
-      
-      // Store current selection
+
+      const uniqueStatuses = [
+        ...new Set(
+          MonitoringState.allData
+            .map((item) => item.status)
+            .filter((status) => status && status.trim() !== "")
+        ),
+      ].sort();
+
       const currentValue = statusFilter.value;
-      
-      // Clear and rebuild options
       statusFilter.innerHTML = '<option value="">Semua Status</option>';
-      
-      uniqueStatuses.forEach(status => {
+
+      uniqueStatuses.forEach((status) => {
         const option = document.createElement("option");
         option.value = status.toLowerCase();
         option.textContent = status;
         statusFilter.appendChild(option);
       });
-      
-      // Restore selection if still exists
+
       if (currentValue) {
         statusFilter.value = currentValue;
       }
-      
-      console.log("✅ Status filter updated with", uniqueStatuses.length, "options");
-    }
+    },
   };
 
   // ========================================
-  // MONITORING ACTIONS
+  // MONITORING ACTIONS - WITH DISPOSISI DETAILS
   // ========================================
   window.MonitoringActions = {
-    /**
-     * View detail of surat
-     */
     viewDetail(id, type) {
       console.log("👁️ Viewing detail:", id, type);
-      
-      const urlMap = {
-        "masuk": "surat-masuk.html",
-        "keluar": "surat-keluar.html",
-        "nota-dinas": "nota-dinas.html"
-      };
-      
-      if (urlMap[type]) {
-        window.location.href = `${urlMap[type]}#detail-${id}`;
-      }
-    },
-    
-    /**
-     * Delete surat (Admin only) - Enhanced version
-     */
-    async deleteSurat(id, type, perihal = 'surat ini') {
-      console.log("🗑️ Delete button clicked:", { id, type, perihal });
-      
-      // Check admin permission
-      if (MonitoringState.userRole !== "admin") {
-        console.warn("⚠️ Access denied - not admin");
-        NotificationManager.show("Akses Ditolak", "Hanya Admin yang dapat menghapus surat", "error");
+
+      if (type !== "masuk") {
+        const urlMap = {
+          keluar: "surat-keluar.html",
+          "nota-dinas": "nota-dinas.html",
+        };
+        if (urlMap[type]) {
+          window.location.href = `${urlMap[type]}#detail-${id}`;
+        }
         return;
       }
-      
-      const collectionMap = {
-        "masuk": "surat_masuk",
-        "keluar": "surat_keluar",
-        "nota-dinas": "nota_dinas"
-      };
-      
-      const collection = collectionMap[type];
-      if (!collection) {
-        console.error("❌ Invalid type:", type);
-        NotificationManager.show("Error", "Tipe surat tidak valid", "error");
-        return;
-      }
-      
-      const typeLabel = type === "masuk" ? "Surat Masuk" :
-                        type === "keluar" ? "Surat Keluar" : "Nota Dinas";
-      
-      // Load SweetAlert and show confirmation
-      window.loadSwal(() => {
-        Swal.fire({
-          title: `Hapus ${typeLabel}?`,
-          html: `
-            <div style="text-align: left; padding: 0 20px;">
-              <p style="margin-bottom: 16px;">Yakin ingin menghapus surat:</p>
-              <div style="background: #fef2f2; padding: 12px; border-radius: 8px; border-left: 4px solid #dc2626; margin-bottom: 16px;">
-                <strong style="color: #991b1b;">"${perihal}"</strong>
+
+      db.collection("surat_masuk")
+        .doc(id)
+        .get()
+        .then((doc) => {
+          if (!doc.exists) {
+            Swal.fire("Error", "Surat tidak ditemukan", "error");
+            return;
+          }
+
+          const surat = doc.data();
+          const disposisi = surat.disposisi || [];
+
+          let disposisiHTML = "";
+          if (disposisi.length > 0) {
+            disposisiHTML = `
+              <div style="background: #f9fafb; padding: 16px; border-radius: 8px; margin-top: 20px;">
+                <h4 style="font-size: 16px; font-weight: 600; color: #1f2937; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                  <i class="bi bi-clipboard-check"></i> Riwayat Disposisi (${
+                    disposisi.length
+                  })
+                </h4>
+                ${disposisi
+                  .map((disp, idx) => {
+                    const tanggalDisp = disp.tanggal
+                      ? new Date(disp.tanggal).toLocaleDateString("id-ID", {
+                          day: "2-digit",
+                          month: "long",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "-";
+
+                    return `
+                  <div style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid #10b981; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                      <div style="flex: 1;">
+                        <div style="font-weight: 600; color: #1f2937; margin-bottom: 4px; font-size: 15px;">
+                          <i class="bi bi-arrow-right-circle"></i> ${
+                            disp.judul || "Disposisi"
+                          }
+                        </div>
+                        <div style="font-size: 13px; color: #6b7280; margin-bottom: 8px;">
+                          <i class="bi bi-person-badge"></i> ${disp.dari} • ${
+                      disp.jabatanDari || "Kepala Pusat"
+                    }
+                        </div>
+                      </div>
+                      <span style="background: #d1fae5; color: #065f46; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                        <i class="bi bi-check-circle"></i> ${
+                          disp.status || "Proses"
+                        }
+                      </span>
+                    </div>
+                    
+                    <div style="background: #f9fafb; padding: 12px; border-radius: 6px; margin-bottom: 8px;">
+                      <div style="font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; text-transform: uppercase;">
+                        <i class="bi bi-people"></i> Ditujukan Kepada:
+                      </div>
+                      <div style="color: #1f2937; font-size: 14px; font-weight: 500;">
+                        ${disp.kepada}
+                      </div>
+                    </div>
+                    
+                    ${
+                      disp.instruksi
+                        ? `
+                      <div style="margin-bottom: 8px; padding: 10px; background: #fffbeb; border-left: 3px solid #f59e0b; border-radius: 4px;">
+                        <strong style="font-size: 12px; color: #92400e; text-transform: uppercase;">
+                          <i class="bi bi-chat-left-text"></i> Instruksi:
+                        </strong>
+                        <div style="color: #78350f; font-size: 14px; margin-top: 4px;">
+                          ${disp.instruksi}
+                        </div>
+                      </div>
+                    `
+                        : ""
+                    }
+                    
+                    <div style="display: flex; gap: 16px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #9ca3af;">
+                      <span><i class="bi bi-calendar-event"></i> ${tanggalDisp}</span>
+                      <span><i class="bi bi-flag-fill"></i> Prioritas: ${
+                        disp.prioritas || "Normal"
+                      }</span>
+                    </div>
+                  </div>
+                `;
+                  })
+                  .join("")}
               </div>
-              <div style="background: #fef9c3; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
-                <p style="margin: 0; font-size: 14px; color: #854d0e;">
-                  <i class="bi bi-info-circle"></i> 
-                  Surat akan dipindahkan ke <strong>Surat Dihapus</strong>
+            `;
+          } else {
+            disposisiHTML = `
+              <div style="background: #fef3c7; padding: 16px; border-radius: 8px; margin-top: 20px; text-align: center;">
+                <i class="bi bi-info-circle" style="font-size: 32px; color: #d97706; margin-bottom: 8px;"></i>
+                <p style="margin: 0; color: #92400e; font-size: 14px;">
+                  Belum ada disposisi untuk surat ini
                 </p>
               </div>
-              <p style="font-size: 13px; color: #6b7280; margin: 0;">
-                Data masih dapat dipulihkan dari menu Surat Dihapus
-              </p>
-            </div>
-          `,
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#dc2626",
-          cancelButtonColor: "#6b7280",
-          confirmButtonText: '<i class="bi bi-trash"></i> Ya, Hapus!',
-          cancelButtonText: "Batal",
-          reverseButtons: true,
-          customClass: {
-            popup: 'swal-wide'
+            `;
           }
-        }).then(async (result) => {
-          if (result.isConfirmed) {
-            await this.performDelete(id, type, collection, perihal);
-          }
-        });
-      });
-    },
-    
-    /**
-     * Perform delete operation
-     */
-    async performDelete(id, type, collection, perihal) {
-      console.log("🗑️ Performing delete:", { id, type, collection });
-      
-      try {
-        // Show loading
-        if (window.Swal) {
+
           Swal.fire({
-            title: 'Menghapus...',
-            html: '<div style="padding: 20px;"><i class="bi bi-arrow-repeat" style="font-size: 48px; animation: spin 1s linear infinite;"></i><p style="margin-top: 16px;">Mohon tunggu...</p></div>',
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            willOpen: () => {
-              Swal.showLoading();
+            title: '<i class="bi bi-envelope-open"></i> Detail Surat Masuk',
+            html: `
+              <div style="text-align: left; padding: 0 20px; max-height: 600px; overflow-y: auto;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 8px; margin-bottom: 20px; color: white;">
+                  <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 700;">
+                    ${surat.perihal || "Tanpa Perihal"}
+                  </h3>
+                  <div style="opacity: 0.9; font-size: 13px;">
+                    <i class="bi bi-hash"></i> ${surat.noSurat || "-"}
+                  </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                  <div style="background: #f9fafb; padding: 12px; border-radius: 8px;">
+                    <div style="font-size: 11px; font-weight: 600; color: #6b7280; margin-bottom: 4px; text-transform: uppercase;">
+                      <i class="bi bi-building"></i> Dari
+                    </div>
+                    <div style="color: #1f2937; font-size: 14px; font-weight: 500;">
+                      ${surat.dari || surat.namaPengirim || "-"}
+                    </div>
+                  </div>
+                  
+                  <div style="background: #f9fafb; padding: 12px; border-radius: 8px;">
+                    <div style="font-size: 11px; font-weight: 600; color: #6b7280; margin-bottom: 4px; text-transform: uppercase;">
+                      <i class="bi bi-calendar3"></i> Tanggal Surat
+                    </div>
+                    <div style="color: #1f2937; font-size: 14px; font-weight: 500;">
+                      ${surat.tanggalSurat || "-"}
+                    </div>
+                  </div>
+                </div>
+                
+                <div style="background: #f9fafb; padding: 12px; border-radius: 8px; margin-bottom: 16px;">
+                  <div style="font-size: 11px; font-weight: 600; color: #6b7280; margin-bottom: 4px; text-transform: uppercase;">
+                    <i class="bi bi-flag-fill"></i> Status
+                  </div>
+                  <div>
+                    <span style="background: ${
+                      RoleManager.getStatusInfo(surat.status).bg
+                    }; color: ${
+              RoleManager.getStatusInfo(surat.status).text
+            }; padding: 6px 12px; border-radius: 12px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                      <i class="bi bi-${
+                        RoleManager.getStatusInfo(surat.status).icon
+                      }"></i>
+                      ${surat.status || "Pending"}
+                    </span>
+                  </div>
+                </div>
+                
+                ${
+                  surat.processedBy
+                    ? `
+                  <div style="background: #eff6ff; padding: 12px; border-radius: 8px; margin-bottom: 16px; border-left: 4px solid #2563eb;">
+                    <div style="font-size: 11px; font-weight: 600; color: #1e40af; margin-bottom: 4px; text-transform: uppercase;">
+                      <i class="bi bi-person-check"></i> Diproses Oleh
+                    </div>
+                    <div style="color: #1e40af; font-size: 14px; font-weight: 600;">
+                      ${surat.processedBy}
+                    </div>
+                    ${
+                      surat.processedByEmail
+                        ? `
+                      <div style="font-size: 12px; color: #3b82f6; margin-top: 2px;">
+                        ${surat.processedByEmail}
+                      </div>
+                    `
+                        : ""
+                    }
+                  </div>
+                `
+                    : ""
+                }
+                
+                ${disposisiHTML}
+              </div>
+            `,
+            width: "800px",
+            showCloseButton: true,
+            confirmButtonText: '<i class="bi bi-x-lg"></i> Tutup',
+            confirmButtonColor: "#6b7280",
+            showCancelButton: true,
+            cancelButtonText:
+              '<i class="bi bi-box-arrow-up-right"></i> Lihat Detail Lengkap',
+            cancelButtonColor: "#2563eb",
+            reverseButtons: true,
+            customClass: {
+              popup: "monitoring-detail-modal",
+              htmlContainer: "monitoring-detail-content",
+            },
+          }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.cancel) {
+              window.location.href = `surat-masuk.html#detail-${id}`;
             }
           });
-        }
-        
-        // Get document first to verify it exists
-        const docRef = db.collection(collection).doc(id);
-        const doc = await docRef.get();
-        
-        if (!doc.exists) {
-          throw new Error("Surat tidak ditemukan");
-        }
-        
-        // Soft delete - update isDeleted flag
-        await docRef.update({
-          isDeleted: true,
-          deletedAt: firebase.firestore.FieldValue.serverTimestamp(),
-          deletedBy: MonitoringState.currentUser?.nama || MonitoringState.userEmail || "Admin",
-          deletedByUid: MonitoringState.currentUser?.uid || null,
-        });
-        
-        console.log("✅ Surat soft-deleted successfully");
-        
-        // Show success
-        if (window.Swal) {
-          Swal.fire({
-            icon: "success",
-            title: "Berhasil Dihapus!",
-            html: `
-              <div style="text-align: center; padding: 0 20px;">
-                <p style="margin-bottom: 16px;">Surat "<strong>${perihal}</strong>" telah dihapus</p>
-                <div style="background: #d1fae5; padding: 12px; border-radius: 8px; margin-bottom: 16px;">
-                  <p style="margin: 0; font-size: 14px; color: #065f46;">
-                    <i class="bi bi-check-circle"></i> 
-                    Tersimpan di <strong>Surat Dihapus</strong>
-                  </p>
-                </div>
-                <p style="font-size: 13px; color: #6b7280; margin: 0;">
-                  Anda dapat memulihkan surat ini kapan saja dari menu Surat Dihapus
-                </p>
-              </div>
-            `,
-            showConfirmButton: true,
-            confirmButtonText: "OK",
-            confirmButtonColor: "#059669",
-            timer: 4000,
-            timerProgressBar: true
-          });
-        } else {
-          NotificationManager.show("Berhasil", "Surat berhasil dihapus", "success");
-        }
-        
-        // Data will auto-refresh via real-time listener
-        console.log("✅ Delete operation completed");
-        
-      } catch (error) {
-        console.error("❌ Error deleting:", error);
-        
-        if (window.Swal) {
+        })
+        .catch((error) => {
+          console.error("❌ Error loading detail:", error);
           Swal.fire({
             icon: "error",
-            title: "Gagal Menghapus",
-            html: `
-              <div style="text-align: center;">
-                <p style="margin-bottom: 12px;">Terjadi kesalahan saat menghapus surat</p>
-                <div style="background: #fef2f2; padding: 12px; border-radius: 8px;">
-                  <p style="margin: 0; font-size: 13px; color: #991b1b; font-family: monospace;">
-                    ${error.message}
-                  </p>
-                </div>
-              </div>
-            `,
-            confirmButtonColor: "#dc2626",
-            confirmButtonText: "Tutup"
+            title: "Error",
+            text: "Gagal memuat detail surat: " + error.message,
           });
-        } else {
-          NotificationManager.show("Error", "Gagal menghapus: " + error.message, "error");
-        }
+        });
+    },
+
+    async deleteSurat(id, type, perihal = "surat ini") {
+      if (MonitoringState.userRole !== "admin") {
+        Swal.fire(
+          "Akses Ditolak",
+          "Hanya Admin yang dapat menghapus surat",
+          "error"
+        );
+        return;
       }
-    }
+
+      const collectionMap = {
+        masuk: "surat_masuk",
+        keluar: "surat_keluar",
+        "nota-dinas": "nota_dinas",
+      };
+
+      const collection = collectionMap[type];
+      if (!collection) {
+        Swal.fire("Error", "Tipe surat tidak valid", "error");
+        return;
+      }
+
+      const typeLabel =
+        type === "masuk"
+          ? "Surat Masuk"
+          : type === "keluar"
+          ? "Surat Keluar"
+          : "Nota Dinas";
+
+      Swal.fire({
+        title: `Hapus ${typeLabel}?`,
+        html: `
+          <div style="text-align: left; padding: 0 20px;">
+            <p style="margin-bottom: 16px;">Yakin ingin menghapus surat:</p>
+            <div style="background: #fef2f2; padding: 12px; border-radius: 8px; border-left: 4px solid #dc2626; margin-bottom: 16px;">
+              <strong style="color: #991b1b;">"${perihal}"</strong>
+            </div>
+            <div style="background: #fef9c3; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
+              <p style="margin: 0; font-size: 14px; color: #854d0e;">
+                <i class="bi bi-info-circle"></i> 
+                Surat akan dipindahkan ke <strong>Surat Dihapus</strong>
+              </p>
+            </div>
+            <p style="font-size: 13px; color: #6b7280; margin: 0;">
+              Data masih dapat dipulihkan dari menu Surat Dihapus
+            </p>
+          </div>
+        `,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#dc2626",
+        cancelButtonColor: "#6b7280",
+        confirmButtonText: '<i class="bi bi-trash"></i> Ya, Hapus!',
+        cancelButtonText: "Batal",
+        reverseButtons: true,
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            Swal.fire({
+              title: "Menghapus...",
+              html: '<div style="padding: 20px;"><i class="bi bi-arrow-repeat" style="font-size: 48px; animation: spin 1s linear infinite;"></i></div>',
+              allowOutsideClick: false,
+              showConfirmButton: false,
+            });
+
+            await db
+              .collection(collection)
+              .doc(id)
+              .update({
+                isDeleted: true,
+                deletedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                deletedBy: MonitoringState.currentUser?.nama || "Admin",
+                deletedByUid: MonitoringState.currentUser?.uid || null,
+              });
+
+            Swal.fire({
+              icon: "success",
+              title: "Berhasil Dihapus!",
+              html: `
+                <div style="text-align: center; padding: 0 20px;">
+                  <p style="margin-bottom: 16px;">Surat "<strong>${perihal}</strong>" telah dihapus</p>
+                  <div style="background: #d1fae5; padding: 12px; border-radius: 8px;">
+                    <p style="margin: 0; font-size: 14px; color: #065f46;">
+                      <i class="bi bi-check-circle"></i> 
+                      Tersimpan di <strong>Surat Dihapus</strong>
+                    </p>
+                  </div>
+                </div>
+              `,
+              confirmButtonColor: "#059669",
+              timer: 3000,
+            });
+          } catch (error) {
+            console.error("❌ Error deleting:", error);
+            Swal.fire("Error", "Gagal menghapus: " + error.message, "error");
+          }
+        }
+      });
+    },
   };
 
   // ========================================
   // CALENDAR MANAGER
   // ========================================
   const CalendarManager = {
-    /**
-     * Initialize calendar
-     */
     init() {
       const datePickerBtn = document.getElementById("datePickerBtn");
       const calendarModal = document.getElementById("calendarModal");
@@ -1101,206 +1024,147 @@
       const applyBtn = document.getElementById("applyDate");
       const prevBtn = document.getElementById("prevMonth");
       const nextBtn = document.getElementById("nextMonth");
-      
-      if (!datePickerBtn || !calendarModal) {
-        console.warn("⚠️ Calendar elements not found");
-        return;
-      }
-      
-      console.log("📅 Initializing calendar...");
-      
-      // Set initial month/year to current date
+
+      if (!datePickerBtn || !calendarModal) return;
+
       const today = new Date();
       MonitoringState.currentMonth = today.getMonth();
       MonitoringState.currentYear = today.getFullYear();
-      
-      // Open/close calendar
+
       datePickerBtn.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        
         const isActive = calendarModal.classList.contains("active");
-        console.log("📅 Calendar toggle:", !isActive);
-        
-        if (isActive) {
-          this.closeCalendar();
-        } else {
-          this.openCalendar();
-        }
+        isActive ? this.closeCalendar() : this.openCalendar();
       });
-      
-      // Apply date filter
+
       if (applyBtn) {
         applyBtn.addEventListener("click", (e) => {
           e.preventDefault();
-          e.stopPropagation();
-          
-          console.log("📅 Apply button clicked");
-          console.log("📅 Selected date:", MonitoringState.selectedDate);
-          
           if (MonitoringState.selectedDate) {
             const dateText = document.getElementById("selectedDateText");
             if (dateText) {
-              const formattedDate = this.formatDate(MonitoringState.selectedDate);
-              dateText.textContent = formattedDate;
-              console.log("✅ Date text updated to:", formattedDate);
+              dateText.textContent = this.formatDate(
+                MonitoringState.selectedDate
+              );
             }
-            
-            // Set the date filter (create new date object to avoid reference issues)
             MonitoringState.dateFilter = new Date(
               MonitoringState.selectedDate.getFullYear(),
               MonitoringState.selectedDate.getMonth(),
               MonitoringState.selectedDate.getDate()
             );
-            
-            console.log("✅ Date filter set to:", MonitoringState.dateFilter.toLocaleDateString());
-            
-            // Close modal
             this.closeCalendar();
-            
-            // Apply filters after a small delay
-            setTimeout(() => {
-              console.log("🔍 Applying filters with date:", MonitoringState.dateFilter);
-              FilterManager.applyFilters();
-            }, 100);
-            
+            setTimeout(() => FilterManager.applyFilters(), 100);
           } else {
-            console.warn("⚠️ No date selected");
             alert("Silakan pilih tanggal terlebih dahulu");
           }
         });
       }
-      
-      // Previous month
+
       if (prevBtn) {
         prevBtn.addEventListener("click", (e) => {
           e.preventDefault();
-          e.stopPropagation();
-          
           MonitoringState.currentMonth--;
           if (MonitoringState.currentMonth < 0) {
             MonitoringState.currentMonth = 11;
             MonitoringState.currentYear--;
           }
-          console.log("◀️ Previous month:", MonitoringState.currentMonth + 1, MonitoringState.currentYear);
           this.render();
         });
       }
-      
-      // Next month
+
       if (nextBtn) {
         nextBtn.addEventListener("click", (e) => {
           e.preventDefault();
-          e.stopPropagation();
-          
           MonitoringState.currentMonth++;
           if (MonitoringState.currentMonth > 11) {
             MonitoringState.currentMonth = 0;
             MonitoringState.currentYear++;
           }
-          console.log("▶️ Next month:", MonitoringState.currentMonth + 1, MonitoringState.currentYear);
           this.render();
         });
       }
-      
-      // Close on backdrop click
+
       if (modalBackdrop) {
-        modalBackdrop.addEventListener("click", () => {
-          console.log("📅 Closing calendar (backdrop click)");
-          this.closeCalendar();
-        });
+        modalBackdrop.addEventListener("click", () => this.closeCalendar());
       }
-      
-      // Close on escape key
+
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape" && calendarModal.classList.contains("active")) {
-          console.log("📅 Closing calendar (escape key)");
           this.closeCalendar();
         }
       });
-      
-      console.log("✅ Calendar initialized");
     },
-    
-    /**
-     * Open calendar modal
-     */
+
     openCalendar() {
       const calendarModal = document.getElementById("calendarModal");
       const modalBackdrop = document.getElementById("modalBackdrop");
       const datePickerBtn = document.getElementById("datePickerBtn");
-      
+
       if (!calendarModal || !datePickerBtn) return;
-      
-      // Reset to current month when opening
+
       const now = new Date();
       MonitoringState.currentMonth = now.getMonth();
       MonitoringState.currentYear = now.getFullYear();
-      
-      // Position modal near button
+
       const btnRect = datePickerBtn.getBoundingClientRect();
       calendarModal.style.position = "fixed";
-      calendarModal.style.top = (btnRect.bottom + 8) + "px";
+      calendarModal.style.top = btnRect.bottom + 8 + "px";
       calendarModal.style.left = btnRect.left + "px";
-      
-      // Show modal and backdrop
+
       calendarModal.classList.add("active");
-      if (modalBackdrop) {
-        modalBackdrop.classList.add("active");
-      }
-      
-      // Render calendar
+      if (modalBackdrop) modalBackdrop.classList.add("active");
+
       this.render();
-      
-      console.log("📅 Calendar opened");
     },
-    
-    /**
-     * Close calendar modal
-     */
+
     closeCalendar() {
       const calendarModal = document.getElementById("calendarModal");
       const modalBackdrop = document.getElementById("modalBackdrop");
-      
-      if (calendarModal) {
-        calendarModal.classList.remove("active");
-      }
-      
-      if (modalBackdrop) {
-        modalBackdrop.classList.remove("active");
-      }
-      
-      console.log("📅 Calendar closed");
+
+      if (calendarModal) calendarModal.classList.remove("active");
+      if (modalBackdrop) modalBackdrop.classList.remove("active");
     },
-    
-    /**
-     * Render calendar
-     */
+
     render() {
       const calendarDays = document.getElementById("calendarDays");
       const calendarMonth = document.getElementById("calendarMonth");
-      
-      if (!calendarDays || !calendarMonth) {
-        console.warn("⚠️ Calendar DOM elements not found");
-        return;
-      }
-      
+
+      if (!calendarDays || !calendarMonth) return;
+
       const monthNames = [
-        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember",
       ];
-      
-      calendarMonth.textContent = `${monthNames[MonitoringState.currentMonth]} ${MonitoringState.currentYear}`;
-      
-      const firstDay = new Date(MonitoringState.currentYear, MonitoringState.currentMonth, 1).getDay();
-      const daysInMonth = new Date(MonitoringState.currentYear, MonitoringState.currentMonth + 1, 0).getDate();
+
+      calendarMonth.textContent = `${
+        monthNames[MonitoringState.currentMonth]
+      } ${MonitoringState.currentYear}`;
+
+      const firstDay = new Date(
+        MonitoringState.currentYear,
+        MonitoringState.currentMonth,
+        1
+      ).getDay();
+      const daysInMonth = new Date(
+        MonitoringState.currentYear,
+        MonitoringState.currentMonth + 1,
+        0
+      ).getDate();
       const today = new Date();
-      
+
       calendarDays.innerHTML = "";
-      
-      console.log("📅 Rendering calendar:", monthNames[MonitoringState.currentMonth], MonitoringState.currentYear);
-      
-      // Empty days at start (Sunday = 0)
+
       for (let i = 0; i < firstDay; i++) {
         const emptyDay = document.createElement("button");
         emptyDay.className = "calendar-day empty";
@@ -1309,17 +1173,19 @@
         emptyDay.innerHTML = "&nbsp;";
         calendarDays.appendChild(emptyDay);
       }
-      
-      // Days
+
       for (let day = 1; day <= daysInMonth; day++) {
         const dayBtn = document.createElement("button");
         dayBtn.className = "calendar-day";
         dayBtn.textContent = day;
         dayBtn.type = "button";
-        
-        const date = new Date(MonitoringState.currentYear, MonitoringState.currentMonth, day);
-        
-        // Mark today
+
+        const date = new Date(
+          MonitoringState.currentYear,
+          MonitoringState.currentMonth,
+          day
+        );
+
         if (
           date.getDate() === today.getDate() &&
           date.getMonth() === today.getMonth() &&
@@ -1327,8 +1193,7 @@
         ) {
           dayBtn.classList.add("today");
         }
-        
-        // Mark selected
+
         if (
           MonitoringState.selectedDate &&
           date.getDate() === MonitoringState.selectedDate.getDate() &&
@@ -1337,137 +1202,105 @@
         ) {
           dayBtn.classList.add("selected");
         }
-        
-        // Click handler
+
         dayBtn.addEventListener("click", (e) => {
           e.preventDefault();
-          e.stopPropagation();
-          
-          // Remove previous selection
-          document.querySelectorAll(".calendar-day.selected").forEach(el => {
+          document.querySelectorAll(".calendar-day.selected").forEach((el) => {
             el.classList.remove("selected");
           });
-          
-          // Add new selection
           dayBtn.classList.add("selected");
-          
-          // Save to state
           MonitoringState.selectedDate = new Date(
             MonitoringState.currentYear,
             MonitoringState.currentMonth,
             day
           );
-          
-          console.log("📅 Date selected:", {
-            date: MonitoringState.selectedDate.toLocaleDateString(),
-            day: day,
-            month: MonitoringState.currentMonth + 1,
-            year: MonitoringState.currentYear
-          });
         });
-        
+
         calendarDays.appendChild(dayBtn);
       }
-      
-      console.log("✅ Calendar rendered with", daysInMonth, "days");
     },
-    
-    /**
-     * Format date for display
-     */
+
     formatDate(date) {
-      const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+      const months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "Mei",
+        "Jun",
+        "Jul",
+        "Agu",
+        "Sep",
+        "Okt",
+        "Nov",
+        "Des",
+      ];
       const day = String(date.getDate()).padStart(2, "0");
       const month = months[date.getMonth()];
       const year = date.getFullYear();
       return `${day} ${month} ${year}`;
-    }
+    },
   };
 
   // ========================================
   // EVENT LISTENERS SETUP
   // ========================================
   const EventListeners = {
-    /**
-     * Setup all event listeners
-     */
     init() {
-      console.log("🔧 Setting up event listeners...");
-      
-      // Tab switching
       const tabBtns = document.querySelectorAll(".tab-btn");
-      tabBtns.forEach(btn => {
+      tabBtns.forEach((btn) => {
         btn.addEventListener("click", () => {
-          tabBtns.forEach(b => b.classList.remove("active"));
+          tabBtns.forEach((b) => b.classList.remove("active"));
           btn.classList.add("active");
-          
           MonitoringState.currentTab = btn.getAttribute("data-tab");
-          console.log("📑 Switched to tab:", MonitoringState.currentTab);
-          
           FilterManager.applyFilters();
         });
       });
-      
-      // Search input
+
       const searchInput = document.getElementById("searchPerihal");
       if (searchInput) {
-        searchInput.addEventListener("input", this.debounce((e) => {
-          MonitoringState.searchQuery = e.target.value.trim();
-          console.log("🔎 Search query:", MonitoringState.searchQuery);
-          FilterManager.applyFilters();
-        }, 300));
+        searchInput.addEventListener(
+          "input",
+          this.debounce((e) => {
+            MonitoringState.searchQuery = e.target.value.trim();
+            FilterManager.applyFilters();
+          }, 300)
+        );
       }
-      
-      // Status filter
+
       const statusFilter = document.getElementById("statusFilter");
       if (statusFilter) {
         statusFilter.addEventListener("change", (e) => {
           MonitoringState.statusFilter = e.target.value.trim();
-          console.log("📊 Status filter:", MonitoringState.statusFilter);
-          
-          // Log available statuses for debugging
-          const statuses = [...new Set(MonitoringState.allData.map(item => item.status || "pending"))];
-          console.log("📋 Available statuses in data:", statuses);
-          
           FilterManager.applyFilters();
         });
       }
-      
-      // Reset button
+
       const resetBtn = document.getElementById("resetBtn");
       if (resetBtn) {
-        resetBtn.addEventListener("click", () => {
-          console.log("🔄 Reset button clicked");
-          FilterManager.resetFilters();
-        });
+        resetBtn.addEventListener("click", () => FilterManager.resetFilters());
       }
-      
-      // Pagination
+
       window.previousPageMonitoring = () => {
         if (MonitoringState.currentPage > 1) {
           MonitoringState.currentPage--;
-          console.log("◀️ Previous page:", MonitoringState.currentPage);
           TableRenderer.render();
           window.scrollTo({ top: 0, behavior: "smooth" });
         }
       };
-      
+
       window.nextPageMonitoring = () => {
-        const maxPage = Math.ceil(MonitoringState.filteredData.length / MonitoringState.itemsPerPage);
+        const maxPage = Math.ceil(
+          MonitoringState.filteredData.length / MonitoringState.itemsPerPage
+        );
         if (MonitoringState.currentPage < maxPage) {
           MonitoringState.currentPage++;
-          console.log("▶️ Next page:", MonitoringState.currentPage);
           TableRenderer.render();
           window.scrollTo({ top: 0, behavior: "smooth" });
         }
       };
-      
-      console.log("✅ Event listeners initialized");
     },
-    
-    /**
-     * Debounce helper
-     */
+
     debounce(func, wait) {
       let timeout;
       return function executedFunction(...args) {
@@ -1478,126 +1311,108 @@
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
       };
-    }
+    },
   };
 
   // ========================================
   // INITIALIZATION
   // ========================================
   window.initializePage = async function () {
-    console.log("🚀 Starting Monitoring Page Initialization...");
-    
+    console.log("🚀 Starting Monitoring Page Initialization v4.0...");
+
     try {
-      // Show loading
       UIManager.showLoading();
-      
-      // Wait for auth
+
       const user = await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => reject(new Error("Auth timeout")), 10000);
-        
+        const timeout = setTimeout(
+          () => reject(new Error("Auth timeout")),
+          10000
+        );
+
         firebase.auth().onAuthStateChanged(async (user) => {
           clearTimeout(timeout);
-          
+
           if (!user) {
             console.error("❌ No user logged in!");
             window.location.href = "login.html";
             return;
           }
-          
+
           console.log("✅ User authenticated:", user.email);
-          
-          // Get user data from Firestore
+
           try {
             const userDoc = await db.collection("users").doc(user.uid).get();
-            
+
             if (!userDoc.exists) {
               console.error("❌ User document not found");
               window.location.href = "login.html";
               return;
             }
-            
+
             const userData = userDoc.data();
-            
+
             MonitoringState.currentUser = {
               uid: user.uid,
               email: user.email,
               nama: userData.nama || user.displayName || user.email,
-              role: userData.role || "user"
+              role: userData.role || "user",
             };
-            
+
             MonitoringState.userRole = userData.role;
             MonitoringState.userEmail = user.email;
-            
+
             console.log("👤 User data loaded:", MonitoringState.currentUser);
-            
-            // Check if user has permission
-            if (MonitoringState.userRole !== "admin" && MonitoringState.userRole !== "kapus") {
+
+            if (
+              MonitoringState.userRole !== "admin" &&
+              MonitoringState.userRole !== "kapus"
+            ) {
               console.error("❌ Insufficient permissions");
-              
-              if (window.Swal) {
-                Swal.fire({
-                  icon: "error",
-                  title: "Akses Ditolak",
-                  text: "Anda tidak memiliki izin untuk mengakses halaman ini",
-                  confirmButtonColor: "#dc2626"
-                }).then(() => {
-                  window.location.href = "dashboard.html";
-                });
-              } else {
-                alert("Akses ditolak!");
+
+              Swal.fire({
+                icon: "error",
+                title: "Akses Ditolak",
+                text: "Anda tidak memiliki izin untuk mengakses halaman ini",
+                confirmButtonColor: "#dc2626",
+              }).then(() => {
                 window.location.href = "dashboard.html";
-              }
+              });
               return;
             }
-            
+
             resolve(user);
-            
           } catch (error) {
             console.error("❌ Error getting user data:", error);
             reject(error);
           }
         });
       });
-      
-      // Show role indicator
-      UIManager.showRoleIndicator();
-      
-      // Setup components
+
       console.log("🔧 Setting up components...");
-      
+
       EventListeners.init();
       CalendarManager.init();
       FirebaseMonitoring.setupListeners();
-      
-      console.log("✅ Monitoring Page Initialized Successfully!");
-      
+
+      console.log("✅ Monitoring Page v4.0 Initialized Successfully!");
     } catch (error) {
       console.error("❌ Initialization error:", error);
       UIManager.showError("Gagal memuat halaman monitoring: " + error.message);
     }
   };
 
-  // ========================================
-  // CLEANUP
-  // ========================================
   window.addEventListener("beforeunload", () => {
     console.log("🧹 Cleaning up listeners...");
     FirebaseMonitoring.cleanupListeners();
   });
 
-  // ========================================
-  // AUTO-INIT ON LOAD
-  // ========================================
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", window.initializePage);
   } else {
     window.initializePage();
   }
 
-  // ========================================
-  // INJECT CSS FOR ANIMATIONS
-  // ========================================
-  const style = document.createElement('style');
+  const style = document.createElement("style");
   style.textContent = `
     @keyframes spin {
       from { transform: rotate(0deg); }
@@ -1638,9 +1453,33 @@
     .action-btn:active {
       transform: translateY(0);
     }
+    
+    .monitoring-detail-content {
+      max-height: 600px !important;
+      overflow-y: auto !important;
+    }
+    
+    .monitoring-detail-content::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .monitoring-detail-content::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    
+    .monitoring-detail-content::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
+    
+    .monitoring-detail-content::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
   `;
   document.head.appendChild(style);
 
-  console.log("✅ Monitoring Real-Time v3.0 - Loaded Successfully!");
-
+  console.log(
+    "✅ Monitoring Real-Time v4.0 - Complete with Disposisi Details!"
+  );
 })();

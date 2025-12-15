@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="assets/css/dashboard.css" />
   </head>
   <body>
-   <div class="dashboard-overview">
+    <div class="dashboard-overview">
       <!-- Sidebar placeholder -->
       <div id="sidebar-placeholder"></div>
 
@@ -101,9 +101,7 @@
           <!-- Dashboard Summary -->
           <div class="dashboard-summary">
             <div class="summary-header">
-              <h2 class="summary-title">
-                Dashboard Summary Activity Document
-              </h2>
+              <h2 class="summary-title">Dashboard Summary Activity Document</h2>
             </div>
             <div class="summary-content">
               <div class="progress-section">
@@ -113,7 +111,9 @@
                 </div>
                 <div class="progress-box red-bg">
                   <div class="progress-label red">Surat Belum Diaksi</div>
-                  <div class="progress-value red" id="progressBelumDiaksi">0%</div>
+                  <div class="progress-value red" id="progressBelumDiaksi">
+                    0%
+                  </div>
                 </div>
               </div>
 
@@ -121,19 +121,25 @@
                 <div class="circular-card blue">
                   <div class="circular-card-title">Surat Masuk</div>
                   <div class="circular-progress">
-                    <div class="circular-progress-text" id="percentSuratMasuk">0%</div>
+                    <div class="circular-progress-text" id="percentSuratMasuk">
+                      0%
+                    </div>
                   </div>
                 </div>
                 <div class="circular-card green">
                   <div class="circular-card-title">Surat Keluar</div>
                   <div class="circular-progress">
-                    <div class="circular-progress-text" id="percentSuratKeluar">0%</div>
+                    <div class="circular-progress-text" id="percentSuratKeluar">
+                      0%
+                    </div>
                   </div>
                 </div>
                 <div class="circular-card yellow">
                   <div class="circular-card-title">Surat Nota Dinas</div>
                   <div class="circular-progress">
-                    <div class="circular-progress-text" id="percentNotaDinas">0%</div>
+                    <div class="circular-progress-text" id="percentNotaDinas">
+                      0%
+                    </div>
                   </div>
                 </div>
               </div>
@@ -179,11 +185,13 @@
                 </tr>
               </tbody>
             </table>
-            <a href="monitoring.html" class="more-link">Lihat Selengkapnya...</a>
+            <a href="monitoring.html" class="more-link"
+              >Lihat Selengkapnya...</a
+            >
           </div>
 
           <!-- Footer -->
-        <div id="footer-placeholder"></div>
+          <div id="footer-placeholder"></div>
         </div>
       </div>
     </div>
@@ -215,12 +223,12 @@
       let unsubscribeMasuk = null;
       let unsubscribeKeluar = null;
       let unsubscribeNotaDinas = null;
-      
+
       // Previous counts untuk menghitung perubahan
       let previousCounts = {
         masuk: 0,
         keluar: 0,
-        notaDinas: 0
+        notaDinas: 0,
       };
 
       // ========================================
@@ -247,7 +255,7 @@
 
             // Load dashboard data with real-time listeners
             loadDashboardStatsRealtime();
-            
+
             // Setup month selector
             setupMonthSelector();
           })
@@ -261,13 +269,13 @@
       // SETUP MONTH SELECTOR
       // ========================================
       function setupMonthSelector() {
-        const monthSelector = document.getElementById('monthSelector');
+        const monthSelector = document.getElementById("monthSelector");
         if (monthSelector) {
           // Set current month
           const currentMonth = new Date().getMonth();
           monthSelector.value = currentMonth;
-          
-          monthSelector.addEventListener('change', () => {
+
+          monthSelector.addEventListener("change", () => {
             loadMonitoringTable();
           });
         }
@@ -277,10 +285,10 @@
       // ANIMATE VALUE CHANGE
       // ========================================
       function animateValueChange(element, newValue) {
-        element.classList.add('updating');
+        element.classList.add("updating");
         element.textContent = newValue;
         setTimeout(() => {
-          element.classList.remove('updating');
+          element.classList.remove("updating");
         }, 500);
       }
 
@@ -289,19 +297,19 @@
       // ========================================
       function calculatePercentages(masukCount, keluarCount, notaDinasCount) {
         const total = masukCount + keluarCount + notaDinasCount;
-        
+
         if (total === 0) {
           return {
             masuk: 0,
             keluar: 0,
-            notaDinas: 0
+            notaDinas: 0,
           };
         }
-        
+
         return {
           masuk: Math.round((masukCount / total) * 100),
           keluar: Math.round((keluarCount / total) * 100),
-          notaDinas: Math.round((notaDinasCount / total) * 100)
+          notaDinas: Math.round((notaDinasCount / total) * 100),
         };
       }
 
@@ -311,32 +319,37 @@
       function updateProgressBars(masukCount, keluarCount, notaDinasCount) {
         // Query untuk status yang sudah diaksi (Selesai atau Proses)
         Promise.all([
-          db.collection("surat_masuk")
+          db
+            .collection("surat_masuk")
             .where("isDeleted", "==", false)
             .where("status", "in", ["Selesai", "Proses"])
             .get(),
-          db.collection("surat_keluar")
-            .where("isDeleted", "==", false)
-            .get(),
-          db.collection("nota_dinas")
+          db.collection("surat_keluar").where("isDeleted", "==", false).get(),
+          db
+            .collection("nota_dinas")
             .where("isDeleted", "==", false)
             .where("status", "in", ["Selesai", "Proses"])
-            .get()
-        ]).then(results => {
-          const sudahDiaksi = results[0].size + results[1].size + results[2].size;
+            .get(),
+        ]).then((results) => {
+          const sudahDiaksi =
+            results[0].size + results[1].size + results[2].size;
           const total = masukCount + keluarCount + notaDinasCount;
           const belumDiaksi = total - sudahDiaksi;
-          
-          const percentSudah = total > 0 ? Math.round((sudahDiaksi / total) * 100) : 0;
-          const percentBelum = total > 0 ? Math.round((belumDiaksi / total) * 100) : 0;
-          
-          const elemSudah = document.getElementById('progressSudahDiaksi');
-          const elemBelum = document.getElementById('progressBelumDiaksi');
-          
-          if (elemSudah) animateValueChange(elemSudah, percentSudah + '%');
-          if (elemBelum) animateValueChange(elemBelum, percentBelum + '%');
-          
-          console.log(`📊 Progress: ${percentSudah}% sudah diaksi, ${percentBelum}% belum diaksi`);
+
+          const percentSudah =
+            total > 0 ? Math.round((sudahDiaksi / total) * 100) : 0;
+          const percentBelum =
+            total > 0 ? Math.round((belumDiaksi / total) * 100) : 0;
+
+          const elemSudah = document.getElementById("progressSudahDiaksi");
+          const elemBelum = document.getElementById("progressBelumDiaksi");
+
+          if (elemSudah) animateValueChange(elemSudah, percentSudah + "%");
+          if (elemBelum) animateValueChange(elemBelum, percentBelum + "%");
+
+          console.log(
+            `📊 Progress: ${percentSudah}% sudah diaksi, ${percentBelum}% belum diaksi`
+          );
         });
       }
 
@@ -355,123 +368,148 @@
         unsubscribeMasuk = db
           .collection("surat_masuk")
           .where("isDeleted", "==", false)
-          .onSnapshot((snapshot) => {
-            const count = snapshot.size;
-            masukCount = count;
-            
-            const element = document.getElementById("statSuratMasuk");
-            if (element) {
-              animateValueChange(element, count);
+          .onSnapshot(
+            (snapshot) => {
+              const count = snapshot.size;
+              masukCount = count;
+
+              const element = document.getElementById("statSuratMasuk");
+              if (element) {
+                animateValueChange(element, count);
+              }
+
+              // Update change indicator
+              const change = count - previousCounts.masuk;
+              const changeElement = document.getElementById("changeSuratMasuk");
+              if (changeElement && previousCounts.masuk > 0) {
+                changeElement.textContent = change >= 0 ? `+${change}` : change;
+                changeElement.style.color = change >= 0 ? "#10b981" : "#ef4444";
+              }
+              previousCounts.masuk = count;
+
+              console.log("📨 Surat Masuk:", count);
+
+              // Update percentages
+              const percentages = calculatePercentages(
+                masukCount,
+                keluarCount,
+                notaDinasCount
+              );
+              const percentElement =
+                document.getElementById("percentSuratMasuk");
+              if (percentElement) {
+                animateValueChange(percentElement, percentages.masuk + "%");
+              }
+
+              // Update progress bars
+              updateProgressBars(masukCount, keluarCount, notaDinasCount);
+
+              // Reload monitoring table
+              loadMonitoringTable();
+            },
+            (error) => {
+              console.error("❌ Error in Surat Masuk listener:", error);
             }
-            
-            // Update change indicator
-            const change = count - previousCounts.masuk;
-            const changeElement = document.getElementById("changeSuratMasuk");
-            if (changeElement && previousCounts.masuk > 0) {
-              changeElement.textContent = change >= 0 ? `+${change}` : change;
-              changeElement.style.color = change >= 0 ? '#10b981' : '#ef4444';
-            }
-            previousCounts.masuk = count;
-            
-            console.log("📨 Surat Masuk:", count);
-            
-            // Update percentages
-            const percentages = calculatePercentages(masukCount, keluarCount, notaDinasCount);
-            const percentElement = document.getElementById('percentSuratMasuk');
-            if (percentElement) {
-              animateValueChange(percentElement, percentages.masuk + '%');
-            }
-            
-            // Update progress bars
-            updateProgressBars(masukCount, keluarCount, notaDinasCount);
-            
-            // Reload monitoring table
-            loadMonitoringTable();
-          }, (error) => {
-            console.error("❌ Error in Surat Masuk listener:", error);
-          });
+          );
 
         // Surat Keluar Listener
         if (unsubscribeKeluar) unsubscribeKeluar();
         unsubscribeKeluar = db
           .collection("surat_keluar")
           .where("isDeleted", "==", false)
-          .onSnapshot((snapshot) => {
-            const count = snapshot.size;
-            keluarCount = count;
-            
-            const element = document.getElementById("statSuratKeluar");
-            if (element) {
-              animateValueChange(element, count);
+          .onSnapshot(
+            (snapshot) => {
+              const count = snapshot.size;
+              keluarCount = count;
+
+              const element = document.getElementById("statSuratKeluar");
+              if (element) {
+                animateValueChange(element, count);
+              }
+
+              // Update change indicator
+              const change = count - previousCounts.keluar;
+              const changeElement =
+                document.getElementById("changeSuratKeluar");
+              if (changeElement && previousCounts.keluar > 0) {
+                changeElement.textContent = change >= 0 ? `+${change}` : change;
+                changeElement.style.color = change >= 0 ? "#10b981" : "#ef4444";
+              }
+              previousCounts.keluar = count;
+
+              console.log("📤 Surat Keluar:", count);
+
+              // Update percentages
+              const percentages = calculatePercentages(
+                masukCount,
+                keluarCount,
+                notaDinasCount
+              );
+              const percentElement =
+                document.getElementById("percentSuratKeluar");
+              if (percentElement) {
+                animateValueChange(percentElement, percentages.keluar + "%");
+              }
+
+              // Update progress bars
+              updateProgressBars(masukCount, keluarCount, notaDinasCount);
+
+              // Reload monitoring table
+              loadMonitoringTable();
+            },
+            (error) => {
+              console.error("❌ Error in Surat Keluar listener:", error);
             }
-            
-            // Update change indicator
-            const change = count - previousCounts.keluar;
-            const changeElement = document.getElementById("changeSuratKeluar");
-            if (changeElement && previousCounts.keluar > 0) {
-              changeElement.textContent = change >= 0 ? `+${change}` : change;
-              changeElement.style.color = change >= 0 ? '#10b981' : '#ef4444';
-            }
-            previousCounts.keluar = count;
-            
-            console.log("📤 Surat Keluar:", count);
-            
-            // Update percentages
-            const percentages = calculatePercentages(masukCount, keluarCount, notaDinasCount);
-            const percentElement = document.getElementById('percentSuratKeluar');
-            if (percentElement) {
-              animateValueChange(percentElement, percentages.keluar + '%');
-            }
-            
-            // Update progress bars
-            updateProgressBars(masukCount, keluarCount, notaDinasCount);
-            
-            // Reload monitoring table
-            loadMonitoringTable();
-          }, (error) => {
-            console.error("❌ Error in Surat Keluar listener:", error);
-          });
+          );
 
         // Nota Dinas Listener
         if (unsubscribeNotaDinas) unsubscribeNotaDinas();
         unsubscribeNotaDinas = db
           .collection("nota_dinas")
           .where("isDeleted", "==", false)
-          .onSnapshot((snapshot) => {
-            const count = snapshot.size;
-            notaDinasCount = count;
-            
-            const element = document.getElementById("statNotaDinas");
-            if (element) {
-              animateValueChange(element, count);
+          .onSnapshot(
+            (snapshot) => {
+              const count = snapshot.size;
+              notaDinasCount = count;
+
+              const element = document.getElementById("statNotaDinas");
+              if (element) {
+                animateValueChange(element, count);
+              }
+
+              // Update change indicator
+              const change = count - previousCounts.notaDinas;
+              const changeElement = document.getElementById("changeNotaDinas");
+              if (changeElement && previousCounts.notaDinas > 0) {
+                changeElement.textContent = change >= 0 ? `+${change}` : change;
+                changeElement.style.color = change >= 0 ? "#10b981" : "#ef4444";
+              }
+              previousCounts.notaDinas = count;
+
+              console.log("📝 Nota Dinas:", count);
+
+              // Update percentages
+              const percentages = calculatePercentages(
+                masukCount,
+                keluarCount,
+                notaDinasCount
+              );
+              const percentElement =
+                document.getElementById("percentNotaDinas");
+              if (percentElement) {
+                animateValueChange(percentElement, percentages.notaDinas + "%");
+              }
+
+              // Update progress bars
+              updateProgressBars(masukCount, keluarCount, notaDinasCount);
+
+              // Reload monitoring table
+              loadMonitoringTable();
+            },
+            (error) => {
+              console.error("❌ Error in Nota Dinas listener:", error);
             }
-            
-            // Update change indicator
-            const change = count - previousCounts.notaDinas;
-            const changeElement = document.getElementById("changeNotaDinas");
-            if (changeElement && previousCounts.notaDinas > 0) {
-              changeElement.textContent = change >= 0 ? `+${change}` : change;
-              changeElement.style.color = change >= 0 ? '#10b981' : '#ef4444';
-            }
-            previousCounts.notaDinas = count;
-            
-            console.log("📝 Nota Dinas:", count);
-            
-            // Update percentages
-            const percentages = calculatePercentages(masukCount, keluarCount, notaDinasCount);
-            const percentElement = document.getElementById('percentNotaDinas');
-            if (percentElement) {
-              animateValueChange(percentElement, percentages.notaDinas + '%');
-            }
-            
-            // Update progress bars
-            updateProgressBars(masukCount, keluarCount, notaDinasCount);
-            
-            // Reload monitoring table
-            loadMonitoringTable();
-          }, (error) => {
-            console.error("❌ Error in Nota Dinas listener:", error);
-          });
+          );
 
         // Load Arsip (deleted documents) - Real-time
         loadArsipCountRealtime();
@@ -482,26 +520,29 @@
       // ========================================
       function loadArsipCountRealtime() {
         let arsipCount = 0;
-        
+
         // Listen to all three collections for deleted items
-        db.collection("surat_masuk").where("isDeleted", "==", true)
+        db.collection("surat_masuk")
+          .where("isDeleted", "==", true)
           .onSnapshot((snapshot) => {
             arsipCount = snapshot.size;
             updateArsipDisplay();
           });
-          
-        db.collection("surat_keluar").where("isDeleted", "==", true)
+
+        db.collection("surat_keluar")
+          .where("isDeleted", "==", true)
           .onSnapshot((snapshot) => {
             arsipCount += snapshot.size;
             updateArsipDisplay();
           });
-          
-        db.collection("nota_dinas").where("isDeleted", "==", true)
+
+        db.collection("nota_dinas")
+          .where("isDeleted", "==", true)
           .onSnapshot((snapshot) => {
             arsipCount += snapshot.size;
             updateArsipDisplay();
           });
-          
+
         function updateArsipDisplay() {
           const element = document.getElementById("statArsip");
           if (element) {
@@ -517,13 +558,13 @@
       function loadMonitoringTable() {
         const tbody = document.getElementById("monitoringTableBody");
         const monthSelector = document.getElementById("monthSelector");
-        
+
         if (!tbody) return;
 
         tbody.innerHTML =
           '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">Loading...</td></tr>';
 
-        const selectedMonth = monthSelector ? monthSelector.value : 'all';
+        const selectedMonth = monthSelector ? monthSelector.value : "all";
 
         Promise.all([
           db.collection("surat_masuk").where("isDeleted", "==", false).get(),
@@ -571,9 +612,9 @@
 
             // Filter by month if selected
             let filteredSurat = allSurat;
-            if (selectedMonth !== 'all') {
+            if (selectedMonth !== "all") {
               const monthNum = parseInt(selectedMonth);
-              filteredSurat = allSurat.filter(surat => {
+              filteredSurat = allSurat.filter((surat) => {
                 return surat._createdAt.getMonth() === monthNum;
               });
             }
@@ -663,5 +704,5 @@
 
       console.log("✅ Dashboard initialization script loaded v3.0 - REALTIME");
     </script>
-    </body>
+  </body>
 </html>

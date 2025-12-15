@@ -384,7 +384,6 @@
       <!-- Main Content -->
       <div class="main-content">
         <div class="content-container" style="padding: 24px">
-          
           <!-- Table View -->
           <div id="tableView">
             <div class="page-header">
@@ -440,12 +439,12 @@
                 type="button"
                 class="btn btn-secondary"
                 onclick="backToTable()"
-                style="display: flex; align-items: center; gap: 8px;"
+                style="display: flex; align-items: center; gap: 8px"
               >
                 <i class="bi bi-arrow-left"></i> Kembali
               </button>
               <div class="breadcrumb-text">
-                <span style="color: #9ca3af;">Surat Masuk</span>
+                <span style="color: #9ca3af">Surat Masuk</span>
                 <span class="separator">/</span>
                 <span class="current">Preview</span>
               </div>
@@ -460,7 +459,9 @@
               <div class="file-preview-section">
                 <div class="file-preview-header">
                   <div class="file-preview-title">
-                    <span id="filePreviewTitle">Pengajuan Magang Mahasiswa Prodi Sistem Informasi</span>
+                    <span id="filePreviewTitle"
+                      >Pengajuan Magang Mahasiswa Prodi Sistem Informasi</span
+                    >
                   </div>
                   <div class="file-preview-actions">
                     <button type="button" onclick="zoomOut()" title="Zoom Out">
@@ -469,7 +470,11 @@
                     <button type="button" onclick="zoomIn()" title="Zoom In">
                       <i class="bi bi-zoom-in"></i>
                     </button>
-                    <button type="button" onclick="downloadFile()" title="Download">
+                    <button
+                      type="button"
+                      onclick="downloadFile()"
+                      title="Download"
+                    >
                       <i class="bi bi-download"></i>
                     </button>
                   </div>
@@ -489,7 +494,7 @@
                   </button>
                 </div>
               </div>
-              
+
               <div class="detail-item">
                 <div class="detail-label">Nomor Surat</div>
                 <div class="detail-value" id="previewNoSurat">-</div>
@@ -520,8 +525,19 @@
                 <div class="detail-value" id="previewCatatan">-</div>
               </div>
 
-              <div style="display: flex; gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 2px solid #e5e7eb;">
-                <button class="btn btn-success flex-fill" onclick="disposisiFromPreview()">
+              <div
+                style="
+                  display: flex;
+                  gap: 12px;
+                  margin-top: 24px;
+                  padding-top: 16px;
+                  border-top: 2px solid #e5e7eb;
+                "
+              >
+                <button
+                  class="btn btn-success flex-fill"
+                  onclick="disposisiFromPreview()"
+                >
                   <i class="bi bi-send"></i> Buat Disposisi
                 </button>
               </div>
@@ -536,12 +552,12 @@
                 type="button"
                 class="btn btn-secondary"
                 onclick="backToTable()"
-                style="display: flex; align-items: center; gap: 8px;"
+                style="display: flex; align-items: center; gap: 8px"
               >
                 <i class="bi bi-arrow-left"></i> Kembali
               </button>
               <div class="breadcrumb-text">
-                <span style="color: #9ca3af;">Surat Masuk</span>
+                <span style="color: #9ca3af">Surat Masuk</span>
                 <span class="separator">/</span>
                 <span class="current">Disposisi</span>
               </div>
@@ -553,50 +569,111 @@
               </div>
 
               <div class="mb-3">
-                <label class="form-label" style="font-weight: 600; color: #374151;">Perihal Surat:</label>
-                <p id="detailPerihal" style="color: #1f2937; background: #f3f4f6; padding: 10px; border-radius: 6px;">-</p>
+                <label
+                  class="form-label"
+                  style="font-weight: 600; color: #374151"
+                  >Perihal Surat:</label
+                >
+                <p
+                  id="detailPerihal"
+                  style="
+                    color: #1f2937;
+                    background: #f3f4f6;
+                    padding: 10px;
+                    border-radius: 6px;
+                  "
+                >
+                  -
+                </p>
               </div>
 
               <div class="mb-3">
                 <label class="form-label">
                   Penerima Disposisi <span class="text-danger">*</span>
-                  <span class="selected-badge" id="penerimaCount">0 dipilih</span>
+                  <span class="selected-badge" id="penerimaCount"
+                    >0 dipilih</span
+                  >
                 </label>
                 <div class="checkbox-group">
                   <div class="checkbox-item">
-                    <input type="checkbox" id="penerima1" name="penerima" value="Kabid Banglola Sisfohan">
+                    <input
+                      type="checkbox"
+                      id="penerima1"
+                      name="penerima"
+                      value="Kabid Banglola Sisfohan"
+                    />
                     <label for="penerima1">Kabid Banglola Sisfohan</label>
                   </div>
                   <div class="checkbox-item">
-                    <input type="checkbox" id="penerima2" name="penerima" value="Kasubbid Infosan">
+                    <input
+                      type="checkbox"
+                      id="penerima2"
+                      name="penerima"
+                      value="Kasubbid Infosan"
+                    />
                     <label for="penerima2">Kasubbid Infosan</label>
                   </div>
                   <div class="checkbox-item">
-                    <input type="checkbox" id="penerima3" name="penerima" value="Kasubbag TU">
+                    <input
+                      type="checkbox"
+                      id="penerima3"
+                      name="penerima"
+                      value="Kasubbag TU"
+                    />
                     <label for="penerima3">Kasubbag TU</label>
                   </div>
                   <div class="checkbox-item">
-                    <input type="checkbox" id="penerima4" name="penerima" value="Kasubbag MSI">
+                    <input
+                      type="checkbox"
+                      id="penerima4"
+                      name="penerima"
+                      value="Kasubbag MSI"
+                    />
                     <label for="penerima4">Kasubbag MSI</label>
                   </div>
                   <div class="checkbox-item">
-                    <input type="checkbox" id="penerima5" name="penerima" value="Kasubbid Data">
+                    <input
+                      type="checkbox"
+                      id="penerima5"
+                      name="penerima"
+                      value="Kasubbid Data"
+                    />
                     <label for="penerima5">Kasubbid Data</label>
                   </div>
                   <div class="checkbox-item">
-                    <input type="checkbox" id="penerima6" name="penerima" value="Kabid Informasi">
+                    <input
+                      type="checkbox"
+                      id="penerima6"
+                      name="penerima"
+                      value="Kabid Informasi"
+                    />
                     <label for="penerima6">Kabid Informasi</label>
                   </div>
                   <div class="checkbox-item">
-                    <input type="checkbox" id="penerima7" name="penerima" value="Kasubbag Keuangan">
+                    <input
+                      type="checkbox"
+                      id="penerima7"
+                      name="penerima"
+                      value="Kasubbag Keuangan"
+                    />
                     <label for="penerima7">Kasubbag Keuangan</label>
                   </div>
                   <div class="checkbox-item">
-                    <input type="checkbox" id="penerima8" name="penerima" value="Kasubbid Perencanaan">
+                    <input
+                      type="checkbox"
+                      id="penerima8"
+                      name="penerima"
+                      value="Kasubbid Perencanaan"
+                    />
                     <label for="penerima8">Kasubbid Perencanaan</label>
                   </div>
                   <div class="checkbox-item">
-                    <input type="checkbox" id="penerima9" name="penerima" value="Staf Administrasi">
+                    <input
+                      type="checkbox"
+                      id="penerima9"
+                      name="penerima"
+                      value="Staf Administrasi"
+                    />
                     <label for="penerima9">Staf Administrasi</label>
                   </div>
                 </div>
@@ -605,43 +682,90 @@
               <div class="mb-3">
                 <label class="form-label">
                   Petunjuk Disposisi <span class="text-danger">*</span>
-                  <span class="selected-badge" id="petunjukCount">0 dipilih</span>
+                  <span class="selected-badge" id="petunjukCount"
+                    >0 dipilih</span
+                  >
                 </label>
                 <div class="checkbox-group">
                   <div class="checkbox-item">
-                    <input type="checkbox" id="petunjuk1" name="petunjuk" value="ACC">
+                    <input
+                      type="checkbox"
+                      id="petunjuk1"
+                      name="petunjuk"
+                      value="ACC"
+                    />
                     <label for="petunjuk1">ACC</label>
                   </div>
                   <div class="checkbox-item">
-                    <input type="checkbox" id="petunjuk2" name="petunjuk" value="Sesuaikan">
+                    <input
+                      type="checkbox"
+                      id="petunjuk2"
+                      name="petunjuk"
+                      value="Sesuaikan"
+                    />
                     <label for="petunjuk2">Sesuaikan</label>
                   </div>
                   <div class="checkbox-item">
-                    <input type="checkbox" id="petunjuk3" name="petunjuk" value="Tindaklanjuti">
+                    <input
+                      type="checkbox"
+                      id="petunjuk3"
+                      name="petunjuk"
+                      value="Tindaklanjuti"
+                    />
                     <label for="petunjuk3">Tindaklanjuti</label>
                   </div>
                   <div class="checkbox-item">
-                    <input type="checkbox" id="petunjuk4" name="petunjuk" value="Untuk Diketahui">
+                    <input
+                      type="checkbox"
+                      id="petunjuk4"
+                      name="petunjuk"
+                      value="Untuk Diketahui"
+                    />
                     <label for="petunjuk4">Untuk Diketahui</label>
                   </div>
                   <div class="checkbox-item">
-                    <input type="checkbox" id="petunjuk5" name="petunjuk" value="Koordinasikan">
+                    <input
+                      type="checkbox"
+                      id="petunjuk5"
+                      name="petunjuk"
+                      value="Koordinasikan"
+                    />
                     <label for="petunjuk5">Koordinasikan</label>
                   </div>
                   <div class="checkbox-item">
-                    <input type="checkbox" id="petunjuk6" name="petunjuk" value="Segera">
+                    <input
+                      type="checkbox"
+                      id="petunjuk6"
+                      name="petunjuk"
+                      value="Segera"
+                    />
                     <label for="petunjuk6">Segera</label>
                   </div>
                   <div class="checkbox-item">
-                    <input type="checkbox" id="petunjuk7" name="petunjuk" value="Pelajari dan Beri Saran">
+                    <input
+                      type="checkbox"
+                      id="petunjuk7"
+                      name="petunjuk"
+                      value="Pelajari dan Beri Saran"
+                    />
                     <label for="petunjuk7">Pelajari dan Beri Saran</label>
                   </div>
                   <div class="checkbox-item">
-                    <input type="checkbox" id="petunjuk8" name="petunjuk" value="Ingatkan">
+                    <input
+                      type="checkbox"
+                      id="petunjuk8"
+                      name="petunjuk"
+                      value="Ingatkan"
+                    />
                     <label for="petunjuk8">Ingatkan</label>
                   </div>
                   <div class="checkbox-item">
-                    <input type="checkbox" id="petunjuk9" name="petunjuk" value="Arsipkan">
+                    <input
+                      type="checkbox"
+                      id="petunjuk9"
+                      name="petunjuk"
+                      value="Arsipkan"
+                    />
                     <label for="petunjuk9">Arsipkan</label>
                   </div>
                 </div>
@@ -675,7 +799,6 @@
               </button>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -691,6 +814,11 @@
     <script src="assets/js/main.js"></script>
 
     <script>
+      // ==========================================
+      // FIXED DISPOSISI SUBMISSION
+      // Surat Masuk Kapus → Submit Disposisi
+      // ==========================================
+
       let currentUserData = null;
       let currentSuratId = null;
       let unsubscribeSuratMasuk = null;
@@ -701,8 +829,6 @@
           currentUserData = userData;
           document.getElementById("sidebarUserName").textContent =
             userData.nama || "Kapus";
-
-          // Setup real-time listener
           setupRealtimeListener();
         })
         .catch((error) => {
@@ -755,45 +881,44 @@
 
         if (suratKapus.length === 0) {
           tbody.innerHTML = `
-          <tr>
-            <td colspan="7" style="text-align: center; padding: 40px; color: #9ca3af;">
-              Tidak ada surat yang perlu ditindaklanjuti
-            </td>
-          </tr>
-        `;
+      <tr>
+        <td colspan="7" style="text-align: center; padding: 40px; color: #9ca3af;">
+          Tidak ada surat yang perlu ditindaklanjuti
+        </td>
+      </tr>
+    `;
           return;
         }
 
         tbody.innerHTML = suratKapus
           .map(
             (surat, index) => `
-        <tr>
-          <td style="text-align: center;">${index + 1}</td>
-          <td>${surat.noSurat || "-"}</td>
-          <td>${surat.perihal || "-"}</td>
-          <td>${surat.dari || surat.namaPengirim || "-"}</td>
-          <td>
-            <span class="badge-status badge-tinggi">Tinggi</span>
-          </td>
-          <td>
-            <span class="badge-status badge-menunggu">Menunggu</span>
-          </td>
-          <td style="text-align: center;">
-            <button class="btn-preview" onclick="previewSurat('${surat.id}')">
-              <i class="bi bi-eye"></i> Preview
-            </button>
-            <button class="btn-disposisi-cepat" onclick="buatDisposisiCepat('${surat.id}')">
-              <i class="bi bi-send"></i> Disposisi
-            </button>
-          </td>
-        </tr>
-      `
+    <tr>
+      <td style="text-align: center;">${index + 1}</td>
+      <td>${surat.noSurat || "-"}</td>
+      <td>${surat.perihal || "-"}</td>
+      <td>${surat.dari || surat.namaPengirim || "-"}</td>
+      <td>
+        <span class="badge-status badge-tinggi">Tinggi</span>
+      </td>
+      <td>
+        <span class="badge-status badge-menunggu">Menunggu</span>
+      </td>
+      <td style="text-align: center;">
+        <button class="btn-preview" onclick="previewSurat('${surat.id}')">
+          <i class="bi bi-eye"></i> Preview
+        </button>
+        <button class="btn-disposisi-cepat" onclick="buatDisposisiCepat('${
+          surat.id
+        }')">
+          <i class="bi bi-send"></i> Disposisi
+        </button>
+      </td>
+    </tr>
+  `
           )
           .join("");
       }
-
-      let currentFileURL = null;
-      let currentZoom = 100;
 
       // Preview Surat
       window.previewSurat = function (suratId) {
@@ -808,104 +933,24 @@
 
             const surat = doc.data();
             currentSuratId = suratId;
-            currentFileURL = surat.fileURL || null;
-            currentZoom = 100;
 
-            // Update detail fields
-            document.getElementById("previewNoSurat").textContent = surat.noSurat || "-";
-            document.getElementById("previewPerihal").textContent = surat.perihal || "-";
-            document.getElementById("previewPengirim").textContent = surat.dari || surat.namaPengirim || "-";
-            document.getElementById("previewTanggalSurat").textContent = surat.tanggalSurat || "-";
-            document.getElementById("previewTanggalDiterima").textContent = surat.tanggalDiterima || "-";
-            document.getElementById("previewCatatan").textContent = surat.catatan || "-";
+            document.getElementById("previewNoSurat").textContent =
+              surat.noSurat || "-";
+            document.getElementById("previewPerihal").textContent =
+              surat.perihal || "-";
+            document.getElementById("previewPengirim").textContent =
+              surat.dari || surat.namaPengirim || "-";
+            document.getElementById("previewTanggalSurat").textContent =
+              surat.tanggalSurat || "-";
+            document.getElementById("previewTanggalDiterima").textContent =
+              surat.tanggalDiterima || "-";
+            document.getElementById("previewCatatan").textContent =
+              surat.catatan || "-";
 
-            // Update file preview title
-            document.getElementById("filePreviewTitle").textContent = surat.perihal || "Dokumen Surat";
-
-            // Handle file preview
-            const filePreviewContent = document.getElementById("filePreviewContent");
-
-            if (surat.fileURL) {
-              const fileExtension = surat.fileName ? surat.fileName.split('.').pop().toLowerCase() : '';
-              
-              if (fileExtension === 'pdf' || surat.fileURL.includes('.pdf')) {
-                filePreviewContent.innerHTML = `
-                  <iframe src="${surat.fileURL}#zoom=${currentZoom}" type="application/pdf"></iframe>
-                `;
-              } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
-                filePreviewContent.innerHTML = `
-                  <img src="${surat.fileURL}" id="previewImage" alt="Preview">
-                `;
-              } else {
-                filePreviewContent.innerHTML = `
-                  <div class="no-file">
-                    <i class="bi bi-file-earmark"></i>
-                    <p>File tidak dapat ditampilkan</p>
-                    <a href="${surat.fileURL}" target="_blank" class="btn btn-sm btn-primary mt-2">
-                      <i class="bi bi-download"></i> Download File
-                    </a>
-                  </div>
-                `;
-              }
-            } else {
-              filePreviewContent.innerHTML = `
-                <div class="no-file">
-                  <i class="bi bi-file-earmark"></i>
-                  <p>Tidak ada file yang dilampirkan</p>
-                </div>
-              `;
-            }
-
-            // Switch to preview view
             document.getElementById("tableView").style.display = "none";
             document.getElementById("disposisiView").classList.remove("active");
             document.getElementById("previewView").classList.add("active");
           });
-      };
-
-      // Zoom In
-      window.zoomIn = function() {
-        if (currentZoom < 200) {
-          currentZoom += 10;
-          updateZoom();
-        }
-      };
-
-      // Zoom Out
-      window.zoomOut = function() {
-        if (currentZoom > 50) {
-          currentZoom -= 10;
-          updateZoom();
-        }
-      };
-
-      // Update Zoom
-      function updateZoom() {
-        const img = document.getElementById('previewImage');
-        if (img) {
-          img.style.transform = `scale(${currentZoom / 100})`;
-        }
-        const iframe = document.querySelector('.file-preview-content iframe');
-        if (iframe && currentFileURL) {
-          iframe.src = `${currentFileURL}#zoom=${currentZoom}`;
-        }
-      }
-
-      // Download File
-      window.downloadFile = function() {
-        if (currentFileURL) {
-          window.open(currentFileURL, '_blank');
-        } else {
-          Swal.fire("Info", "Tidak ada file untuk didownload", "info");
-        }
-      };
-
-      // Disposisi from Preview
-      window.disposisiFromPreview = function() {
-        if (currentSuratId) {
-          document.getElementById("previewView").classList.remove("active");
-          buatDisposisiCepat(currentSuratId);
-        }
       };
 
       // Show Disposisi View
@@ -918,13 +963,17 @@
           .then((doc) => {
             if (doc.exists) {
               const surat = doc.data();
-              
-              // Fill only perihal in form
-              document.getElementById("detailPerihal").textContent = surat.perihal || "-";
+
+              document.getElementById("detailPerihal").textContent =
+                surat.perihal || "-";
 
               // Reset form
-              document.querySelectorAll('input[name="penerima"]').forEach(cb => cb.checked = false);
-              document.querySelectorAll('input[name="petunjuk"]').forEach(cb => cb.checked = false);
+              document
+                .querySelectorAll('input[name="penerima"]')
+                .forEach((cb) => (cb.checked = false));
+              document
+                .querySelectorAll('input[name="petunjuk"]')
+                .forEach((cb) => (cb.checked = false));
               document.getElementById("disposisiInstruksi").value = "";
               document.getElementById("disposisiPrioritas").value = "Normal";
               updatePenerimaCount();
@@ -939,7 +988,7 @@
       };
 
       // Back to table
-      window.backToTable = function() {
+      window.backToTable = function () {
         document.getElementById("tableView").style.display = "block";
         document.getElementById("disposisiView").classList.remove("active");
         document.getElementById("previewView").classList.remove("active");
@@ -947,35 +996,62 @@
       };
 
       // Update checkbox counters
-      document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('input[name="penerima"]').forEach(checkbox => {
-          checkbox.addEventListener('change', updatePenerimaCount);
-        });
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .querySelectorAll('input[name="penerima"]')
+          .forEach((checkbox) => {
+            checkbox.addEventListener("change", updatePenerimaCount);
+          });
 
-        document.querySelectorAll('input[name="petunjuk"]').forEach(checkbox => {
-          checkbox.addEventListener('change', updatePetunjukCount);
-        });
+        document
+          .querySelectorAll('input[name="petunjuk"]')
+          .forEach((checkbox) => {
+            checkbox.addEventListener("change", updatePetunjukCount);
+          });
       });
 
       function updatePenerimaCount() {
-        const checked = document.querySelectorAll('input[name="penerima"]:checked').length;
-        document.getElementById('penerimaCount').textContent = checked + ' dipilih';
+        const checked = document.querySelectorAll(
+          'input[name="penerima"]:checked'
+        ).length;
+        document.getElementById("penerimaCount").textContent =
+          checked + " dipilih";
       }
 
       function updatePetunjukCount() {
-        const checked = document.querySelectorAll('input[name="petunjuk"]:checked').length;
-        document.getElementById('petunjukCount').textContent = checked + ' dipilih';
+        const checked = document.querySelectorAll(
+          'input[name="petunjuk"]:checked'
+        ).length;
+        document.getElementById("petunjukCount").textContent =
+          checked + " dipilih";
       }
 
-      // Submit Disposisi
+      // ==========================================
+      // FIXED: Submit Disposisi
+      // ==========================================
       window.submitDisposisiCepat = function () {
-        const penerima = Array.from(document.querySelectorAll('input[name="penerima"]:checked'))
-          .map(cb => cb.value);
-        const petunjuk = Array.from(document.querySelectorAll('input[name="petunjuk"]:checked'))
-          .map(cb => cb.value);
-        const instruksi = document.getElementById("disposisiInstruksi").value;
+        console.log("📤 Submit Disposisi clicked");
+
+        // Get form data
+        const penerima = Array.from(
+          document.querySelectorAll('input[name="penerima"]:checked')
+        ).map((cb) => cb.value);
+        const petunjuk = Array.from(
+          document.querySelectorAll('input[name="petunjuk"]:checked')
+        ).map((cb) => cb.value);
+        const instruksi = document
+          .getElementById("disposisiInstruksi")
+          .value.trim();
         const prioritas = document.getElementById("disposisiPrioritas").value;
 
+        console.log("📋 Form data:", {
+          penerima,
+          petunjuk,
+          instruksi,
+          prioritas,
+        });
+
+        // Validation
         if (penerima.length === 0) {
           Swal.fire("Error", "Pilih minimal 1 penerima disposisi!", "error");
           return;
@@ -986,6 +1062,25 @@
           return;
         }
 
+        if (!currentSuratId) {
+          Swal.fire("Error", "Surat tidak ditemukan!", "error");
+          return;
+        }
+
+        console.log("✅ Validation passed, submitting to Firebase...");
+
+        // Show loading
+        Swal.fire({
+          title: "Mengirim Disposisi...",
+          html: "Mohon tunggu sebentar",
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
+        // FIX: Create disposisi object with ISO timestamp
+        const now = new Date();
         const disposisi = {
           kepada: penerima.join(", "),
           judul: petunjuk.join(", "),
@@ -993,9 +1088,12 @@
           prioritas: prioritas,
           dari: currentUserData.nama,
           jabatanDari: "Kepala Pusat",
-          tanggal: firebase.firestore.FieldValue.serverTimestamp(),
+          tanggal: now.toISOString(), // ISO string instead of serverTimestamp
           status: "Proses",
+          createdAt: now.toISOString(),
         };
+
+        console.log("📦 Disposisi object:", disposisi);
 
         // Update di Firestore
         db.collection("surat_masuk")
@@ -1003,23 +1101,61 @@
           .update({
             status: "Selesai - Sudah Didisposisi",
             processedBy: currentUserData.nama,
+            processedByEmail: currentUserData.email || "",
             processedAt: firebase.firestore.FieldValue.serverTimestamp(),
             disposisi: firebase.firestore.FieldValue.arrayUnion(disposisi),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
           })
           .then(() => {
+            console.log("✅ Disposisi saved successfully");
+
             Swal.fire({
               icon: "success",
               title: "Disposisi Berhasil Dikirim!",
-              text: `Disposisi telah dikirim ke ${penerima.join(", ")}`,
-              timer: 2000,
+              html: `
+          <div style="text-align: left; padding: 0 20px;">
+            <p style="margin-bottom: 12px;">Disposisi telah dikirim ke:</p>
+            <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+              <strong style="color: #1f2937;">${penerima.join(", ")}</strong>
+            </div>
+            <p style="font-size: 14px; color: #6b7280; margin: 0;">
+              <i class="bi bi-check-circle"></i> 
+              Surat akan muncul di Monitoring dengan status "Selesai - Sudah Didisposisi"
+            </p>
+          </div>
+        `,
+              confirmButtonText: "OK",
+              confirmButtonColor: "#10b981",
+              timer: 3000,
+              timerProgressBar: true,
+            }).then(() => {
+              backToTable();
             });
-
-            backToTable();
           })
           .catch((error) => {
-            console.error("Error:", error);
-            Swal.fire("Error", "Gagal mengirim disposisi", "error");
+            console.error("❌ Error saving disposisi:", error);
+
+            Swal.fire({
+              icon: "error",
+              title: "Gagal Mengirim Disposisi",
+              html: `
+          <p style="margin-bottom: 12px;">Terjadi kesalahan saat menyimpan disposisi</p>
+          <div style="background: #fef2f2; padding: 12px; border-radius: 8px;">
+            <code style="font-size: 13px; color: #991b1b;">${error.message}</code>
+          </div>
+        `,
+              confirmButtonText: "Tutup",
+              confirmButtonColor: "#dc2626",
+            });
           });
+      };
+
+      // Disposisi from Preview
+      window.disposisiFromPreview = function () {
+        if (currentSuratId) {
+          document.getElementById("previewView").classList.remove("active");
+          buatDisposisiCepat(currentSuratId);
+        }
       };
 
       // Logout handler
@@ -1047,68 +1183,45 @@
           unsubscribeSuratMasuk();
         }
       });
-      (function() {
-  console.log("🔍 Checking for auto-open parameters...");
-  
-  const urlParams = new URLSearchParams(window.location.search);
-  const disposisiId = urlParams.get('disposisi');
-  
-  if (disposisiId) {
-    console.log("✅ Auto-opening disposisi for:", disposisiId);
-    
-    // Wait for page to fully load
-    window.addEventListener('load', function() {
-      setTimeout(() => {
-        // Auto-trigger disposisi view
-        if (typeof buatDisposisiCepat === 'function') {
-          buatDisposisiCepat(disposisiId);
-          console.log("✅ Disposisi view opened automatically");
-        } else {
-          console.error("❌ buatDisposisiCepat function not found");
+
+      // Auto-open disposisi from URL parameter
+      (function () {
+        console.log("🔍 Checking for auto-open parameters...");
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const previewId = urlParams.get("preview");
+        const disposisiId = urlParams.get("disposisi");
+
+        if (previewId) {
+          console.log("✅ Auto-opening PREVIEW for:", previewId);
+
+          window.addEventListener("load", function () {
+            setTimeout(() => {
+              if (typeof previewSurat === "function") {
+                previewSurat(previewId);
+                console.log("✅ Preview opened automatically");
+              } else {
+                console.error("❌ previewSurat function not found");
+              }
+            }, 500);
+          });
+        } else if (disposisiId) {
+          console.log("✅ Auto-opening DISPOSISI for:", disposisiId);
+
+          window.addEventListener("load", function () {
+            setTimeout(() => {
+              if (typeof buatDisposisiCepat === "function") {
+                buatDisposisiCepat(disposisiId);
+                console.log("✅ Disposisi view opened automatically");
+              } else {
+                console.error("❌ buatDisposisiCepat function not found");
+              }
+            }, 500);
+          });
         }
-      }, 500);
-    });
-  }
-})();
-(function() {
-  console.log("🔍 Checking for auto-open parameters...");
-  
-  const urlParams = new URLSearchParams(window.location.search);
-  const previewId = urlParams.get('preview');
-  const disposisiId = urlParams.get('disposisi');
-  
-  if (previewId) {
-    console.log("✅ Auto-opening PREVIEW for:", previewId);
-    
-    // Wait for page to fully load
-    window.addEventListener('load', function() {
-      setTimeout(() => {
-        // Auto-trigger preview (read-only mode)
-        if (typeof previewSurat === 'function') {
-          previewSurat(previewId);
-          console.log("✅ Preview opened automatically");
-        } else {
-          console.error("❌ previewSurat function not found");
-        }
-      }, 500);
-    });
-  } else if (disposisiId) {
-    console.log("✅ Auto-opening DISPOSISI for:", disposisiId);
-    
-    // Wait for page to fully load
-    window.addEventListener('load', function() {
-      setTimeout(() => {
-        // Auto-trigger disposisi view
-        if (typeof buatDisposisiCepat === 'function') {
-          buatDisposisiCepat(disposisiId);
-          console.log("✅ Disposisi view opened automatically");
-        } else {
-          console.error("❌ buatDisposisiCepat function not found");
-        }
-      }, 500);
-    });
-  }
-})();
+      })();
+
+      console.log("✅ Surat Masuk Kapus script loaded - FIXED VERSION");
     </script>
   </body>
 </html>
