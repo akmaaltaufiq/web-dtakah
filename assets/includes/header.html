@@ -1,68 +1,80 @@
 <div class="content-header">
   <div class="header-left">
+    <!-- SIDEBAR TOGGLE BUTTON -->
+    <button
+      class="menu-toggle-btn"
+      id="sidebarToggleBtn"
+      title="Toggle Sidebar"
+    >
+      <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Logo -->
     <div class="logo-emblem-header">
-      <img
-        src="assets/img/logo_kemhan_ri.png"
-        alt="Logo Kemhan"
-        style="
-          width: 80px;
-          height: 80px;
-          margin: 0 auto 10px;
-          background-size: contain;
-          background-position: center;
-          background-repeat: no-repeat;
-        "
-      />
+      <img src="assets/img/logo_kemhan_ri.png" alt="Logo Kemhan" />
     </div>
+
+    <!-- Title -->
     <div class="header-title">
       Tata Naskah Digital Kementerian Pertahanan Republik Indonesia
     </div>
   </div>
+
   <div class="header-right">
-    <button class="header-btn" id="notificationBtn" title="Notifikasi">
-      <i class="bi bi-bell-fill"></i>
-      <span class="notification-badge" id="notificationCount">4</span>
-    </button>
+    <!-- Notification Button with Wrapper -->
+    <div style="position: relative">
+      <button class="header-btn" id="notificationBtn" title="Notifikasi">
+        <i class="bi bi-bell-fill"></i>
+        <span class="notification-badge" id="notificationCount"></span>
+      </button>
+
+      <!-- Notification Dropdown -->
+      <div class="notification-dropdown" id="notificationDropdown">
+        <div class="notification-header">
+          <h4>Notifikasi Terbaru (<span id="notifUnreadCount">0</span>)</h4>
+          <button class="mark-all-read" id="markAllRead">
+            Tandai Sudah Baca
+          </button>
+        </div>
+        <div class="notification-list" id="notifList">
+          <p style="text-align: center; color: #999; padding: 10px">
+            Memuat notifikasi...
+          </p>
+        </div>
+        <div class="notification-footer">
+          <a href="monitoring.html">Lihat Semua</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Language Selector -->
     <div class="language-selector-wrapper">
       <div class="language-selector" id="languageSelector">
         <img src="https://flagcdn.com/w40/id.png" alt="Indonesia" />
-        <span style="font-size: 14px; font-weight: 500">Indonesia</span>
-        <i class="bi bi-chevron-down" style="font-size: 12px"></i>
+        <span>Indonesia</span>
+        <i class="bi bi-chevron-down"></i>
       </div>
       <div class="language-dropdown" id="languageDropdown">
-        <a href="#" class="lang-item active">
+        <a href="#" class="lang-item active" data-lang="id">
           <img src="https://flagcdn.com/w40/id.png" alt="Indonesia" />
           <span>Indonesia</span>
         </a>
-        <a href="#" class="lang-item">
+        <a href="#" class="lang-item" data-lang="en">
           <img src="https://flagcdn.com/w40/us.png" alt="English" />
           <span>English</span>
         </a>
       </div>
     </div>
+
+    <!-- User Profile -->
     <div class="user-info" id="userProfileBtn">
       <div class="user-details">
-        <div class="user-details-name">Staff TU Puslapbinkunhan</div>
+        <div class="user-details-name" id="userNameDisplay">Admin</div>
         <div class="user-details-role">Admin</div>
       </div>
       <div class="user-avatar-header">
         <i class="bi bi-person-fill"></i>
       </div>
     </div>
-  </div>
-</div>
-
-<div class="notification-dropdown" id="notificationDropdown">
-  <div class="notification-header">
-    <h4>Notifikasi Terbaru (<span id="notifUnreadCount">0</span>)</h4>
-    <button class="mark-all-read" id="markAllRead">Tandai Sudah Baca</button>
-  </div>
-  <div class="notification-list" id="notifList">
-    <p style="text-align: center; color: #999; padding: 10px">
-      Memuat notifikasi...
-    </p>
-  </div>
-  <div class="notification-footer">
-    <a href="monitoring-surat.html">Lihat Semua</a>
   </div>
 </div>

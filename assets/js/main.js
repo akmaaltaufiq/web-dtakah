@@ -308,37 +308,116 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   window.attachHeaderEvents = function () {
+    console.log("🔧 Attaching header events...");
+
+    // Notification button
     const notifBtn = document.getElementById("notificationBtn");
-    if (notifBtn) {
-      notifBtn.addEventListener("click", toggleNotificationDropdown);
+    const notifDropdown = document.getElementById("notificationDropdown");
+
+    if (notifBtn && notifDropdown) {
+      // Remove existing listeners
+      const newNotifBtn = notifBtn.cloneNode(true);
+      notifBtn.parentNode.replaceChild(newNotifBtn, notifBtn);
+
+      newNotifBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Close language dropdown if open
+        const langDropdown = document.getElementById("languageDropdown");
+        if (langDropdown) {
+          langDropdown.classList.remove("active");
+        }
+
+        // Toggle notification dropdown
+        notifDropdown.classList.toggle("active");
+        console.log("🔔 Notification dropdown toggled");
+      });
+      console.log("✅ Notification button attached");
     }
 
+    // User profile button
     const userProfileBtn = document.getElementById("userProfileBtn");
     if (userProfileBtn) {
       userProfileBtn.addEventListener("click", () => {
         window.location.href = "pengaturan.html";
       });
+      console.log("✅ User profile button attached");
     }
 
+    // Language selector
     const langSelector = document.getElementById("languageSelector");
     const langDropdown = document.getElementById("languageDropdown");
 
-    if (langSelector) {
-      langSelector.addEventListener("click", (e) => {
+    if (langSelector && langDropdown) {
+      // Remove existing listeners
+      const newLangSelector = langSelector.cloneNode(true);
+      langSelector.parentNode.replaceChild(newLangSelector, langSelector);
+
+      newLangSelector.addEventListener("click", (e) => {
+        e.preventDefault();
         e.stopPropagation();
-        if (langDropdown) langDropdown.classList.toggle("active");
+
+        // Close notification dropdown if open
+        const notifDropdown = document.getElementById("notificationDropdown");
+        if (notifDropdown) {
+          notifDropdown.classList.remove("active");
+        }
+
+        // Toggle language dropdown
+        langDropdown.classList.toggle("active");
+        console.log("🌐 Language dropdown toggled");
       });
+
+      // Language item clicks
+      const langItems = langDropdown.querySelectorAll(".lang-item");
+      langItems.forEach((item) => {
+        item.addEventListener("click", (e) => {
+          e.preventDefault();
+
+          // Remove active from all
+          langItems.forEach((i) => i.classList.remove("active"));
+
+          // Add active to clicked
+          item.classList.add("active");
+
+          // Update selector text and flag
+          const flag = item.querySelector("img").src;
+          const text = item.querySelector("span").textContent;
+
+          const selectorFlag = newLangSelector.querySelector("img");
+          const selectorText = newLangSelector.querySelector("span");
+
+          if (selectorFlag) selectorFlag.src = flag;
+          if (selectorText) selectorText.textContent = text;
+
+          // Close dropdown
+          langDropdown.classList.remove("active");
+
+          console.log("🌐 Language changed to:", text);
+        });
+      });
+
+      console.log("✅ Language selector attached");
     }
 
-    document
-      .getElementById("markAllRead")
-      ?.addEventListener("click", markAllAsRead);
+    // Mark all read button
+    const markAllReadBtn = document.getElementById("markAllRead");
+    if (markAllReadBtn) {
+      markAllReadBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        markAllAsRead();
+      });
+    }
 
     // Close dropdowns on outside click
     document.addEventListener("click", (e) => {
       const notifDropdown = document.getElementById("notificationDropdown");
       const notifBtn = document.getElementById("notificationBtn");
+      const langDropdown = document.getElementById("languageDropdown");
+      const langSelector = document.getElementById("languageSelector");
 
+      // Close notification dropdown
       if (
         notifDropdown &&
         !notifDropdown.contains(e.target) &&
@@ -348,6 +427,7 @@ document.addEventListener("DOMContentLoaded", () => {
         notifDropdown.classList.remove("active");
       }
 
+      // Close language dropdown
       if (
         langDropdown &&
         !langDropdown.contains(e.target) &&
@@ -358,8 +438,132 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    // Load notifications
     loadNotifications();
+
+    console.log("✅ Header events attached");
   };
+
+  // =============================
+  // SIDEBAR TOGGLE FUNCTIONALITY
+  // =============================
+  window.toggleSidebar = function () {
+    console.log("🔄 Toggling sidebar...");
+
+    const sidebar = document.querySelector(".navigation-sidebar");
+    const mainContent = document.querySelector(".main-content");
+    const overlay = document.querySelector(".sidebar-overlay");
+
+    if (!sidebar || !mainContent) {
+      console.warn("⚠️ Sidebar or main content not found");
+      return;
+    }
+
+    // Toggle classes
+    sidebar.classList.toggle("hidden");
+    mainContent.classList.toggle("expanded");
+
+    // Mobile overlay
+    if (overlay) {
+      overlay.classList.toggle("active");
+    } else if (window.innerWidth <= 768) {
+      // Create overlay if mobile and doesn't exist
+      const newOverlay = document.createElement("div");
+      newOverlay.className = "sidebar-overlay active";
+      newOverlay.addEventListener("click", toggleSidebar);
+      document.body.appendChild(newOverlay);
+    }
+
+    // Save state to localStorage
+    const isHidden = sidebar.classList.contains("hidden");
+    localStorage.setItem("sidebarHidden", isHidden);
+
+    console.log(`📱 Sidebar ${isHidden ? "hidden" : "visible"}`);
+  };
+
+  window.initSidebarToggle = function () {
+    console.log("🔧 Initializing sidebar toggle...");
+
+    // Create overlay for mobile if needed
+    if (
+      window.innerWidth <= 768 &&
+      !document.querySelector(".sidebar-overlay")
+    ) {
+      const overlay = document.createElement("div");
+      overlay.className = "sidebar-overlay";
+      overlay.addEventListener("click", toggleSidebar);
+      document.body.appendChild(overlay);
+      console.log("✅ Mobile overlay created");
+    }
+
+    // Restore sidebar state from localStorage
+    const wasHidden = localStorage.getItem("sidebarHidden") === "true";
+    const sidebar = document.querySelector(".navigation-sidebar");
+    const mainContent = document.querySelector(".main-content");
+
+    if (wasHidden && sidebar && mainContent && window.innerWidth > 768) {
+      sidebar.classList.add("hidden");
+      mainContent.classList.add("expanded");
+      console.log("✅ Sidebar state restored: hidden");
+    }
+
+    // Attach click handler to toggle button
+    const toggleBtn = document.getElementById("sidebarToggleBtn");
+    if (toggleBtn) {
+      // Remove existing listeners
+      const newToggleBtn = toggleBtn.cloneNode(true);
+      toggleBtn.parentNode.replaceChild(newToggleBtn, toggleBtn);
+
+      // Add new listener
+      newToggleBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        toggleSidebar();
+      });
+      console.log("✅ Sidebar toggle button attached");
+    } else {
+      console.warn("⚠️ Sidebar toggle button not found");
+    }
+
+    console.log("✅ Sidebar toggle initialized");
+  };
+
+  // Handle window resize
+  window.addEventListener("resize", () => {
+    const sidebar = document.querySelector(".navigation-sidebar");
+    const mainContent = document.querySelector(".main-content");
+    const overlay = document.querySelector(".sidebar-overlay");
+
+    // Reset pada desktop
+    if (window.innerWidth > 768) {
+      // Remove mobile overlay
+      if (overlay) {
+        overlay.remove();
+      }
+
+      // Restore saved state on desktop
+      const wasHidden = localStorage.getItem("sidebarHidden") === "true";
+      if (wasHidden) {
+        sidebar?.classList.add("hidden");
+        mainContent?.classList.add("expanded");
+      } else {
+        sidebar?.classList.remove("hidden");
+        mainContent?.classList.remove("expanded");
+      }
+    } else {
+      // Mobile: ensure overlay exists
+      if (!document.querySelector(".sidebar-overlay")) {
+        const newOverlay = document.createElement("div");
+        newOverlay.className = "sidebar-overlay";
+        newOverlay.addEventListener("click", toggleSidebar);
+        document.body.appendChild(newOverlay);
+      }
+
+      // Mobile: sidebar default hidden
+      if (sidebar && !sidebar.classList.contains("active")) {
+        mainContent?.classList.remove("expanded");
+      }
+    }
+  });
 
   // =============================
   // SIDEBAR & MENU HIGHLIGHTING
@@ -460,7 +664,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // =============================
-    // LOGOUT HANDLER - FIXED VERSION
+    // LOGOUT HANDLER
     // =============================
     let logoutLink =
       document.getElementById("logoutLink") ||
@@ -494,7 +698,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (result.isConfirmed) {
               console.log("✅ User confirmed logout");
 
-              // PAKSA CLEAR DULU
+              // Clear storage
               sessionStorage.clear();
               localStorage.clear();
 
@@ -531,64 +735,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       console.warn("⚠️ Logout button NOT found");
     }
-  };
 
-  // =============================
-  // LEGACY LOGOUT DIALOG (BACKUP)
-  // =============================
-  window.showLogoutDialog = function () {
-    console.log("🔓 Showing logout dialog (legacy)...");
-
-    if (!window.Swal) {
-      console.error("❌ SweetAlert2 not loaded!");
-      if (confirm("Yakin ingin logout?")) {
-        sessionStorage.clear();
-        localStorage.clear();
-        window.location.replace("login.html?logout=true");
-      }
-      return;
-    }
-
-    Swal.fire({
-      title: "Yakin ingin logout?",
-      text: "Anda akan keluar dari sesi saat ini.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Ya, logout",
-      cancelButtonText: "Batal",
-      reverseButtons: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        console.log("✅ User confirmed logout");
-        sessionStorage.clear();
-        localStorage.clear();
-
-        if (window.auth) {
-          auth
-            .signOut()
-            .then(() => {
-              Swal.fire({
-                title: "Logout berhasil",
-                text: "Anda akan diarahkan ke halaman login.",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 1500,
-              });
-
-              setTimeout(() => {
-                window.location.replace("login.html?logout=true");
-              }, 1600);
-            })
-            .catch(() => {
-              window.location.replace("login.html?logout=true");
-            });
-        } else {
-          window.location.replace("login.html?logout=true");
-        }
-      }
-    });
+    console.log("✅ Sidebar events attached");
   };
 
   // =============================
@@ -597,7 +745,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.loadIncludes = async function () {
     console.log("🔄 Loading includes...");
 
-    // Load sidebar
+    // Load sidebar - ALWAYS
     try {
       const sidebarResponse = await fetch("assets/includes/sidebar.html");
       const sidebarHtml = await sidebarResponse.text();
@@ -616,40 +764,38 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("❌ Error loading sidebar:", err);
     }
 
-    const isDashboard =
-      window.location.pathname.endsWith("index.html") ||
-      window.location.pathname.endsWith("dashboard") ||
-      window.location.pathname.endsWith("/");
+    // Load header - UNTUK SEMUA HALAMAN
+    try {
+      const headerResponse = await fetch("assets/includes/header.html");
+      const headerHtml = await headerResponse.text();
+      const headerPlaceholder = document.getElementById("header-placeholder");
 
-    if (!isDashboard) {
-      // Load header
-      try {
-        const headerResponse = await fetch("assets/includes/header.html");
-        const headerHtml = await headerResponse.text();
-        const headerPlaceholder = document.getElementById("header-placeholder");
+      if (headerPlaceholder) {
+        headerPlaceholder.innerHTML = headerHtml;
+        attachHeaderEvents();
+        console.log("✅ Header loaded");
 
-        if (headerPlaceholder) {
-          headerPlaceholder.innerHTML = headerHtml;
-          attachHeaderEvents();
-          console.log("✅ Header loaded");
-        }
-      } catch (err) {
-        console.error("❌ Error loading header:", err);
+        // Initialize sidebar toggle after header loaded
+        setTimeout(() => {
+          initSidebarToggle();
+        }, 100);
       }
+    } catch (err) {
+      console.error("❌ Error loading header:", err);
+    }
 
-      // Load footer
-      try {
-        const footerResponse = await fetch("assets/includes/footer.html");
-        const footerHtml = await footerResponse.text();
-        const footerPlaceholder = document.getElementById("footer-placeholder");
+    // Load footer - UNTUK SEMUA HALAMAN
+    try {
+      const footerResponse = await fetch("assets/includes/footer.html");
+      const footerHtml = await footerResponse.text();
+      const footerPlaceholder = document.getElementById("footer-placeholder");
 
-        if (footerPlaceholder) {
-          footerPlaceholder.innerHTML = footerHtml;
-          console.log("✅ Footer loaded");
-        }
-      } catch (err) {
-        console.error("❌ Error loading footer:", err);
+      if (footerPlaceholder) {
+        footerPlaceholder.innerHTML = footerHtml;
+        console.log("✅ Footer loaded");
       }
+    } catch (err) {
+      console.error("❌ Error loading footer:", err);
     }
 
     // Trigger page-specific initialization
@@ -687,7 +833,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const file = event.target.files[0];
     console.log("File object:", file);
 
-    // Cari semua elemen yang dibutuhkan
     const uploadArea = document.getElementById("uploadArea");
     const uploadContent = document.getElementById("uploadContent");
     const fileInfoDisplay = document.getElementById("fileInfoDisplay");
@@ -696,7 +841,6 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Upload Content found:", uploadContent);
     console.log("File Info Display found:", fileInfoDisplay);
 
-    // Jika tidak ada file, reset
     if (!file) {
       console.log("No file selected, resetting...");
       if (uploadArea) uploadArea.classList.remove("has-file");
@@ -713,7 +857,6 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("File type:", file.type);
     console.log("File size:", file.size);
 
-    // Validasi tipe file
     const allowedTypes = [
       "application/pdf",
       "application/msword",
@@ -731,7 +874,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Validasi ukuran (50MB)
     const maxSize = 50 * 1024 * 1024;
     if (file.size > maxSize) {
       alert("❌ Ukuran file terlalu besar!\n\nMaksimal: 50MB");
@@ -739,11 +881,9 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Simpan file
     window.uploadedFile = file;
     console.log("File saved to window.uploadedFile");
 
-    // Tentukan icon dan warna
     let iconClass = "bi-file-earmark-text-fill";
     let iconColor = "#6b7280";
 
@@ -758,10 +898,8 @@ document.addEventListener("DOMContentLoaded", () => {
       iconColor = "#10b981";
     }
 
-    // Hitung ukuran
     const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
 
-    // Escape nama file untuk keamanan
     const safeName = file.name
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
@@ -771,7 +909,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log("Creating file display card...");
 
-    // Buat HTML untuk display
     const fileCardHTML = `
     <div class="file-display-card">
       <div class="file-display-icon" style="background-color: ${iconColor}20;">
@@ -788,7 +925,6 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
   `;
 
-    // Update tampilan - LANGKAH DEMI LANGKAH
     console.log("Step 1: Hide upload content");
     if (uploadContent) {
       uploadContent.style.display = "none";
@@ -821,47 +957,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const uploadContent = document.getElementById("uploadContent");
     const fileInfoDisplay = document.getElementById("fileInfoDisplay");
 
-    // Reset input
     if (fileInput) {
       fileInput.value = "";
       console.log("✓ Input cleared");
     }
 
-    // Hide file display
     if (fileInfoDisplay) {
       fileInfoDisplay.innerHTML = "";
       fileInfoDisplay.style.display = "none";
       console.log("✓ File display hidden");
     }
 
-    // Show upload content
     if (uploadContent) {
       uploadContent.style.display = "flex";
       console.log("✓ Upload content shown");
     }
 
-    // Remove class
     if (uploadArea) {
       uploadArea.classList.remove("has-file");
       console.log("✓ has-file class removed");
     }
 
-    // Clear global variable
     window.uploadedFile = null;
     console.log("✓ Global variable cleared");
 
     console.log("=== FILE REMOVED ===");
   };
-
-  // Auto-attach saat halaman dimuat
-  document.addEventListener("DOMContentLoaded", function () {
-    const fileInput = document.getElementById("fileInput");
-    if (fileInput) {
-      console.log("✅ File input found and handler attached");
-    } else {
-      console.warn("⚠️ File input NOT found on page load");
-    }
-  });
 
   // =============================
   // START INITIALIZATION
