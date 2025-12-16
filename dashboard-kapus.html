@@ -37,6 +37,21 @@
         font-size: 15px;
       }
 
+      /* ✅ ADDED: Clickable cards styling */
+      .stat-card {
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .stat-card:active {
+        transform: translateY(-2px);
+      }
+
       .action-card {
         background: white;
         border-radius: 10px;
@@ -237,12 +252,12 @@
 
       <!-- Main Content -->
       <div class="main-content">
-        <!-- ✅ FIXED: Consistent Header -->
+        <!-- Header -->
         <div id="header-placeholder"></div>
 
         <!-- Content Container -->
         <div class="content-container" style="padding: 24px">
-          <!-- ✅ FIXED: Welcome Header (Consistent with other pages) -->
+          <!-- Welcome Header -->
           <div class="kapus-welcome-header">
             <h1>Selamat Datang, <span id="kapusName">Kepala Pusat</span></h1>
             <p>Dashboard Persetujuan & Disposisi Surat</p>
@@ -250,7 +265,12 @@
 
           <!-- Stats Cards -->
           <div class="stats-cards">
-            <div class="stat-card blue">
+            <!-- ✅ ADDED: onclick handlers for navigation -->
+            <div
+              class="stat-card blue"
+              onclick="navigateTo('surat-masuk-kapus.html')"
+              title="Klik untuk melihat Surat Masuk"
+            >
               <div class="stat-card-content">
                 <div class="stat-card-title">Surat Masuk</div>
                 <div class="stat-card-value" id="statSuratMasuk">0</div>
@@ -260,7 +280,11 @@
                 <i class="bi bi-envelope-fill"></i>
               </div>
             </div>
-            <div class="stat-card red">
+            <div
+              class="stat-card red"
+              onclick="navigateTo('surat-keluar-kapus.html')"
+              title="Klik untuk melihat Surat Keluar"
+            >
               <div class="stat-card-content">
                 <div class="stat-card-title">Surat Keluar</div>
                 <div class="stat-card-value" id="statSuratKeluar">0</div>
@@ -270,7 +294,11 @@
                 <i class="bi bi-send-fill"></i>
               </div>
             </div>
-            <div class="stat-card light-blue">
+            <div
+              class="stat-card light-blue"
+              onclick="navigateTo('nota-dinas-kapus.html')"
+              title="Klik untuk melihat Nota Dinas"
+            >
               <div class="stat-card-content">
                 <div class="stat-card-title">Nota Dinas</div>
                 <div class="stat-card-value" id="statNotaDinas">0</div>
@@ -377,7 +405,7 @@
 
     <script>
       // ========================================
-      // ✅ DASHBOARD KAPUS - FIXED HEADER VERSION
+      // DASHBOARD KAPUS - ENHANCED VERSION
       // ========================================
 
       console.log("📄 Dashboard Kapus page loading...");
@@ -386,6 +414,14 @@
       let unsubscribeSuratMasuk = null;
       let unsubscribeSuratKeluar = null;
       let unsubscribeNotaDinas = null;
+
+      // ========================================
+      // ✅ ADDED: NAVIGATION FUNCTION
+      // ========================================
+      window.navigateTo = function (page) {
+        console.log("🔗 Navigating to:", page);
+        window.location.href = page;
+      };
 
       // ✅ CRITICAL: Define initializePage BEFORE main.js tries to call it
       window.initializePage = function () {

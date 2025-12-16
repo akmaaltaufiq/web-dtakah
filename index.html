@@ -14,6 +14,129 @@
     />
     <link rel="stylesheet" href="assets/css/style.css" />
     <link rel="stylesheet" href="assets/css/dashboard.css" />
+    <style>
+      /* ✅ Clickable cards styling */
+      .stat-card {
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .stat-card:active {
+        transform: translateY(-2px);
+      }
+
+      .circular-card {
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .circular-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+      }
+
+      /* ✅ Progress bar animations */
+      .progress-box {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .progress-box::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+
+      .progress-box.updating::before {
+        left: 100%;
+      }
+
+      /* ✅ Value update animation */
+      .stat-card-value.updating,
+      .progress-value.updating,
+      .circular-progress-text.updating {
+        animation: pulse 0.5s ease-in-out;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      /* ✅ IMPROVED: Compact Circular Progress Styling */
+      .circular-progress {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+      }
+
+      .circular-progress-ring {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+      }
+
+      .circular-progress-ring circle {
+        transition: stroke-dashoffset 0.6s ease;
+      }
+
+      .circular-progress-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+        font-weight: 700;
+        color: #1f2937;
+      }
+
+      /* ✅ Circular card improvements */
+      .circular-cards {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .circular-card {
+        flex: 1;
+        min-width: 200px;
+        max-width: 280px;
+        padding: 24px 20px;
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .circular-card-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 16px;
+        text-align: center;
+      }
+    </style>
   </head>
   <body>
     <div class="dashboard-overview">
@@ -22,14 +145,18 @@
 
       <!-- Main Content -->
       <div class="main-content">
-        <!-- Header Placeholder - SEKARANG PAKAI PLACEHOLDER -->
+        <!-- Header Placeholder -->
         <div id="header-placeholder"></div>
 
         <!-- Content Container -->
         <div class="content-container">
           <!-- Stats Cards -->
           <div class="stats-cards">
-            <div class="stat-card blue">
+            <div
+              class="stat-card blue"
+              onclick="navigateTo('surat-masuk.html')"
+              title="Klik untuk melihat Surat Masuk"
+            >
               <div class="stat-card-content">
                 <div class="stat-card-title">Surat Masuk</div>
                 <div class="stat-card-value" id="statSuratMasuk">0</div>
@@ -40,7 +167,11 @@
               </div>
             </div>
 
-            <div class="stat-card red">
+            <div
+              class="stat-card red"
+              onclick="navigateTo('surat-keluar.html')"
+              title="Klik untuk melihat Surat Keluar"
+            >
               <div class="stat-card-content">
                 <div class="stat-card-title">Surat Keluar</div>
                 <div class="stat-card-value" id="statSuratKeluar">0</div>
@@ -51,7 +182,11 @@
               </div>
             </div>
 
-            <div class="stat-card maroon">
+            <div
+              class="stat-card maroon"
+              onclick="navigateTo('arsip.html')"
+              title="Klik untuk melihat Arsip"
+            >
               <div class="stat-card-content">
                 <div class="stat-card-title">Arsip</div>
                 <div class="stat-card-value" id="statArsip">0</div>
@@ -61,7 +196,11 @@
               </div>
             </div>
 
-            <div class="stat-card light-blue">
+            <div
+              class="stat-card light-blue"
+              onclick="navigateTo('nota-dinas.html')"
+              title="Klik untuk melihat Nota Dinas"
+            >
               <div class="stat-card-content">
                 <div class="stat-card-title">Surat Nota Dinas</div>
                 <div class="stat-card-value" id="statNotaDinas">0</div>
@@ -83,21 +222,62 @@
                 <div class="progress-box blue-bg">
                   <div class="progress-label blue">Surat Sudah Diaksi</div>
                   <div class="progress-value" id="progressSudahDiaksi">0%</div>
+                  <div
+                    style="
+                      position: absolute;
+                      bottom: 0;
+                      left: 0;
+                      height: 4px;
+                      background: rgba(37, 99, 235, 0.3);
+                      width: 100%;
+                    "
+                  >
+                    <div
+                      id="progressBarSudah"
+                      style="
+                        height: 100%;
+                        background: #2563eb;
+                        width: 0%;
+                        transition: width 0.5s;
+                      "
+                    ></div>
+                  </div>
                 </div>
                 <div class="progress-box red-bg">
                   <div class="progress-label red">Surat Belum Diaksi</div>
                   <div class="progress-value red" id="progressBelumDiaksi">
                     0%
                   </div>
+                  <div
+                    style="
+                      position: absolute;
+                      bottom: 0;
+                      left: 0;
+                      height: 4px;
+                      background: rgba(220, 38, 38, 0.3);
+                      width: 100%;
+                    "
+                  >
+                    <div
+                      id="progressBarBelum"
+                      style="
+                        height: 100%;
+                        background: #dc2626;
+                        width: 0%;
+                        transition: width 0.5s;
+                      "
+                    ></div>
+                  </div>
                 </div>
               </div>
 
+              <!-- ✅ IMPROVED: Compact Circular Cards -->
               <div class="circular-cards">
                 <div class="circular-card blue">
                   <div class="circular-card-title">Surat Masuk</div>
                   <div class="circular-progress">
                     <div class="circular-progress-text" id="percentSuratMasuk">
-                      0%
+                      75%
                     </div>
                   </div>
                 </div>
@@ -105,7 +285,7 @@
                   <div class="circular-card-title">Surat Keluar</div>
                   <div class="circular-progress">
                     <div class="circular-progress-text" id="percentSuratKeluar">
-                      0%
+                      25%
                     </div>
                   </div>
                 </div>
@@ -113,7 +293,7 @@
                   <div class="circular-card-title">Surat Nota Dinas</div>
                   <div class="circular-progress">
                     <div class="circular-progress-text" id="percentNotaDinas">
-                      0%
+                      50%
                     </div>
                   </div>
                 </div>
@@ -181,19 +361,27 @@
     <script src="assets/js/main.js"></script>
     <script src="assets/js/database.js"></script>
 
-    <!-- Page Initialization -->
     <script>
-      console.log("📄 Dashboard Admin page loaded v3.0 - REALTIME");
+      console.log(
+        "📄 Dashboard Admin page loaded v6.0 - COMPACT CIRCULAR PROGRESS"
+      );
 
       let unsubscribeMasuk = null;
       let unsubscribeKeluar = null;
       let unsubscribeNotaDinas = null;
 
-      // Previous counts untuk menghitung perubahan
       let previousCounts = {
         masuk: 0,
         keluar: 0,
         notaDinas: 0,
+      };
+
+      // ========================================
+      // NAVIGATION FUNCTION
+      // ========================================
+      window.navigateTo = function (page) {
+        console.log("🔗 Navigating to:", page);
+        window.location.href = page;
       };
 
       // ========================================
@@ -202,32 +390,63 @@
       function initDashboard() {
         console.log("🚀 Initializing realtime dashboard...");
 
-        // Check authentication and role
         checkUserRole(["admin"])
           .then((userData) => {
             console.log("✅ Admin access granted:", userData);
 
-            // Display user info
             const userNameDisplay = document.getElementById("userNameDisplay");
             if (userNameDisplay) {
               userNameDisplay.textContent = userData.nama || userData.email;
             }
 
-            // Load includes (sidebar, footer)
             if (window.loadIncludes) {
               window.loadIncludes();
             }
 
-            // Load dashboard data with real-time listeners
-            loadDashboardStatsRealtime();
+            setTimeout(() => {
+              ensureSidebarDropdownWorks();
+            }, 500);
 
-            // Setup month selector
+            loadDashboardStatsRealtime();
             setupMonthSelector();
           })
           .catch((error) => {
             console.error("❌ Access denied:", error);
-            // User will be redirected by checkUserRole
           });
+      }
+
+      // ========================================
+      // FIX SIDEBAR DROPDOWN
+      // ========================================
+      function ensureSidebarDropdownWorks() {
+        console.log("🔧 Ensuring sidebar dropdown functionality...");
+
+        const dropdownToggles = document.querySelectorAll(
+          ".menu-dropdown-toggle"
+        );
+
+        dropdownToggles.forEach((toggle) => {
+          const newToggle = toggle.cloneNode(true);
+          toggle.parentNode.replaceChild(newToggle, toggle);
+
+          newToggle.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const menuItem = this.closest(".menu-dropdown");
+            const isOpen = menuItem.classList.contains("open");
+
+            document.querySelectorAll(".menu-dropdown").forEach((item) => {
+              if (item !== menuItem) {
+                item.classList.remove("open");
+              }
+            });
+
+            menuItem.classList.toggle("open");
+          });
+        });
+
+        console.log("✅ Sidebar dropdown functionality ensured");
       }
 
       // ========================================
@@ -236,7 +455,6 @@
       function setupMonthSelector() {
         const monthSelector = document.getElementById("monthSelector");
         if (monthSelector) {
-          // Set current month
           const currentMonth = new Date().getMonth();
           monthSelector.value = currentMonth;
 
@@ -282,7 +500,6 @@
       // UPDATE PROGRESS BARS
       // ========================================
       function updateProgressBars(masukCount, keluarCount, notaDinasCount) {
-        // Query untuk status yang sudah diaksi (Selesai atau Proses)
         Promise.all([
           db
             .collection("surat_masuk")
@@ -308,14 +525,84 @@
 
           const elemSudah = document.getElementById("progressSudahDiaksi");
           const elemBelum = document.getElementById("progressBelumDiaksi");
+          const barSudah = document.getElementById("progressBarSudah");
+          const barBelum = document.getElementById("progressBarBelum");
 
-          if (elemSudah) animateValueChange(elemSudah, percentSudah + "%");
-          if (elemBelum) animateValueChange(elemBelum, percentBelum + "%");
+          if (elemSudah) {
+            animateValueChange(elemSudah, percentSudah + "%");
+            elemSudah.parentElement.classList.add("updating");
+            setTimeout(() => {
+              elemSudah.parentElement.classList.remove("updating");
+            }, 500);
+          }
+
+          if (elemBelum) {
+            animateValueChange(elemBelum, percentBelum + "%");
+            elemBelum.parentElement.classList.add("updating");
+            setTimeout(() => {
+              elemBelum.parentElement.classList.remove("updating");
+            }, 500);
+          }
+
+          if (barSudah) {
+            barSudah.style.width = percentSudah + "%";
+          }
+          if (barBelum) {
+            barBelum.style.width = percentBelum + "%";
+          }
 
           console.log(
             `📊 Progress: ${percentSudah}% sudah diaksi, ${percentBelum}% belum diaksi`
           );
         });
+      }
+
+      // ========================================
+      // ✅ IMPROVED: UPDATE CIRCULAR PROGRESS (COMPACT)
+      // ========================================
+      function updateCircularProgress(masukCount, keluarCount, notaDinasCount) {
+        const percentages = calculatePercentages(
+          masukCount,
+          keluarCount,
+          notaDinasCount
+        );
+
+        // Circumference = 2 * PI * radius = 2 * 3.14159 * 54 = 339.3
+        const circumference = 339.3;
+
+        // Update Surat Masuk
+        const percentMasukEl = document.getElementById("percentSuratMasuk");
+        const circleMasuk = document.getElementById("circleSuratMasuk");
+        if (percentMasukEl && circleMasuk) {
+          animateValueChange(percentMasukEl, percentages.masuk + "%");
+          const offset =
+            circumference - (percentages.masuk / 100) * circumference;
+          circleMasuk.style.strokeDashoffset = offset;
+        }
+
+        // Update Surat Keluar
+        const percentKeluarEl = document.getElementById("percentSuratKeluar");
+        const circleKeluar = document.getElementById("circleSuratKeluar");
+        if (percentKeluarEl && circleKeluar) {
+          animateValueChange(percentKeluarEl, percentages.keluar + "%");
+          const offset =
+            circumference - (percentages.keluar / 100) * circumference;
+          circleKeluar.style.strokeDashoffset = offset;
+        }
+
+        // Update Nota Dinas
+        const percentNotaDinasEl = document.getElementById("percentNotaDinas");
+        const circleNotaDinas = document.getElementById("circleNotaDinas");
+        if (percentNotaDinasEl && circleNotaDinas) {
+          animateValueChange(percentNotaDinasEl, percentages.notaDinas + "%");
+          const offset =
+            circumference - (percentages.notaDinas / 100) * circumference;
+          circleNotaDinas.style.strokeDashoffset = offset;
+        }
+
+        console.log(
+          `🎯 Circular Progress: Masuk ${percentages.masuk}%, Keluar ${percentages.keluar}%, Nota Dinas ${percentages.notaDinas}%`
+        );
       }
 
       // ========================================
@@ -343,7 +630,6 @@
                 animateValueChange(element, count);
               }
 
-              // Update change indicator
               const change = count - previousCounts.masuk;
               const changeElement = document.getElementById("changeSuratMasuk");
               if (changeElement && previousCounts.masuk > 0) {
@@ -352,24 +638,8 @@
               }
               previousCounts.masuk = count;
 
-              console.log("📨 Surat Masuk:", count);
-
-              // Update percentages
-              const percentages = calculatePercentages(
-                masukCount,
-                keluarCount,
-                notaDinasCount
-              );
-              const percentElement =
-                document.getElementById("percentSuratMasuk");
-              if (percentElement) {
-                animateValueChange(percentElement, percentages.masuk + "%");
-              }
-
-              // Update progress bars
+              updateCircularProgress(masukCount, keluarCount, notaDinasCount);
               updateProgressBars(masukCount, keluarCount, notaDinasCount);
-
-              // Reload monitoring table
               loadMonitoringTable();
             },
             (error) => {
@@ -392,7 +662,6 @@
                 animateValueChange(element, count);
               }
 
-              // Update change indicator
               const change = count - previousCounts.keluar;
               const changeElement =
                 document.getElementById("changeSuratKeluar");
@@ -402,24 +671,8 @@
               }
               previousCounts.keluar = count;
 
-              console.log("📤 Surat Keluar:", count);
-
-              // Update percentages
-              const percentages = calculatePercentages(
-                masukCount,
-                keluarCount,
-                notaDinasCount
-              );
-              const percentElement =
-                document.getElementById("percentSuratKeluar");
-              if (percentElement) {
-                animateValueChange(percentElement, percentages.keluar + "%");
-              }
-
-              // Update progress bars
+              updateCircularProgress(masukCount, keluarCount, notaDinasCount);
               updateProgressBars(masukCount, keluarCount, notaDinasCount);
-
-              // Reload monitoring table
               loadMonitoringTable();
             },
             (error) => {
@@ -442,7 +695,6 @@
                 animateValueChange(element, count);
               }
 
-              // Update change indicator
               const change = count - previousCounts.notaDinas;
               const changeElement = document.getElementById("changeNotaDinas");
               if (changeElement && previousCounts.notaDinas > 0) {
@@ -451,24 +703,8 @@
               }
               previousCounts.notaDinas = count;
 
-              console.log("📝 Nota Dinas:", count);
-
-              // Update percentages
-              const percentages = calculatePercentages(
-                masukCount,
-                keluarCount,
-                notaDinasCount
-              );
-              const percentElement =
-                document.getElementById("percentNotaDinas");
-              if (percentElement) {
-                animateValueChange(percentElement, percentages.notaDinas + "%");
-              }
-
-              // Update progress bars
+              updateCircularProgress(masukCount, keluarCount, notaDinasCount);
               updateProgressBars(masukCount, keluarCount, notaDinasCount);
-
-              // Reload monitoring table
               loadMonitoringTable();
             },
             (error) => {
@@ -476,7 +712,6 @@
             }
           );
 
-        // Load Arsip (deleted documents) - Real-time
         loadArsipCountRealtime();
       }
 
@@ -486,7 +721,6 @@
       function loadArsipCountRealtime() {
         let arsipCount = 0;
 
-        // Listen to all three collections for deleted items
         db.collection("surat_masuk")
           .where("isDeleted", "==", true)
           .onSnapshot((snapshot) => {
@@ -513,7 +747,6 @@
           if (element) {
             animateValueChange(element, arsipCount);
           }
-          console.log("🗄️ Arsip:", arsipCount);
         }
       }
 
@@ -660,14 +893,13 @@
       // ========================================
       // START INITIALIZATION
       // ========================================
-      // Wait for auth.js to load
       if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", initDashboard);
       } else {
         initDashboard();
       }
 
-      console.log("✅ Dashboard initialization script loaded v3.0 - REALTIME");
+      console.log("✅ Dashboard v5.0 - SINGLE LARGE CIRCULAR PROGRESS RING");
     </script>
   </body>
 </html>
