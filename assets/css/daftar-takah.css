@@ -1,41 +1,51 @@
-/* Daftar Takah */
+/* =============================
+   DAFTAR TAKAH - REFACTORED CSS
+   Skala dikurangi ~25% untuk optimal di zoom 100%
+   ============================= */
+
+/* =============================
+   CONTAINER
+   ============================= */
 .takah-container {
   padding: 0;
 }
 
 .takah-title {
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 700;
   color: #202224;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
+/* =============================
+   FILTERS
+   ============================= */
 .takah-filters {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   align-items: center;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .filter-label {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 500;
   color: #495057;
 }
 
 .filter-select {
-  padding: 12px 40px 12px 16px;
+  padding: 9px 32px 9px 12px;
   border: 1px solid #dee2e6;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 6px;
+  font-size: 13px;
   background: white;
   cursor: pointer;
   appearance: none;
   color: #495057;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23495057' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 12px center;
-  min-width: 200px;
+  background-position: right 10px center;
+  min-width: 160px;
   transition: border-color 0.2s;
 }
 
@@ -46,14 +56,14 @@
 .filter-select:focus {
   outline: none;
   border-color: #86b7fe;
-  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
 }
 
 .search-group {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex: 1;
-  max-width: 500px;
+  max-width: 400px;
 }
 
 .search-input-wrapper {
@@ -63,31 +73,31 @@
 
 .search-input {
   width: 100%;
-  padding: 12px 15px;
+  padding: 9px 12px;
   border: 1px solid #dee2e6;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 6px;
+  font-size: 13px;
   background: white;
 }
 
 .search-input:focus {
   outline: none;
   border-color: #86b7fe;
-  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
 }
 
 .btn-search {
-  padding: 12px 28px;
+  padding: 9px 22px;
   background: #4285f4;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 6px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   transition: all 0.2s;
 }
 
@@ -96,17 +106,17 @@
 }
 
 .btn-print {
-  padding: 12px 24px;
+  padding: 9px 20px;
   background: #8b0000;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 6px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   transition: all 0.2s;
   margin-left: auto;
 }
@@ -115,16 +125,19 @@
   background: #6b0000;
 }
 
+/* =============================
+   CARD GRID
+   ============================= */
 .takah-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  margin-bottom: 32px;
+  gap: 18px;
+  margin-bottom: 24px;
 }
 
 .takah-card {
   background: white;
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
@@ -133,62 +146,62 @@
 }
 
 .takah-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: translateY(-4px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
 }
 
 .card-header {
   background: linear-gradient(135deg, #fffaeb 0%, #fef3c7 100%);
-  padding: 32px 24px;
+  padding: 24px 18px;
   text-align: center;
 }
 
 .card-number {
-  font-size: 35px;
+  font-size: 28px;
   font-weight: 700;
   color: #1a1a1a;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .card-title {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
   color: #202224;
   line-height: 1.4;
-  min-height: 75px;
+  min-height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .card-body {
-  padding: 24px;
+  padding: 18px;
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
 .card-description {
-  font-size: 16px;
+  font-size: 13px;
   color: #4285f4;
-  line-height: 1.6;
+  line-height: 1.5;
   margin-bottom: auto;
-  min-height: 60px;
+  min-height: 48px;
 }
 
 .card-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 20px;
-  padding-top: 20px;
+  margin-top: 15px;
+  padding-top: 15px;
   border-top: 1px solid #f0f0f0;
 }
 
 .badge {
-  padding: 6px 16px;
-  border-radius: 6px;
-  font-size: 13px;
+  padding: 5px 12px;
+  border-radius: 5px;
+  font-size: 12px;
   font-weight: 500;
 }
 
@@ -198,9 +211,9 @@
 }
 
 .year-badge {
-  padding: 6px 16px;
-  border-radius: 6px;
-  font-size: 15px;
+  padding: 5px 12px;
+  border-radius: 5px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -224,10 +237,12 @@
   color: #10b981;
 }
 
-/* Header */
+/* =============================
+   HEADER
+   ============================= */
 .content-header {
   background: #fff;
-  padding: 16px 24px;
+  padding: 12px 18px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: space-between;
@@ -238,41 +253,41 @@
 }
 
 .search-box {
-  width: 350px;
+  width: 280px;
   position: relative;
 }
 
 .search-box input {
   width: 100%;
-  padding: 10px 40px 10px 15px;
+  padding: 8px 32px 8px 12px;
   border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 6px;
+  font-size: 13px;
   background: #f5f6fa;
 }
 
 .search-box i {
   position: absolute;
-  right: 15px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: #999;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
 }
 
 .header-btn {
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border: none;
   background: transparent;
-  border-radius: 8px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -285,20 +300,20 @@
 }
 
 .header-btn i {
-  font-size: 20px;
+  font-size: 17px;
   color: #666;
 }
 
 .notification-badge {
   position: absolute;
-  top: -5px;
-  right: -5px;
+  top: -4px;
+  right: -4px;
   background: #e74c3c;
   color: #fff;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -308,19 +323,19 @@
 .user-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .user-avatar-header {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: #8b0000;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 15px;
 }
 
 .user-details {
@@ -328,41 +343,43 @@
 }
 
 .user-details-name {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #333;
 }
 
 .user-details-role {
-  font-size: 12px;
+  font-size: 11px;
   color: #666;
 }
 
-/* Footer */
+/* =============================
+   FOOTER
+   ============================= */
 .content-footer {
   background: #fff;
-  padding: 20px 24px;
+  padding: 15px 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 32px;
-  border-radius: 10px;
+  margin-top: 24px;
+  border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .content-footer p {
-  font-size: 12px;
+  font-size: 11px;
   color: #666;
   margin: 0;
 }
 
 .footer-links {
   display: flex;
-  gap: 16px;
+  gap: 12px;
 }
 
 .footer-links a {
-  font-size: 12px;
+  font-size: 11px;
   color: #666;
   text-decoration: none;
   transition: color 0.3s;
@@ -372,10 +389,12 @@
   color: #8b0000;
 }
 
-/* Scrollbar */
+/* =============================
+   SCROLLBAR
+   ============================= */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -384,18 +403,20 @@
 
 ::-webkit-scrollbar-thumb {
   background: #8b0000;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #600000;
 }
 
-/* Animations */
+/* =============================
+   ANIMATIONS
+   ============================= */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
   }
   to {
     opacity: 1;
@@ -427,34 +448,255 @@
   animation-delay: 0.3s;
 }
 
+/* =============================
+   RESPONSIVE - TABLET
+   ============================= */
 @media (max-width: 1200px) {
   .takah-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .search-box {
+    width: 240px;
+  }
 }
 
+@media (max-width: 1024px) {
+  .takah-title {
+    font-size: 22px;
+  }
+
+  .takah-filters {
+    flex-wrap: wrap;
+  }
+
+  .search-group {
+    max-width: 100%;
+  }
+}
+
+/* =============================
+   RESPONSIVE - MOBILE
+   ============================= */
 @media (max-width: 768px) {
   .takah-title {
-    font-size: 24px;
+    font-size: 20px;
+    margin-bottom: 20px;
   }
 
   .takah-filters {
     flex-direction: column;
     align-items: stretch;
+    gap: 10px;
+  }
+
+  .filter-label {
+    font-size: 12px;
   }
 
   .filter-select,
   .search-group {
     width: 100%;
     max-width: 100%;
+    min-width: 100%;
+  }
+
+  .search-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-search,
+  .btn-print {
+    width: 100%;
+    justify-content: center;
   }
 
   .takah-grid {
     grid-template-columns: 1fr;
+    gap: 15px;
   }
 
-  .btn-print {
+  .card-header {
+    padding: 20px 15px;
+  }
+
+  .card-number {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .card-title {
+    font-size: 14px;
+    min-height: 52px;
+  }
+
+  .card-body {
+    padding: 15px;
+  }
+
+  .card-description {
+    font-size: 12px;
+    min-height: 42px;
+  }
+
+  .card-footer {
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+
+  .badge,
+  .year-badge {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .content-header {
+    padding: 10px 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .search-box {
     width: 100%;
-    justify-content: center;
+    order: 3;
+  }
+
+  .header-right {
+    gap: 12px;
+  }
+
+  .header-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .header-btn i {
+    font-size: 15px;
+  }
+
+  .user-avatar-header {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .user-details-name {
+    font-size: 12px;
+  }
+
+  .user-details-role {
+    font-size: 10px;
+  }
+
+  .content-footer {
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 15px;
+    text-align: center;
+  }
+
+  .footer-links {
+    gap: 10px;
+  }
+}
+
+/* =============================
+   RESPONSIVE - SMALL MOBILE
+   ============================= */
+@media (max-width: 480px) {
+  .takah-title {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .takah-filters {
+    gap: 8px;
+  }
+
+  .filter-select,
+  .search-input,
+  .btn-search,
+  .btn-print {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  .card-number {
+    font-size: 22px;
+  }
+
+  .card-title {
+    font-size: 13px;
+    min-height: 48px;
+  }
+
+  .card-description {
+    font-size: 11px;
+    min-height: 38px;
+  }
+
+  .badge,
+  .year-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+
+  .user-info {
+    gap: 8px;
+  }
+
+  .header-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .header-btn i {
+    font-size: 14px;
+  }
+
+  .notification-badge {
+    width: 14px;
+    height: 14px;
+    font-size: 8px;
+  }
+}
+
+/* =============================
+   PRINT STYLES
+   ============================= */
+@media print {
+  .content-header,
+  .takah-filters,
+  .btn-print,
+  .btn-search {
+    display: none !important;
+  }
+
+  .takah-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .takah-card {
+    break-inside: avoid;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .takah-card:hover {
+    transform: none;
+  }
+
+  .card-header {
+    padding: 18px 15px;
+  }
+
+  .card-body {
+    padding: 15px;
+  }
+
+  .content-footer {
+    margin-top: 20px;
+    padding: 12px 15px;
   }
 }

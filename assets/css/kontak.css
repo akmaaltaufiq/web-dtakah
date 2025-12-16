@@ -1,14 +1,19 @@
-/* Kontak */
-/* ==================== HEADER ==================== */
+/* =============================
+   KONTAK - REFACTORED CSS
+   Skala dikurangi ~25% untuk optimal di zoom 100%
+   ============================= */
 
+/* =============================
+   HEADER
+   ============================= */
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .header-title {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
   color: #8b0000;
 }
@@ -16,17 +21,17 @@
 .header-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .header-btn {
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border: none;
   background: transparent;
   cursor: pointer;
-  font-size: 20px;
+  font-size: 17px;
   color: #666;
 }
 
@@ -36,33 +41,33 @@
   right: 0;
   background: #ff4444;
   color: white;
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 10px;
+  font-size: 9px;
+  padding: 2px 5px;
+  border-radius: 8px;
 }
 
 .user-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .user-details-name {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #000;
   text-align: right;
 }
 
 .user-details-role {
-  font-size: 12px;
+  font-size: 11px;
   color: #888;
   text-align: right;
 }
 
 .user-avatar-header {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: #e8e8e8;
   display: flex;
@@ -71,20 +76,24 @@
 }
 
 .user-avatar-header i {
-  font-size: 20px;
+  font-size: 17px;
   color: #888;
 }
 
-/* ==================== CHAT CONTAINER ==================== */
+/* =============================
+   CHAT CONTAINER
+   ============================= */
 .chat-container {
   display: grid;
-  grid-template-columns: 380px 1fr;
-  height: calc(100vh - 73px);
+  grid-template-columns: 300px 1fr;
+  height: calc(100vh - 60px);
   overflow: hidden;
   background: white;
 }
 
-/* ==================== CONTACT SIDEBAR ==================== */
+/* =============================
+   CONTACT SIDEBAR
+   ============================= */
 .contact-sidebar {
   border-right: 1px solid #e0e0e0;
   display: flex;
@@ -95,17 +104,17 @@
 }
 
 .sidebar-header {
-  padding: 20px 16px;
+  padding: 15px 12px;
   background: white;
   flex-shrink: 0;
   border-bottom: 1px solid #e0e0e0;
 }
 
 .sidebar-title {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
   color: #000;
-  margin: 0 0 12px 0;
+  margin: 0 0 10px 0;
 }
 
 .sidebar-search {
@@ -114,10 +123,10 @@
 
 .sidebar-search input {
   width: 100%;
-  padding: 8px 12px 8px 38px;
+  padding: 7px 10px 7px 32px;
   border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 13px;
+  border-radius: 6px;
+  font-size: 12px;
   background: #f0f2f5;
   transition: all 0.2s;
 }
@@ -130,14 +139,16 @@
 
 .sidebar-search i {
   position: absolute;
-  left: 12px;
+  left: 10px;
   top: 50%;
   transform: translateY(-50%);
   color: #667781;
-  font-size: 14px;
+  font-size: 12px;
 }
 
-/* ==================== CONTACT LIST ==================== */
+/* =============================
+   CONTACT LIST
+   ============================= */
 .contact-list {
   flex: 1;
   overflow-y: scroll;
@@ -154,7 +165,7 @@
 
 /* Scrollbar untuk Chrome, Safari, Edge */
 .contact-list::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 .contact-list::-webkit-scrollbar-track {
@@ -173,7 +184,7 @@
 .contact-item {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
+  padding: 10px 12px;
   cursor: pointer;
   transition: background 0.15s;
   background: white;
@@ -189,19 +200,19 @@
 }
 
 .contact-avatar {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: #dfe5e7;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 12px;
+  margin-right: 10px;
   flex-shrink: 0;
 }
 
 .contact-avatar i {
-  font-size: 22px;
+  font-size: 18px;
   color: #8696a0;
 }
 
@@ -215,31 +226,31 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .contact-name {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #111b21;
 }
 
 .contact-time {
-  font-size: 12px;
+  font-size: 11px;
   color: #667781;
   flex-shrink: 0;
-  margin-left: 8px;
+  margin-left: 6px;
 }
 
 .contact-preview {
-  font-size: 14px;
+  font-size: 12px;
   color: #667781;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
 }
 
 .contact-preview.typing {
@@ -248,14 +259,16 @@
 
 .status-check {
   color: #667781;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .status-check.text-success {
   color: #53bdeb;
 }
 
-/* ==================== CHAT AREA ==================== */
+/* =============================
+   CHAT AREA
+   ============================= */
 .chat-area {
   display: flex;
   flex-direction: column;
@@ -265,7 +278,7 @@
 }
 
 .chat-header {
-  padding: 10px 20px;
+  padding: 8px 16px;
   background: #f0f2f5;
   border-bottom: 1px solid #d1d7db;
   display: flex;
@@ -277,12 +290,12 @@
 .chat-header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .chat-avatar {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: #dfe5e7;
   display: flex;
@@ -291,25 +304,25 @@
 }
 
 .chat-avatar i {
-  font-size: 20px;
+  font-size: 17px;
   color: #8696a0;
 }
 
 .chat-user-info h3 {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #111b21;
   margin: 0 0 2px 0;
 }
 
 .chat-user-status {
-  font-size: 13px;
+  font-size: 11px;
   color: #667781;
 }
 
 .chat-header-actions {
   display: flex;
-  gap: 20px;
+  gap: 15px;
 }
 
 .chat-action-btn {
@@ -317,8 +330,8 @@
   border: none;
   cursor: pointer;
   color: #54656f;
-  font-size: 24px;
-  padding: 8px;
+  font-size: 20px;
+  padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -329,12 +342,14 @@
   color: #111b21;
 }
 
-/* ==================== CHAT MESSAGES ==================== */
+/* =============================
+   CHAT MESSAGES
+   ============================= */
 .chat-messages {
   flex: 1;
   overflow-y: scroll;
   overflow-x: hidden;
-  padding: 20px 60px;
+  padding: 15px 45px;
   background: #efeae2;
   background-image: repeating-linear-gradient(
       45deg,
@@ -360,7 +375,7 @@
 
 /* Scrollbar untuk Chrome, Safari, Edge */
 .chat-messages::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 .chat-messages::-webkit-scrollbar-track {
@@ -377,19 +392,19 @@
 }
 
 .message-group {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .message-date {
   text-align: center;
   color: #54656f;
-  font-size: 12px;
-  margin: 12px 0;
+  font-size: 11px;
+  margin: 10px 0;
   font-weight: 400;
   background: #ffffff;
   display: inline-block;
-  padding: 5px 12px;
-  border-radius: 7.5px;
+  padding: 4px 10px;
+  border-radius: 6px;
   position: relative;
   left: 50%;
   transform: translateX(-50%);
@@ -398,7 +413,7 @@
 
 .message {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 2px;
   align-items: flex-end;
 }
@@ -408,8 +423,8 @@
 }
 
 .message-avatar {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: #dfe5e7;
   display: flex;
@@ -419,7 +434,7 @@
 }
 
 .message-avatar i {
-  font-size: 14px;
+  font-size: 12px;
   color: #8696a0;
 }
 
@@ -438,10 +453,10 @@
 }
 
 .message-bubble {
-  padding: 6px 7px 8px 9px;
-  border-radius: 7.5px;
-  font-size: 14px;
-  line-height: 19px;
+  padding: 5px 6px 7px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 17px;
   word-wrap: break-word;
   position: relative;
   box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
@@ -458,48 +473,48 @@
 }
 
 .message-time {
-  font-size: 11px;
+  font-size: 10px;
   color: #667781;
   margin-top: 2px;
   padding-top: 2px;
   display: inline-block;
   float: right;
-  margin-left: 8px;
+  margin-left: 6px;
 }
 
 .message.sent .message-time {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
 }
 
 .message.sent .message-time i {
-  font-size: 16px;
+  font-size: 14px;
   color: #53bdeb;
 }
 
 .message-file {
   background: #ffffff;
-  padding: 10px 12px;
-  border-radius: 7.5px;
+  padding: 8px 10px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 3px;
-  min-width: 280px;
+  min-width: 220px;
   box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
 }
 
 .file-icon {
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   background: #fff0f0;
-  border-radius: 6px;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #df3535;
-  font-size: 20px;
+  font-size: 17px;
 }
 
 .file-info {
@@ -507,25 +522,27 @@
 }
 
 .file-name {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 400;
   color: #111b21;
   margin-bottom: 2px;
 }
 
 .file-meta {
-  font-size: 12px;
+  font-size: 11px;
   color: #667781;
 }
 
-/* ==================== CHAT INPUT ==================== */
+/* =============================
+   CHAT INPUT
+   ============================= */
 .chat-input {
-  padding: 10px 16px;
+  padding: 8px 12px;
   background: #f0f2f5;
   border-top: 1px solid #d1d7db;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -534,8 +551,8 @@
   border: none;
   cursor: pointer;
   color: #54656f;
-  font-size: 24px;
-  padding: 8px;
+  font-size: 20px;
+  padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -553,10 +570,10 @@
 
 .input-wrapper input {
   width: 100%;
-  padding: 9px 12px;
+  padding: 8px 10px;
   border: none;
-  border-radius: 8px;
-  font-size: 15px;
+  border-radius: 6px;
+  font-size: 13px;
   background: #ffffff;
 }
 
@@ -572,9 +589,9 @@
   background: transparent;
   color: #54656f;
   border: none;
-  padding: 8px 16px;
+  padding: 6px 12px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   transition: color 0.2s;
 }
@@ -583,8 +600,276 @@
   color: #111b21;
 }
 
-/* ==================== SMOOTH SCROLLING ==================== */
+/* =============================
+   SMOOTH SCROLLING
+   ============================= */
 .contact-list,
 .chat-messages {
   scroll-behavior: smooth;
+}
+
+/* =============================
+   RESPONSIVE - TABLET
+   ============================= */
+@media (max-width: 1024px) {
+  .chat-container {
+    grid-template-columns: 260px 1fr;
+  }
+
+  .chat-messages {
+    padding: 15px 30px;
+  }
+}
+
+/* =============================
+   RESPONSIVE - MOBILE
+   ============================= */
+@media (max-width: 768px) {
+  .chat-container {
+    grid-template-columns: 1fr;
+    height: calc(100vh - 55px);
+  }
+
+  .contact-sidebar {
+    display: none;
+  }
+
+  .contact-sidebar.mobile-visible {
+    display: flex;
+    position: fixed;
+    top: 55px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 55px);
+    z-index: 1000;
+  }
+
+  .sidebar-header {
+    padding: 12px 10px;
+  }
+
+  .sidebar-title {
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+
+  .sidebar-search input {
+    padding: 6px 8px 6px 28px;
+    font-size: 11px;
+  }
+
+  .contact-item {
+    padding: 8px 10px;
+  }
+
+  .contact-avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .contact-avatar i {
+    font-size: 16px;
+  }
+
+  .contact-name {
+    font-size: 13px;
+  }
+
+  .contact-time {
+    font-size: 10px;
+  }
+
+  .contact-preview {
+    font-size: 11px;
+  }
+
+  .chat-header {
+    padding: 6px 12px;
+  }
+
+  .chat-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .chat-avatar i {
+    font-size: 15px;
+  }
+
+  .chat-user-info h3 {
+    font-size: 13px;
+  }
+
+  .chat-user-status {
+    font-size: 10px;
+  }
+
+  .chat-header-actions {
+    gap: 12px;
+  }
+
+  .chat-action-btn {
+    font-size: 18px;
+    padding: 5px;
+  }
+
+  .chat-messages {
+    padding: 12px 15px;
+  }
+
+  .message-date {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+
+  .message-avatar {
+    width: 22px;
+    height: 22px;
+  }
+
+  .message-avatar i {
+    font-size: 11px;
+  }
+
+  .message-bubble {
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  .message-time {
+    font-size: 9px;
+  }
+
+  .message.sent .message-time i {
+    font-size: 12px;
+  }
+
+  .message-file {
+    min-width: 180px;
+    padding: 6px 8px;
+  }
+
+  .file-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 15px;
+  }
+
+  .file-name {
+    font-size: 11px;
+  }
+
+  .file-meta {
+    font-size: 10px;
+  }
+
+  .chat-input {
+    padding: 6px 10px;
+  }
+
+  .attach-btn {
+    font-size: 18px;
+    padding: 5px;
+  }
+
+  .input-wrapper input {
+    padding: 7px 9px;
+    font-size: 12px;
+  }
+
+  .send-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .header-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 15px;
+  }
+
+  .user-avatar-header {
+    width: 30px;
+    height: 30px;
+  }
+
+  .user-avatar-header i {
+    font-size: 15px;
+  }
+
+  .user-details-name {
+    font-size: 12px;
+  }
+
+  .user-details-role {
+    font-size: 10px;
+  }
+
+  .header-title {
+    font-size: 14px;
+  }
+}
+
+/* =============================
+   RESPONSIVE - SMALL MOBILE
+   ============================= */
+@media (max-width: 480px) {
+  .chat-messages {
+    padding: 10px 12px;
+  }
+
+  .message-content {
+    max-width: 75%;
+  }
+
+  .message-bubble {
+    font-size: 11px;
+    line-height: 15px;
+    padding: 4px 5px 6px 7px;
+  }
+
+  .message-file {
+    min-width: 160px;
+  }
+
+  .header-title {
+    font-size: 13px;
+  }
+
+  .header-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+}
+
+/* =============================
+   PRINT STYLES
+   ============================= */
+@media print {
+  .contact-sidebar,
+  .chat-header-actions,
+  .chat-input {
+    display: none !important;
+  }
+
+  .chat-container {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .chat-messages {
+    padding: 15px;
+    overflow: visible;
+  }
+
+  .message-bubble {
+    box-shadow: none;
+    border: 1px solid #e0e0e0;
+  }
+
+  .message-date {
+    box-shadow: none;
+    border: 1px solid #e0e0e0;
+  }
 }

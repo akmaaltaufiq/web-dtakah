@@ -1,42 +1,55 @@
-/* Favorit */
+/* =============================
+   FAVORIT - REFACTORED CSS
+   Skala dikurangi ~25% untuk optimal di zoom 100%
+   ============================= */
+
+/* =============================
+   CONTAINER
+   ============================= */
 .favorit-container {
   padding: 0;
 }
 
 .favorit-title {
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 700;
   color: #202224;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
+/* =============================
+   FAVORIT LIST
+   ============================= */
 .favorit-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .favorit-card {
   background: white;
-  border-radius: 12px;
-  padding: 24px 28px;
+  border-radius: 10px;
+  padding: 18px 22px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
 }
 
 .favorit-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
 }
 
+/* =============================
+   STAR ICON
+   ============================= */
 .star-icon {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   background: #fff9e6;
-  border-radius: 12px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -44,38 +57,48 @@
 }
 
 .star-icon i {
-  font-size: 24px;
+  font-size: 20px;
   color: #f4c430;
 }
 
+/* =============================
+   FAVORIT INFO
+   ============================= */
 .favorit-info {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
 }
 
 .favorit-from {
-  min-width: 180px;
+  min-width: 140px;
 }
 
 .from-name {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
   color: #202224;
   line-height: 1.4;
 }
 
 .favorit-sifat {
-  min-width: 120px;
+  min-width: 110px;
+  display: flex;
+  align-items: center;
 }
 
 .sifat-badge {
-  display: inline-block;
-  padding: 6px 18px;
-  border-radius: 6px;
-  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 14px;
+  border-radius: 5px;
+  font-size: 12px;
   font-weight: 500;
+  white-space: nowrap;
+  min-width: 90px;
+  text-align: center;
 }
 
 .sifat-badge.umum {
@@ -98,23 +121,26 @@
 }
 
 .perihal-text {
-  font-size: 14px;
+  font-size: 13px;
   color: #495057;
   line-height: 1.5;
 }
 
+/* =============================
+   ACTION BUTTONS
+   ============================= */
 .favorit-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
 }
 
 .action-btn {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border: 1px solid #dee2e6;
   background: white;
-  border-radius: 8px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -146,13 +172,15 @@
 }
 
 .action-btn i {
-  font-size: 18px;
+  font-size: 15px;
 }
 
-/* Header */
+/* =============================
+   HEADER
+   ============================= */
 .content-header {
   background: #fff;
-  padding: 16px 24px;
+  padding: 12px 18px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: space-between;
@@ -163,41 +191,41 @@
 }
 
 .search-box {
-  width: 350px;
+  width: 280px;
   position: relative;
 }
 
 .search-box input {
   width: 100%;
-  padding: 10px 40px 10px 15px;
+  padding: 8px 32px 8px 12px;
   border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 6px;
+  font-size: 13px;
   background: #f5f6fa;
 }
 
 .search-box i {
   position: absolute;
-  right: 15px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: #999;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
 }
 
 .header-btn {
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border: none;
   background: transparent;
-  border-radius: 8px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -210,20 +238,20 @@
 }
 
 .header-btn i {
-  font-size: 20px;
+  font-size: 17px;
   color: #666;
 }
 
 .notification-badge {
   position: absolute;
-  top: -5px;
-  right: -5px;
+  top: -4px;
+  right: -4px;
   background: #e74c3c;
   color: #fff;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -233,19 +261,19 @@
 .user-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .user-avatar-header {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: #8b0000;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 15px;
 }
 
 .user-details {
@@ -253,41 +281,43 @@
 }
 
 .user-details-name {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #333;
 }
 
 .user-details-role {
-  font-size: 12px;
+  font-size: 11px;
   color: #666;
 }
 
-/* Footer */
+/* =============================
+   FOOTER
+   ============================= */
 .content-footer {
   background: #fff;
-  padding: 20px 24px;
+  padding: 15px 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 32px;
-  border-radius: 10px;
+  margin-top: 24px;
+  border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .content-footer p {
-  font-size: 12px;
+  font-size: 11px;
   color: #666;
   margin: 0;
 }
 
 .footer-links {
   display: flex;
-  gap: 16px;
+  gap: 12px;
 }
 
 .footer-links a {
-  font-size: 12px;
+  font-size: 11px;
   color: #666;
   text-decoration: none;
   transition: color 0.3s;
@@ -297,10 +327,12 @@
   color: #8b0000;
 }
 
-/* Scrollbar */
+/* =============================
+   SCROLLBAR
+   ============================= */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -309,18 +341,20 @@
 
 ::-webkit-scrollbar-thumb {
   background: #8b0000;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #600000;
 }
 
-/* Animations */
+/* =============================
+   ANIMATIONS
+   ============================= */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
   }
   to {
     opacity: 1;
@@ -354,36 +388,242 @@
   animation-delay: 0.35s;
 }
 
+/* =============================
+   RESPONSIVE - TABLET
+   ============================= */
 @media (max-width: 1024px) {
   .favorit-info {
     flex-wrap: wrap;
+    gap: 12px;
   }
 
   .favorit-from,
   .favorit-sifat {
     min-width: auto;
   }
+
+  .search-box {
+    width: 240px;
+  }
 }
 
+/* =============================
+   RESPONSIVE - MOBILE
+   ============================= */
 @media (max-width: 768px) {
   .favorit-title {
-    font-size: 24px;
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .favorit-list {
+    gap: 10px;
   }
 
   .favorit-card {
-    padding: 20px;
+    padding: 15px 18px;
     flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .star-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .star-icon i {
+    font-size: 18px;
   }
 
   .favorit-info {
     width: 100%;
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 10px;
+  }
+
+  .favorit-from {
+    min-width: auto;
+  }
+
+  .from-name {
+    font-size: 12px;
+  }
+
+  .sifat-badge {
+    font-size: 11px;
+    padding: 4px 12px;
+  }
+
+  .perihal-text {
+    font-size: 12px;
   }
 
   .favorit-actions {
     width: 100%;
     justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .action-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .action-btn i {
+    font-size: 14px;
+  }
+
+  .content-header {
+    padding: 10px 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .search-box {
+    width: 100%;
+    order: 3;
+  }
+
+  .header-right {
+    gap: 12px;
+  }
+
+  .header-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .header-btn i {
+    font-size: 15px;
+  }
+
+  .user-avatar-header {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .user-details-name {
+    font-size: 12px;
+  }
+
+  .user-details-role {
+    font-size: 10px;
+  }
+
+  .content-footer {
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 15px;
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .footer-links {
+    gap: 10px;
+  }
+}
+
+/* =============================
+   RESPONSIVE - SMALL MOBILE
+   ============================= */
+@media (max-width: 480px) {
+  .favorit-title {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .favorit-card {
+    padding: 12px 15px;
+  }
+
+  .star-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .star-icon i {
+    font-size: 16px;
+  }
+
+  .from-name {
+    font-size: 11px;
+  }
+
+  .sifat-badge {
+    font-size: 10px;
+    padding: 3px 10px;
+  }
+
+  .perihal-text {
+    font-size: 11px;
+  }
+
+  .action-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .action-btn i {
+    font-size: 13px;
+  }
+
+  .header-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .header-btn i {
+    font-size: 14px;
+  }
+
+  .notification-badge {
+    width: 14px;
+    height: 14px;
+    font-size: 8px;
+  }
+
+  .user-info {
+    gap: 8px;
+  }
+}
+
+/* =============================
+   PRINT STYLES
+   ============================= */
+@media print {
+  .content-header,
+  .favorit-actions,
+  .star-icon {
+    display: none !important;
+  }
+
+  .favorit-card {
+    break-inside: avoid;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 15px 18px;
+  }
+
+  .favorit-card:hover {
+    transform: none;
+  }
+
+  .favorit-info {
+    gap: 12px;
+  }
+
+  .from-name,
+  .perihal-text {
+    font-size: 12px;
+  }
+
+  .sifat-badge {
+    border: 1px solid currentColor;
+  }
+
+  .content-footer {
+    margin-top: 20px;
+    padding: 12px 15px;
   }
 }
