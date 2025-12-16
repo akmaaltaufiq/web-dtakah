@@ -1,5 +1,5 @@
 /* ========================================
-   LOGIN.CSS - Login Page Styles
+   LOGIN.CSS - Login Page Styles (Refactored)
    ======================================== */
 
 * {
@@ -9,8 +9,7 @@
 }
 
 body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
@@ -20,9 +19,8 @@ body {
    CUSTOM SCROLLBAR
    ======================================== */
 
-/* For Webkit browsers (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -44,7 +42,6 @@ body {
   background: rgba(139, 0, 0, 1);
 }
 
-/* For Firefox */
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(139, 0, 0, 0.6) rgba(255, 255, 255, 0.1);
@@ -81,9 +78,9 @@ body {
 }
 
 .loading-logo {
-  width: 120px;
-  height: 120px;
-  margin: 0 auto 30px;
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 22px;
   animation: pulse 1s ease-in-out infinite;
 }
 
@@ -91,13 +88,13 @@ body {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
 }
 
 .loading-spinner {
-  width: 60px;
-  height: 60px;
-  margin: 0 auto 20px;
+  width: 45px;
+  height: 45px;
+  margin: 0 auto 15px;
   position: relative;
 }
 
@@ -105,7 +102,7 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
-  border: 4px solid transparent;
+  border: 3px solid transparent;
   border-top-color: #f4c430;
   border-radius: 50%;
   animation: spin 1.2s linear infinite;
@@ -131,8 +128,7 @@ body {
 }
 
 @keyframes pulse {
-  0%,
-  100% {
+  0%, 100% {
     transform: scale(1);
   }
   50% {
@@ -141,15 +137,15 @@ body {
 }
 
 .loading-text {
-  font-size: 20px;
+  font-size: 1rem;
   font-weight: 600;
   color: #fff;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   letter-spacing: 0.5px;
 }
 
 .loading-subtext {
-  font-size: 14px;
+  font-size: 0.813rem;
   color: rgba(255, 255, 255, 0.8);
   letter-spacing: 0.3px;
 }
@@ -160,8 +156,7 @@ body {
 }
 
 @keyframes dots {
-  0%,
-  20% {
+  0%, 20% {
     content: "";
   }
   40% {
@@ -170,14 +165,13 @@ body {
   60% {
     content: "..";
   }
-  80%,
-  100% {
+  80%, 100% {
     content: "...";
   }
 }
 
 /* ========================================
-   LOGIN PAGE
+   LOGIN PAGE LAYOUT
    ======================================== */
 
 .login-page {
@@ -185,52 +179,55 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(
-      rgba(128, 128, 128, 0.6),
-      rgba(128, 128, 128, 0.6)
-    ),
-    url("../img/bg.jpg");
+  background: linear-gradient(rgba(128, 128, 128, 0.6), rgba(128, 128, 128, 0.6)), url("../img/bg.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  padding: 40px 20px;
+  padding: 30px 15px;
 }
 
 .login-container {
   width: 100%;
-  max-width: 520px;
+  max-width: 390px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
+  gap: 22px;
 }
+
+/* ========================================
+   LOGO
+   ======================================== */
 
 .logo-container {
   text-align: center;
 }
 
 .logo-container img {
-  width: 180px;
-  height: 180px;
+  width: 135px;
+  height: 135px;
   object-fit: contain;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.3));
 }
+
+/* ========================================
+   LOGIN CARD
+   ======================================== */
 
 .login-card {
   background: white;
-  border-radius: 10px;
-  padding: 40px 35px;
+  border-radius: 8px;
+  padding: 30px 26px;
   width: 100%;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
   max-height: 85vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
 
-/* Custom scrollbar for login card */
 .login-card::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 .login-card::-webkit-scrollbar-track {
@@ -247,20 +244,24 @@ body {
   background: #6b0000;
 }
 
+/* ========================================
+   LOGIN HEADER
+   ======================================== */
+
 .login-header {
   text-align: center;
-  margin-bottom: 35px;
+  margin-bottom: 26px;
 }
 
 .login-header h1 {
-  font-size: 32px;
+  font-size: 1.5rem;
   font-weight: 600;
   color: #000;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .login-header p {
-  font-size: 16px;
+  font-size: 0.938rem;
   color: #666;
   font-weight: 400;
 }
@@ -270,14 +271,14 @@ body {
    ======================================== */
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .form-label {
   display: block;
-  font-size: 16px;
+  font-size: 0.938rem;
   color: #141414;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   font-weight: 400;
 }
 
@@ -300,15 +301,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 50px;
-  height: 50px;
+  width: 38px;
+  height: 38px;
   background: #fffce7;
   border-right: 1px solid #d1d5db;
   flex-shrink: 0;
 }
 
 .input-icon i {
-  font-size: 22px;
+  font-size: 1.125rem;
   color: #666;
 }
 
@@ -316,8 +317,8 @@ body {
   flex: 1;
   border: none;
   outline: none;
-  padding: 14px 15px;
-  font-size: 16px;
+  padding: 10px 12px;
+  font-size: 0.938rem;
   color: #141414;
   background: transparent;
   font-family: inherit;
@@ -329,13 +330,13 @@ body {
 
 .toggle-password {
   position: absolute;
-  right: 15px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
-  padding: 5px;
+  padding: 4px;
   color: #666;
   display: flex;
   align-items: center;
@@ -348,7 +349,7 @@ body {
 }
 
 .toggle-password i {
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 /* ========================================
@@ -359,34 +360,36 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 25px;
+  margin-bottom: 18px;
+  gap: 10px;
 }
 
 .remember-me {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .remember-me input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   cursor: pointer;
   accent-color: #8b0000;
 }
 
 .remember-me label {
-  font-size: 15px;
+  font-size: 0.875rem;
   color: #141414;
   cursor: pointer;
   user-select: none;
 }
 
 .forgot-password {
-  font-size: 15px;
+  font-size: 0.875rem;
   color: #8b0000;
   text-decoration: none;
   transition: opacity 0.3s;
+  white-space: nowrap;
 }
 
 .forgot-password:hover {
@@ -400,12 +403,12 @@ body {
 
 .login-button {
   width: 100%;
-  padding: 16px;
+  padding: 12px;
   background: #8b0000;
   color: white;
   border: none;
   border-radius: 5px;
-  font-size: 18px;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s;
@@ -433,66 +436,34 @@ body {
 .login-footer {
   text-align: center;
   color: white;
-  font-size: 14px;
+  font-size: 0.813rem;
   line-height: 1.5;
-  font-size: bold;
+  font-weight: regular;
 }
 
 .login-footer p {
-  margin: 5px 0;
+  margin: 4px 0;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .login-footer img {
-  margin-top: 15px;
-  height: 40px;
+  margin-top: 12px;
+  height: 30px;
   object-fit: contain;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 /* ========================================
-   RESPONSIVE
+   RESPONSIVE - TABLET
    ======================================== */
 
-@media (max-width: 576px) {
-  .login-card {
-    padding: 30px 25px;
+@media (max-width: 768px) {
+  .login-page {
+    padding: 25px 15px;
   }
 
-  .login-header h1 {
-    font-size: 26px;
-  }
-
-  .login-header p {
-    font-size: 14px;
-  }
-
-  .logo-container img {
-    width: 140px;
-    height: 140px;
-  }
-
-  .form-label {
-    font-size: 14px;
-  }
-
-  .form-input {
-    font-size: 14px;
-  }
-
-  .login-button {
-    font-size: 16px;
-    padding: 14px;
-  }
-
-  .login-footer {
-    font-size: 13px;
-    font-size: bold;
-  }
-}
-
-@media (max-width: 380px) {
   .login-container {
+    max-width: 360px;
     gap: 20px;
   }
 
@@ -502,19 +473,165 @@ body {
   }
 
   .login-card {
-    padding: 25px 20px;
+    padding: 26px 22px;
   }
 
   .login-header h1 {
-    font-size: 24px;
+    font-size: 1.375rem;
+  }
+
+  .login-header p {
+    font-size: 0.875rem;
+  }
+}
+
+/* ========================================
+   RESPONSIVE - MOBILE
+   ======================================== */
+
+@media (max-width: 576px) {
+  .login-page {
+    padding: 20px 12px;
+  }
+
+  .login-container {
+    max-width: 100%;
+    gap: 18px;
+  }
+
+  .logo-container img {
+    width: 105px;
+    height: 105px;
+  }
+
+  .login-card {
+    padding: 22px 18px;
+    border-radius: 6px;
+  }
+
+  .login-header {
+    margin-bottom: 22px;
+  }
+
+  .login-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .login-header p {
+    font-size: 0.813rem;
+  }
+
+  .form-group {
+    margin-bottom: 13px;
+  }
+
+  .form-label {
+    font-size: 0.875rem;
+  }
+
+  .form-input {
+    font-size: 0.875rem;
+    padding: 9px 10px;
   }
 
   .input-icon {
-    width: 45px;
-    height: 45px;
+    width: 36px;
+    height: 36px;
   }
 
   .input-icon i {
-    font-size: 1.1rem;
+    font-size: 1rem;
+  }
+
+  .form-options {
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .remember-me label,
+  .forgot-password {
+    font-size: 0.813rem;
+  }
+
+  .login-button {
+    font-size: 0.938rem;
+    padding: 11px;
+  }
+
+  .login-footer {
+    font-size: 0.75rem;
+  }
+
+  .login-footer img {
+    height: 26px;
+    margin-top: 10px;
+  }
+
+  .loading-logo {
+    width: 75px;
+    height: 75px;
+    margin-bottom: 18px;
+  }
+
+  .loading-spinner {
+    width: 38px;
+    height: 38px;
+    margin-bottom: 12px;
+  }
+
+  .loading-text {
+    font-size: 0.938rem;
+  }
+
+  .loading-subtext {
+    font-size: 0.75rem;
+  }
+}
+
+/* ========================================
+   RESPONSIVE - SMALL MOBILE
+   ======================================== */
+
+@media (max-width: 380px) {
+  .login-page {
+    padding: 15px 10px;
+  }
+
+  .login-container {
+    gap: 15px;
+  }
+
+  .logo-container img {
+    width: 90px;
+    height: 90px;
+  }
+
+  .login-card {
+    padding: 18px 15px;
+  }
+
+  .login-header h1 {
+    font-size: 1.125rem;
+  }
+
+  .login-header p {
+    font-size: 0.75rem;
+  }
+
+  .input-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .input-icon i {
+    font-size: 0.938rem;
+  }
+
+  .form-input {
+    padding: 8px 10px;
+  }
+
+  .login-button {
+    padding: 10px;
   }
 }
