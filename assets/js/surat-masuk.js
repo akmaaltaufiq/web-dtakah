@@ -1,5 +1,5 @@
 // =============================
-// SURAT MASUK - FIREBASE INTEGRATED (NO DISPOSISI ICON)
+// SURAT MASUK - FIREBASE INTEGRATED WITH SUCCESS POPUP
 // =============================
 (function () {
   "use strict";
@@ -15,7 +15,7 @@
   // INITIALIZATION
   // =============================
   window.initializeSuratMasukPage = function () {
-    console.log("📄 Surat Masuk Page Initialized (No Disposisi Icon)");
+    console.log("📄 Surat Masuk Page Initialized (With Success Popup)");
 
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -202,7 +202,7 @@
   }
 
   // =============================
-  // FORM SUBMIT
+  // FORM SUBMIT WITH SUCCESS POPUP
   // =============================
   function handleSubmit(e) {
     e.preventDefault();
@@ -257,20 +257,23 @@
 
         if (window.hideLoading) window.hideLoading();
 
-        Notification.success(`Surat Masuk (${newSurat.noSurat}) Berhasil Disimpan!`);
-
-        document.querySelectorAll(".step-content").forEach((el) => {
-          el.classList.remove("active");
+        // Show SweetAlert2 Success Popup (same style as Surat Keluar)
+        window.loadSwal(() => {
+          Swal.fire({
+            icon: "success",
+            title: "Berhasil Ditambahkan!",
+            html: `
+              <p>Surat Masuk "<strong>${newSurat.perihal}</strong>" berhasil ditambahkan!</p>
+              <p style="margin-top: 10px;"><small>Status: <strong>${newSurat.status}</strong></small></p>
+            `,
+            confirmButtonText: "OK",
+            confirmButtonColor: "#8b0000",
+            timer: 3000,
+            timerProgressBar: true,
+          }).then(() => {
+            closeForm();
+          });
         });
-
-        const successContent = document.getElementById("successContent");
-        if (successContent) {
-          successContent.classList.add("active");
-        }
-
-        setTimeout(() => {
-          closeForm();
-        }, 2000);
       })
       .catch((error) => {
         console.error("❌ Error saving surat:", error);
@@ -651,4 +654,4 @@
 
 })();
 
-console.log("✅ Surat Masuk JS - Without Disposisi Icon");
+console.log("✅ Surat Masuk JS - With SweetAlert2 Success Popup");
